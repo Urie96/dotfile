@@ -1,0 +1,11 @@
+#!/usr/bin/env -S nu -n --no-std-lib --no-history
+
+let recent_files = (^mdfind -onlyin ~ 'kMDItemLastUsedDate <= $time.now()' | lines)
+let modified_time = (^mdls -attr kMDItemUsedDates --raw ...$recent_files
+| split row "\u{0}"
+| each {
+  parse --regex '"(.*)"' | sort | last
+})
+
+$recent_files | wrap name | merge ( $modified_time | wrap time ) | sort-by time -r | get name | str join (char newline)
+

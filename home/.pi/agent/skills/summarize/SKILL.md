@@ -1,0 +1,44 @@
+---
+name: summarize
+description: Summarize or extract text/transcripts from URLs, podcasts, and local files (great fallback for “transcribe this YouTube/video”).
+homepage: https://summarize.sh
+---
+
+# Summarize
+
+Fast CLI to summarize URLs, local files, and YouTube links.
+
+## When to use (trigger phrases)
+
+Use this skill immediately when the user asks any of:
+- “use summarize.sh”
+- “what’s this link/video about?”
+- “summarize this URL/article”
+- “transcribe this YouTube/video” (best-effort transcript extraction; no `yt-dlp` needed)
+
+## Quick start
+
+```bash
+summarize "https://example.com"
+summarize "/path/to/file.pdf"
+summarize "https://youtu.be/dQw4w9WgXcQ" --youtube auto
+```
+
+## YouTube: summary vs transcript
+
+Best-effort transcript (URLs only):
+
+```bash
+summarize "https://youtu.be/dQw4w9WgXcQ" --youtube auto --extract-only
+```
+
+If the user asked for a transcript but it’s huge, return a tight summary first, then ask which section/time range to expand.
+
+## Useful flags
+
+- `--length short|medium|long|xl|xxl|<chars>`
+- `--max-output-tokens <count>`
+- `--extract-only` (URLs only)
+- `--json` (machine readable)
+- `--firecrawl auto|off|always` (fallback extraction)
+- `--youtube auto` (Apify fallback if `APIFY_API_TOKEN` set)

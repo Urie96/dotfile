@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Colors
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+select_proc() {
+  select_line="$(ps -eo pid,command | fzf --prompt="process> " \
+    --height=~50% \
+    --reverse \
+    -q "$1" \
+    --preview="ps -p {1} -o pid,ppid,%cpu,%mem,rss,command" \
+    --header-lines="1")"
+  if [[ -z "$select_line" ]]; then
+    exit
+  else
+    echo "$select_line" | awk '{print $1}'
+  fi
+}
+
+show_tree() {
+  pid="$1"
+
+  echo
+  pstree -w -g 3 -p "$pid" | grep -C 1000000 "$pid" --color=always
+  echo
+}
+
+PID="$(select_proc "${1:-}")"
+
+if [[ -z "$PID" ]]; then
+  exit
+fi
+
+ps -p "$PID" -f
+
+while true; do
+  ACTION=$(echo -e "tree\nkill" | fzf --prompt="Action for $PID> " --height=~20% --reverse)
+
+  if [[ -z "$ACTION" ]]; then
+    break
+  fi
+
+  case "$ACTION" in
+  tree)
+    show_tree "$PID"
+    ;;
+  kill)
+    kill -9 "$PID"
+    echo -e "${YELLOW}Stopped $PID${NC}"
+    exit
+    ;;
+  *)
+    break
+    ;;
+  esac
+done

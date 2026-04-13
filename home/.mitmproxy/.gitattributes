@@ -1,0 +1,4 @@
+mitmproxy-dhparam.pem filter=git-crypt diff=git-crypt
+mitmproxy-ca.pem filter=git-crypt diff=git-crypt
+mitmproxy-ca.p12 filter=git-crypt diff=git-crypt
+mitmproxy-ca-cert.p12 filter=git-crypt diff=git-crypt

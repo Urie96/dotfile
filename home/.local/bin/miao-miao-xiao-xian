@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+get_html() {
+  # local link="https://mp.weixin.qq.com/s/Sn2-cZY_JzQqzzd8YhNfOA"
+  local link="$1"
+  curl "$link" \
+    -H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
+    -H 'accept-language: zh-CN,zh;q=0.9' \
+    -H 'cache-control: no-cache' \
+    -b 'rewardsn=; wxtokenkey=777; pac_uid=0_frFKr6JtfhbsY; _qimei_uuid42=1940f0e193b1001a9317070a03de0d2464dc0367a4; _qimei_fingerprint=13de740e177c1baea5eb5bb838ae605a; omgid=0_frFKr6JtfhbsY; yyb_muid=2D1BCB3E291567100EA6DD222856664D' \
+    -H 'pragma: no-cache' \
+    -H 'priority: u=0, i' \
+    -H 'sec-ch-ua: "Not(A:Brand";v="8", "Chromium";v="144"' \
+    -H 'sec-ch-ua-mobile: ?0' \
+    -H 'sec-ch-ua-platform: "macOS"' \
+    -H 'sec-fetch-dest: document' \
+    -H 'sec-fetch-mode: navigate' \
+    -H 'sec-fetch-site: none' \
+    -H 'sec-fetch-user: ?1' \
+    -H 'upgrade-insecure-requests: 1' \
+    -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'
+
+}
+
+download() {
+  # media_id="MzkzMzcyNjQzNF8yMjQ3NDkzNzE4"
+  # output="马戏团.mp3"
+  media_id="$1"
+  output="$2"
+
+  curl "https://res.wx.qq.com/voice/getvoice?mediaid=$media_id" \
+    -H 'accept: */*' \
+    -H 'accept-language: zh-CN,zh;q=0.9' \
+    -H 'cache-control: no-cache' \
+    -b 'pac_uid=0_frFKr6JtfhbsY; _qimei_uuid42=1940f0e193b1001a9317070a03de0d2464dc0367a4; _qimei_fingerprint=13de740e177c1baea5eb5bb838ae605a; omgid=0_frFKr6JtfhbsY; yyb_muid=2D1BCB3E291567100EA6DD222856664D' \
+    -H 'pragma: no-cache' \
+    -H 'priority: i' \
+    -H 'range: bytes=0-' \
+    -H 'referer: https://mp.weixin.qq.com/' \
+    -H 'sec-ch-ua: "Not(A:Brand";v="8", "Chromium";v="144"' \
+    -H 'sec-ch-ua-mobile: ?0' \
+    -H 'sec-ch-ua-platform: "macOS"' \
+    -H 'sec-fetch-dest: audio' \
+    -H 'sec-fetch-mode: no-cors' \
+    -H 'sec-fetch-site: same-site' \
+    -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36' -o "$output"
+}
+
+html="$(get_html "$1")"
+media_name="$(echo "$html" | grep -oP 'id="js_content".*? name="\K[^"]*')"
+if [ -z "$media_name" ]; then
+  media_name="$(echo "$html" | htmlq '#js_content mp-common-mpaudio' --attribute name)"
+fi
+echo "media_name: $media_name"
+media_id="$(echo "$html" | grep -oP '"voice_id":"\K[^"]*')"
+echo "media_id: $media_id"
+download "$media_id" "${media_name}.mp3"

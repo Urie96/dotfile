@@ -1,0 +1,14 @@
+#!/bin/bash
+
+filepath="$1"
+if [ -z "$filepath" ]; then
+  echo no file path
+fi
+
+touch "$filepath"
+
+osascript <<EOF
+set png_data to the clipboard as «class PNGf»
+set the_file to open for access POSIX path of (POSIX file "$filepath") with write permission
+write png_data to the_file
+EOF

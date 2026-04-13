@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+
+cd "${TMPDIR:-/tmp}" || exit 1
+dir="${TMPDIR:-/tmp}/diffs/defaults"
+dir="${dir#/}"
+echo -e "\033[1mSaving plist files to '$dir' folder.\033[0m"
+
+mkdir -p "$dir"
+defaults read >"$dir/old.plist"
+defaults -currentHost read >"$dir/host-old.plist"
+
+echo -e "\n\033[1m⏳ Change settings and press any key to continue\033[0m"
+
+read -n 1 -s -r
+defaults read >"$dir/new.plist"
+defaults -currentHost read >"$dir/host-new.plist"
+
+echo -e "\033[1m➡️ Here is your diff\033[0m\n\n"
+git --no-pager diff --no-index "$dir/old.plist" "$dir/new.plist"
+echo -e "\n\n\033[1m➡️ and here with the '-currentHost' option\n\n"
+git --no-pager diff --no-index "$dir/host-old.plist" "$dir/host-new.plist"
+
+echo -e "\n\n\033[1m🔮 Commands to print the diffs again\033[0m"
+echo -e "$ git --no-pager diff --no-index $dir/old.plist $dir/new.plist"
+echo -e "$ git --no-pager diff --no-index $dir/host-old.plist $dir/host-new.plist"

@@ -1,0 +1,20 @@
+[services.home]
+type     = "sftp"
+host     = "home.lubui.com"
+user     = "urie"
+port     = 22
+key_file = "~/.ssh/id_rsa"
+
+[services.mac]
+type     = "sftp"
+host     = "mac.mini"
+user     = "urie"
+port     = 22
+key_file = "~/.ssh/id_rsa"
+
+[services.kindle]
+type     = "sftp"
+host     = "kindle.lan"
+user     = "root"
+port     = 2222
+password = "root"

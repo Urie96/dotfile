@@ -1,0 +1,52 @@
+- cmd: console.exit
+  key: ctrl q
+- cmd: 'console.choose.cmd Format export.formats
+
+    extra.osc_copy {choice} @focus
+
+    '
+  ctx:
+  - flowlist
+  - flowview
+  key: c
+- cmd: 'console.choose.cmd Action extra.filter_similar_options
+
+    extra.filter_similar {choice}
+
+    '
+  ctx:
+  - flowlist
+  key: F
+- cmd: 'console.choose.cmd Action extra.modify_later_options
+
+    extra.modify_later {choice}
+
+    '
+  ctx:
+  - flowlist
+  - flowview
+  key: M
+- cmd: extra.test
+  ctx:
+  - flowlist
+  - flowview
+  key: t
+- cmd: 'console.choose.cmd Action extra.add_header_options
+
+    extra.add_header_pre {choice}
+
+    '
+  ctx:
+  - flowlist
+  key: h
+- cmd: 'console.command.set custom_env
+
+    '
+  ctx:
+  - flowlist
+  key: H
+- cmd: extra.sse_stream_toggle
+  ctx:
+  - flowlist
+  - flowview
+  key: s

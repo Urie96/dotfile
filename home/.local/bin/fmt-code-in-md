@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+from typing import List
+import asyncio
+import fileinput
+import re
+import inspect
+
+
+async def format_console(code: List[str]):
+    i = 0
+    out_lines = []
+    while i < len(code):
+        if not code[i].startswith("$ "):
+            out_lines.append(code[i])
+            i = i + 1
+        else:
+            j = i
+            while re.fullmatch(r".*(\\|\||&&)\n", code[j]):
+                j = j + 1
+            bash_code = [code[i][2:]] + code[i + 1 : j + 1]
+            # print("".join(bash_code))
+            # print("")
+            out_lines.append(format_code("bash", bash_code))
+            i = j + 1
+    i = 0
+    while i < len(out_lines):
+        if inspect.isawaitable(out_lines[i]):
+            out_lines[i] = "$ " + await out_lines[i]
+        i = i + 1
+    return "".join(out_lines)
+
+
+async def format_code(language: str, code: List[str]):
+    if language == "console":
+        formatted = await format_console(code)
+        return formatted
+    proc = await asyncio.create_subprocess_exec(
+        "fmt-file",
+        "-l",
+        language,
+        stdin=asyncio.subprocess.PIPE,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+
+    stdout, _ = await proc.communicate(input=bytes("".join(code), "utf-8"))
+    if proc.returncode and proc.returncode > 0:
+        return code
+    return stdout.decode()
+
+
+async def main():
+    stdin_lines = []
+    for line in fileinput.input():
+        stdin_lines.append(line)
+
+    out_lines = []
+    i = 0
+    while i < len(stdin_lines):
+        match = re.search(r"^\s*```\s*(\w+)\s*$", stdin_lines[i])
+        if match and match.group(1):
+            out_lines.append(stdin_lines[i])
+            lang = match.group(1)
+            j = i + 1
+            while not re.fullmatch(r"\s*```\s*", stdin_lines[j]):
+                j = j + 1
+            out_lines.append(format_code(lang, stdin_lines[i + 1 : j]))
+            out_lines.append(stdin_lines[j])
+            i = j + 1
+        else:
+            out_lines.append(stdin_lines[i])
+            i = i + 1
+
+    i = 0
+    while i < len(out_lines):
+        if inspect.isawaitable(out_lines[i]):
+            out_lines[i] = await out_lines[i]
+        i = i + 1
+    print("".join(out_lines))
+
+
+asyncio.run(main())

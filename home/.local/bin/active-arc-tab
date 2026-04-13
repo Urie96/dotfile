@@ -1,0 +1,54 @@
+#!/usr/bin/env -S nu -n --no-std-lib --no-history
+
+def main [
+  regex: string
+] {
+  let cands = (get_tabs | where url =~ $regex)
+  if ($cands | length) == 0 {
+    exit 1
+  }
+  $cands | first | do {
+    print $"Try to active ($in.url)"
+    active_tab $in.win_id $in.tab_index
+  }
+}
+
+def get_tabs [] {
+  r#'
+set _output to ""
+
+tell application "Arc"
+  set _window_index to 1
+  set _tab_index to 1
+
+  repeat with _tab in tabs of first window
+    set _url to get URL of _tab
+    set _output to (_output & _url & "~~~" & _window_index & "~~~" & _tab_index & "\n")
+    set _tab_index to _tab_index + 1
+  end repeat
+end tell
+return _output
+  '#
+  | ^osascript 
+  | lines | parse -r '^(?<url>.+)~~~(?<win_id>\d+)~~~(?<tab_index>\d+)$' 
+  | each {{
+      url: $in.url
+      win_id: ($in.win_id | into int)
+      tab_index: ($in.tab_index | into int)
+    }}
+}
+
+def active_tab [
+  win_id: int,
+  tab_index: int,
+] {
+  $'
+tell application "Arc"
+  tell window ($win_id)
+    tell tab ($tab_index) to select
+  end tell
+
+  activate
+end tell
+  ' | ^osascript
+}

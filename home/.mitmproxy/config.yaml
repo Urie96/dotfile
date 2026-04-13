@@ -1,0 +1,4 @@
+scripts:
+- ./addons/addons.py
+stream_large_bodies: 3m
+validate_inbound_headers: false
