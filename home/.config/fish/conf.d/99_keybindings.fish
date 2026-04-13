@@ -28,7 +28,7 @@ function _resume_background_jobs
 end
 
 bind \cZ _resume_background_jobs
-bind \ce edit_command_buffer
+bind \cg edit_command_buffer
 
 function _command_line_ls
     if [ -z (commandline -b) ]

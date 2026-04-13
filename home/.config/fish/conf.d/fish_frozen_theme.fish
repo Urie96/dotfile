@@ -28,8 +28,8 @@ set --global fish_color_option CBCCC6
 set --global fish_color_param CBCCC6
 set --global fish_color_quote BAE67E
 set --global fish_color_redirection D4BFFF
-set --global fish_color_search_match --background=FFCC66
-set --global fish_color_selection --background=FFCC66
+set --global fish_color_search_match --background=FFCC66 --bold
+set --global fish_color_selection --background=FFCC66 --bold
 set --global fish_color_status red
 set --global fish_color_user brgreen
 set --global fish_color_valid_path --underline
@@ -37,7 +37,7 @@ set --global fish_pager_color_background
 set --global fish_pager_color_completion normal
 set --global fish_pager_color_description B3A06D yellow
 set --global fish_pager_color_prefix normal --bold --underline
-set --global fish_pager_color_progress brwhite --background=cyan
+set --global fish_pager_color_progress brwhite --background=cyan --bold
 set --global fish_pager_color_secondary_background
 set --global fish_pager_color_secondary_completion
 set --global fish_pager_color_secondary_description
