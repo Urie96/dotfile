@@ -1,0 +1,18 @@
+*~
+*.swp
+*.swo
+.DS_Store
+.gdb_history
+.direnv.*
+.direnv
+.envrc
+tags
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.cache/clangd
+.terraform/
+
+# Devenv
+.devenv*
+devenv.local.nix

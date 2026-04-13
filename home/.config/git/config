@@ -1,0 +1,87 @@
+[core]
+	pager = "delta"
+  editor = nvim
+[interactive]
+  singlekey = true
+  diffFilter = delta --color-only
+[format]
+  signoff = true
+[color]
+  branch = true
+  diff = true
+  status = true
+[push]
+  recurseSubmodules = on-demand
+[submodule]
+  fetchJobs = 0
+[delta]
+  navigate = true    # use n and N to move between diff sections
+	dark = true
+	keep-plus-minus-markers = true
+	light = false
+	line-numbers = false
+	side-by-side = false
+	true-color = "always"
+[user]
+  name = yangrui
+  email = lubui.com@gmail.com
+[gpg]
+  format = ssh
+[diff]
+  compactionHeuristic = true
+  renames = true
+  colorMoved = default
+	algorithm = "histogram"
+	mnemonicPrefix = true
+[merge]
+	tool = vimdiff
+  keepBackup = false
+  conflictstyle = zdiff3
+[mergetool "vimdiff"]
+  cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+[merge "mergiraf"]
+  name = mergiraf
+  driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L
+[push]
+  default = current
+  autoSetupRemote = true
+[rerere]
+  autoUpdate = true
+  enabled = true
+[branch]
+  autoSetupRebase = always
+  autoSetupMerge = always
+	sort = "-committerdate"
+[pull]
+  rebase = true
+  autostash = true
+  twohead = ort
+[rebase]
+  stat = true
+  autoStash = true
+  autoSquash = true
+  updateRefs = true
+[help]
+  autocorrect = 10
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+[github]
+  user = Urie96
+[init]
+  defaultBranch = main
+[credential]
+  helper = store
+[credential "https://github.com"]
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = !gh auth git-credential
+[fetch]
+	all = true
+	prune = true
+	pruneTags = true
+[tag]
+	sort = "version:refname"
+
