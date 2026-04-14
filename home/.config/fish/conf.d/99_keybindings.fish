@@ -9,10 +9,13 @@ fish_default_key_bindings
 # bind -M insert \cA beginning-of-line # ctrl-a
 # bind -M insert \cE end-of-line # ctrl-e
 bind \e\[107\;9u clear-screen # cmd-k
+bind super-k clear-screen
 bind \v clear-screen # ctrl-k
 bind \e\x7F backward-kill-path-component # alt-backspace to delete word
 bind \e\[122\;9u undo # cmd + z
+bind super-z undo
 bind \e\[122\;10u redo # cmd + shift + z
+bind super-shift-z redo
 
 function _resume_background_jobs
     set -l jobs_output (jobs | string collect)
@@ -47,6 +50,7 @@ function _command_line_ls
 end
 
 bind \e\[114\;9u _command_line_ls # cmd + r
+bind super-r _command_line_ls
 bind \cr _command_line_ls
 
 function fzf-file-widget -d "List files and folders"
