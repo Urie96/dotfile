@@ -67,6 +67,10 @@ fmt_stdin() {
   jsonc | js | ts | jsx | tsx | mjs | mts | typescriptreact | javascriptreact | typescript | javascript | css)
     biome format --stdin-file-path "$NAME" --indent-style space
     ;;
+  kdl)
+    # kdlfmt format --stdin --kdl-version v1
+    cat
+    ;;
   http)
     kulala-fmt format --stdin
     ;;
