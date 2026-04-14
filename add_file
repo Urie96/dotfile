@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+DOTFILE_HOME="$CURRENT_DIR/home"
+ENCRYPT=false
+
+print_help() {
+  echo "Usage: $(basename "$0") [--encrypt] <file1> [file2] ..."
+  echo ""
+  echo "Moves files into $DOTFILE_HOME/home/ preserving their path structure,"
+  echo "then creates a symlink from the original location to the dotfile copy."
+  echo ""
+  echo "  --encrypt  Add files to .gitattributes for git-crypt encryption"
+}
+
+# Parse options
+files=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+  --encrypt)
+    ENCRYPT=true
+    shift
+    ;;
+  -h | --help)
+    print_help
+    exit 0
+    ;;
+  *)
+    files+=("$1")
+    shift
+    ;;
+  esac
+done
+
+if [[ ${#files[@]} -eq 0 ]]; then
+  print_help
+  exit 1
+fi
+
+for target in "${files[@]}"; do
+  # Resolve to absolute path
+  abs_path=$(cd "$(dirname "$target")" && pwd)/$(basename "$target")
+
+  if [[ ! -e "$abs_path" ]]; then
+    echo "Error: $abs_path does not exist, skipping."
+    continue
+  fi
+
+  if [[ -L "$abs_path" ]]; then
+    existing=$(readlink "$abs_path")
+    echo "Skip: $abs_path is already a symlink -> $existing"
+    continue
+  fi
+
+  # Compute relative path from $HOME, then build the dotfile destination
+  rel_path="${abs_path#"$HOME"/}"
+  dotfile_path="$DOTFILE_HOME/$rel_path"
+
+  # If it's already in dotfile, skip
+  if [[ "$abs_path" == "$DOTFILE_HOME/"* ]]; then
+    echo "Skip: $abs_path is already inside $DOTFILE_HOME"
+    continue
+  fi
+
+  # Create parent directory in dotfile
+  mkdir -p "$(dirname "$dotfile_path")"
+
+  # Move the file into dotfile
+  mv "$abs_path" "$dotfile_path"
+
+  # Create symlink from original location to dotfile
+  ln -s "$dotfile_path" "$abs_path"
+
+  # Optionally add to .gitattributes for git-crypt encryption
+  if [[ "$ENCRYPT" == true ]]; then
+    gitattr_dir=$(dirname "$dotfile_path")
+    gitattr_file="$gitattr_dir/.gitattributes"
+    filename=$(basename "$dotfile_path")
+    entry="$filename filter=git-crypt diff=git-crypt"
+
+    if [[ -f "$gitattr_file" ]] && grep -qF "$filename" "$gitattr_file" 2>/dev/null; then
+      echo "  .gitattributes already has entry for $filename, skipping."
+    else
+      echo "$entry" >>"$gitattr_file"
+      echo "  Added $filename to $gitattr_file"
+    fi
+  fi
+
+  echo "OK: $abs_path -> $dotfile_path"
+done
