@@ -87,7 +87,7 @@ nvim() {
         exit
       fi
     fi
-    slim-kitten @ kitten scripts/group_window.py Neovim
+    # slim-kitten @ kitten scripts/group_window.py Neovim
     exec $EDITOR
   fi
   exec $EDITOR "${paths[@]}"

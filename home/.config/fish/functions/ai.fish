@@ -1,5 +1,5 @@
 function ai
-    slim-kitten @ kitten scripts/group_window.py AI
+    # slim-kitten @ kitten scripts/group_window.py AI
 
     set -l prev_cwd (pwd)
     set -l session_dir ~/.pi/agent/simple-sessions
