@@ -1,0 +1,1 @@
+export PATH="$HOME/.local/bin:$HOME/.local/state/nix/profile/bin:/run/wrappers/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:$HOME/.local/share/pnpm:/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"

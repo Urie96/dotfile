@@ -9,7 +9,7 @@ set -gx XDG_CONFIG_HOME ~/.config
 set -gx XDG_DATA_HOME ~/.local/share
 set -gx XDG_STATE_HOME ~/.local/state
 
-fish_add_path -g -m ~/.local/bin ~/.local/state/nix/profiles/profile/bin /run/wrappers/bin /run/current-system/sw/bin /nix/var/nix/profiles/default/bin "$PNPM_HOME" /opt/homebrew/bin /opt/homebrew/sbin
+fish_add_path -g -m ~/.local/bin ~/.local/state/nix/profile/bin /run/wrappers/bin /run/current-system/sw/bin /nix/var/nix/profiles/default/bin "$PNPM_HOME" /opt/homebrew/bin /opt/homebrew/sbin
 
 if command -q flatnvim
     set -gx EDITOR flatnvim

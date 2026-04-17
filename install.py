@@ -33,6 +33,8 @@ SKIP_PATTERNS = [
 
 if SYSTEM == "Linux":
     SKIP_PATTERNS.extend(["/Library", "/.config/raycast"])
+elif SYSTEM == "Darwin":
+    SKIP_PATTERNS.extend(["/.config/niri", "/.config/hypr"])
 
 
 def _match_skip_pattern(name: str, rel_dir: str, is_dir: bool) -> bool:

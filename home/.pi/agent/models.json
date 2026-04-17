@@ -24,6 +24,16 @@
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/237.84.2.178 Safari/537.36"
       },
       "models": [{ "id": "gpt-5.4" }]
+    },
+    "modelhub": {
+      "baseUrl": "https://aidp.bytedance.net/api/modelhub/online/v2/crawl/openai/deployments/gpt_openapi",
+      "api": "openai-completions",
+      "apiKey": "MODELHUB_API_KEY",
+      "models": [
+        { "id": "gpt-5.4-2026-03-05" },
+        { "id": "gpt-5.4" },
+        { "id": "gpt-5.4-pro-2026-03-05" }
+      ]
     }
   }
 }
