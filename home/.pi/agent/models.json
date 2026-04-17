@@ -17,7 +17,14 @@
       "baseUrl": "https://codebase-api.byted.org/v2/api/2022-06-01/LLMProxy/Model",
       "api": "openai-completions",
       "apiKey": "COCO_API_KEY",
-      "models": [{ "id": "glm-5" }]
+      "models": [
+        {
+          "id": "glm-5",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 200000
+        }
+      ]
     },
     "temp": {
       "baseUrl": "https://yybb.codes/v1",
@@ -26,15 +33,32 @@
       "headers": {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/237.84.2.178 Safari/537.36"
       },
-      "models": [{ "id": "gpt-5.4" }]
+      "models": [
+        {
+          "id": "gpt-5.4",
+          "contextWindow": 1000000,
+          "input": ["text", "image"],
+          "reasoning": true
+        }
+      ]
     },
     "modelhub": {
       "baseUrl": "https://aidp.bytedance.net/api/modelhub/online/v2/crawl/openai/deployments/gpt_openapi",
       "api": "openai-completions",
       "apiKey": "MODELHUB_API_KEY",
       "models": [
-        { "id": "gpt-5.4-2026-03-05" },
-        { "id": "gpt-5.4-pro-2026-03-05" }
+        {
+          "id": "gpt-5.4-2026-03-05",
+          "contextWindow": 1000000,
+          "input": ["text", "image"],
+          "reasoning": true
+        },
+        {
+          "id": "gpt-5.4-pro-2026-03-05",
+          "contextWindow": 1000000,
+          "input": ["text", "image"],
+          "reasoning": true
+        }
       ]
     }
   }
