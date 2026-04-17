@@ -335,10 +335,10 @@ local function setup_lspconfig()
   local attachCodeLens = {
     on_attach = function(client, bufnr)
       if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_codeLens, bufnr) then
-        vim.lsp.codelens.refresh()
+        vim.lsp.codelens.enable(true, { bufnr = bufnr })
         vim.api.nvim_create_autocmd({ 'BufEnter', 'InsertLeave' }, {
           buffer = bufnr,
-          callback = vim.lsp.codelens.refresh,
+          callback = function() vim.lsp.codelens.enable(true, { bufnr = bufnr }) end,
         })
       end
     end,

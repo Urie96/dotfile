@@ -2,5 +2,6 @@
   "lastChangelogVersion": "0.66.1",
   "defaultProvider": "zhipu",
   "defaultModel": "glm-5.1",
-  "defaultThinkingLevel": "off"
+  "defaultThinkingLevel": "medium",
+  "enabledModels": ["glm-5.1*", "gpt-5.4*"]
 }
