@@ -5,7 +5,6 @@
 .gdb_history
 .direnv.*
 .direnv
-.envrc
 tags
 .mypy_cache/
 .pytest_cache/
