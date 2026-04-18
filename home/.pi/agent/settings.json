@@ -1,7 +1,10 @@
 {
   "lastChangelogVersion": "0.66.1",
-  "defaultProvider": "zhipu",
-  "defaultModel": "glm-5.1",
+  "defaultProvider": "minimax-cn",
+  "defaultModel": "MiniMax-M2.7",
   "defaultThinkingLevel": "medium",
-  "enabledModels": ["glm-5.1*", "gpt-5.4*"]
+  "enabledModels": [
+    "glm-5.1*",
+    "gpt-5.4*"
+  ]
 }

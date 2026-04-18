@@ -12,7 +12,7 @@ switches:
     states: [¥, $]
   - name: code_mode
     reset: 0
-    states: ['!!', '!=']
+    states: ["!!", "!="]
   - name: emoji
     states: [💀, 😄]
   - name: ascii_mode
@@ -42,7 +42,7 @@ engine: # 輸入引擎設定，即掛接組件的「處方」
   translators: # 三、這批組件翻譯特定類型的編碼段爲一組候選文字
     - punct_translator # ※ 轉換標點符號
     - script_translator # ※ 腳本翻譯器，用於拼音等基於音節表的輸入方案
-    - table_translator@melt_eng # 英文输入
+    # - table_translator@melt_eng # 英文输入
   filters: # 四、這批組件過濾翻譯的結果
     - simplifier@emoji # Emoji
     - simplifier@traditionalize # 简繁切换
@@ -132,7 +132,7 @@ translator:
 punctuator:
   import_preset: default
   symbols:
-    '//': [/no, /go]
+    "//": [/no, /go]
 
 key_binder:
   import_preset: default
@@ -141,7 +141,7 @@ recognizer:
   import_preset: default
   patterns:
     reverse_lookup: "`[a-z]*'?$"
-    punct: '^/([0-9A-Za-z/]+)$'
+    punct: "^/([0-9A-Za-z/]+)$"
 
 # 简繁切换
 traditionalize:
