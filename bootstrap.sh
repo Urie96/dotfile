@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO="git@github.com:Urie96/dotfile.git"
+REPO="https://github.com/Urie96/dotfile.git"
 DEST="$HOME/dotfile"
 
 msg() { printf "\033[1;34m>>> %s\033[0m\n" "$*"; }
