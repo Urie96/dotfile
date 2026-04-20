@@ -7,6 +7,7 @@ Symlinks are recorded in .symlink_record for cleanup on subsequent runs.
 
 import os
 import platform
+import subprocess
 from pathlib import Path
 
 REPO_DIR = Path(__file__).resolve().parent
@@ -156,6 +157,46 @@ def make_link(src: Path, dst: Path) -> bool:
     return True
 
 
+def fix_encrypted_file_permissions() -> int:
+    """Run git-crypt status -e, change perms of encrypted repo files to 600.
+    
+    Returns the number of files whose permissions were changed.
+    """
+    try:
+        result = subprocess.run(
+            ["git-crypt", "status", "-e"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    except FileNotFoundError:
+        print("  ⏭ git-crypt 未安装，跳过加密文件权限修复")
+        return 0
+    except subprocess.CalledProcessError:
+        print("  ⏭ git-crypt 返回错误，跳过加密文件权限修复")
+        return 0
+
+    changed = 0
+    for line in result.stdout.splitlines():
+        line = line.strip()
+        if not line.startswith("encrypted:"):
+            continue
+        path_str = line.split("encrypted:", 1)[1].strip()
+        if not path_str:
+            continue
+        dst = REPO_DIR / path_str
+        if not dst.exists():
+            continue
+        current_mode = dst.stat().st_mode & 0o777
+        if current_mode != 0o600:
+            os.chmod(dst, 0o600)
+            changed += 1
+            print(f"  🔐 设置权限 600: {dst}")
+        else:
+            print(f"  ✓ 权限已是 600: {dst}")
+    return changed
+
+
 def main() -> None:
     if not SOURCE_DIR.exists():
         print(f"错误: 源目录不存在: {SOURCE_DIR}")
@@ -164,6 +205,9 @@ def main() -> None:
     old_record = read_record()
     current_mapping = collect_source_files()  # src -> dst
     current_targets: set[str] = {str(dst) for dst in current_mapping.values()}
+
+    # ---- Phase 0: fix encrypted file permissions ----
+    fixed_perms = fix_encrypted_file_permissions()
 
     # ---- Phase 1: remove stale symlinks ----
     removed = 0
@@ -189,6 +233,7 @@ def main() -> None:
     total = len(current_targets)
     print()
     print(f"{'=' * 50}")
+    print(f"  权限修复: {fixed_perms} 个")
     print(f"  新增: {added} 个")
     print(f"  删除: {removed} 个")
     print(f"  当前总共: {total} 个软链接")
