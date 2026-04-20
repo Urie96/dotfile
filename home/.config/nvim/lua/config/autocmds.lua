@@ -85,15 +85,6 @@ au('TextYankPost', {
 --   callback = function() vim.g.snacks_animate = true end,
 -- })
 
-local function reset_terminal_title() vim.opt.titlestring = 'nvim: ' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':~') end
-
-reset_terminal_title()
-
-au({ 'DirChanged', 'VimResume', 'TermClose' }, {
-  group = ag 'reset_terminal_title',
-  callback = reset_terminal_title,
-})
-
 au('FileType', {
   group = ag 'disable_spell',
   pattern = 'markdown',
@@ -125,16 +116,6 @@ au('BufReadPost', {
     if mark[1] > 0 and mark[1] <= lcount then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
   end,
 })
-
--- au('UIEnter', {
---   group = ag 'set_main_window',
---   callback = function()
---     vim.api.nvim_tabpage_list_wins(0)
---     vim.api.nvim_win_get_buf(1000)
---     vim.api.nvim_get_current_buf()
---     _G.ttt = 'sdfsdf'
---   end,
--- })
 
 -- au('LspAttach', {
 --   callback = function(args)

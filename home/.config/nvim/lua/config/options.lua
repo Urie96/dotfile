@@ -58,6 +58,7 @@ opt.cursorline = true -- Show which line your cursor is on
 opt.scrolloff = 10 -- Minimal number of screen lines to keep above and below the cursor.
 opt.wrap = true
 opt.title = true -- enable neovim change terminal title
+opt.titlestring = "VI:%{fnamemodify(getcwd(), ':t')}"
 opt.conceallevel = 0 -- don't hide my json strings
 opt.spelllang = { 'en', 'cjk' }
 opt.spelloptions = 'camel'

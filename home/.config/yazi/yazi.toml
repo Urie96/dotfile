@@ -2,6 +2,13 @@
 ratio        = [1, 3, 4]
 sort_by      = "mtime"
 sort_reverse = true
+title_format = "YA:{cwd}"
+
+[preview]
+max_height  = 1000
+max_width   = 1000
+wrap        = "no"
+image_delay = 100
 
 [[open.rules]]
 mime = "vfs/{absent,stale}"
@@ -48,7 +55,3 @@ preloaders = []
   id   = "git"
   name = "*/"
   run  = "git"
-
-[preview]
-max_height = 1000
-max_width  = 1000
