@@ -54,7 +54,12 @@ cmd_mr() {
 
   if [[ "$remote_url" == code.byted.org* ]]; then
     local source_branch target_branch
-    source_branch=$(git_remote_bind_branch)
+    if source_branch=$(git_remote_bind_branch); then
+      :
+    else
+      source_branch=$(git_local_branch_name)
+      echo "No upstream configured, fallback to local branch: $source_branch" >&2
+    fi
     target_branch=$(git_origin_master_branch)
     open_browser "$remote_url/merge_requests/new?target_branch=$target_branch&source_branch=$source_branch"
   else

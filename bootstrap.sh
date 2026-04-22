@@ -8,12 +8,15 @@ msg() { printf "\033[1;34m>>> %s\033[0m\n" "$*"; }
 warn() { printf "\033[1;33m!!! %s\033[0m\n" "$*"; }
 err() { printf "\033[1;31m!!! %s\033[0m\n" "$*" >&2; }
 
-# ── 1. Clone ─────────────────────────────────────────────────────────
+# ── 1. Clone / Pull ───────────────────────────────────────────────────
 if [ -d "$DEST/.git" ]; then
-  msg "仓库已存在: $DEST — 跳过 clone"
+  msg "仓库已存在: $DEST — 执行 pull"
+  cd "$DEST"
+  git pull --ff-only || { err "存在冲突，请手动解决后再运行本脚本"; exit 1; }
 else
   msg "克隆 $REPO → $DEST"
   git clone "$REPO" "$DEST"
+  cd "$DEST"
 fi
 
 chmod 700 "$DEST"
