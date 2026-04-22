@@ -12,28 +12,30 @@ err() { printf "\033[1;31m!!! %s\033[0m\n" "$*" >&2; }
 if [ -d "$DEST/.git" ]; then
   msg "仓库已存在: $DEST — 执行 pull"
   cd "$DEST"
-  git pull --ff-only || { err "存在冲突，请手动解决后再运行本脚本"; exit 1; }
+  git pull --ff-only || {
+    err "存在冲突，请手动解决后再运行本脚本"
+    exit 1
+  }
 else
   msg "克隆 $REPO → $DEST"
   git clone "$REPO" "$DEST"
   cd "$DEST"
-fi
 
-chmod 700 "$DEST"
+  chmod 700 "$DEST"
 
-cd "$DEST"
+  # ── 2. git-crypt unlock ──────────────────────────────────────────────
+  if ! git-crypt unlock; then
+    warn "git-crypt unlock 失败（可能缺少密钥）"
+    read -rp "是否继续安装？[y/N] " answer
+    case "$answer" in
+    [yY] | [yY][eE][sS]) ;;
+    *)
+      err "用户取消"
+      exit 1
+      ;;
+    esac
+  fi
 
-# ── 2. git-crypt unlock ──────────────────────────────────────────────
-if ! git-crypt unlock; then
-  warn "git-crypt unlock 失败（可能缺少密钥）"
-  read -rp "是否继续安装？[y/N] " answer
-  case "$answer" in
-  [yY] | [yY][eE][sS]) ;;
-  *)
-    err "用户取消"
-    exit 1
-    ;;
-  esac
 fi
 
 # ── 3. Install ───────────────────────────────────────────────────────
