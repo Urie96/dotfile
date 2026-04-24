@@ -1,10 +1,7 @@
 {
   "lastChangelogVersion": "0.67.68",
-  "defaultProvider": "minimax-cn",
-  "defaultModel": "MiniMax-M2.7",
+  "defaultProvider": "deepseek",
+  "defaultModel": "deepseek-v4-pro",
   "defaultThinkingLevel": "medium",
-  "enabledModels": [
-    "glm-5.1*",
-    "gpt-5.4*"
-  ]
+  "enabledModels": ["gpt-5.4*", "MiniMax-*", "deepseek-*"]
 }

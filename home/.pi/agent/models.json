@@ -1,5 +1,24 @@
 {
   "providers": {
+    "deepseek": {
+      "baseUrl": "https://api.deepseek.com",
+      "api": "openai-completions",
+      "apiKey": "DEEPSEEK_API_KEY",
+      "models": [
+        {
+          "id": "deepseek-v4-pro",
+          "contextWindow": 1000000,
+          "input": ["text"],
+          "reasoning": true
+        },
+        {
+          "id": "deepseek-v4-flash",
+          "contextWindow": 1000000,
+          "input": ["text"],
+          "reasoning": true
+        }
+      ]
+    },
     "zhipu": {
       "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
       "api": "openai-completions",
