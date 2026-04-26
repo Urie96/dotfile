@@ -1,7 +1,10 @@
 {
   "lastChangelogVersion": "0.67.68",
-  "defaultProvider": "deepseek",
-  "defaultModel": "deepseek-v4-pro",
+  "defaultProvider": "yybbcode",
+  "defaultModel": "gpt-5.5",
   "defaultThinkingLevel": "medium",
-  "enabledModels": ["gpt-5.4*", "MiniMax-*", "deepseek-*"]
+  "enabledModels": [
+    "MiniMax-*",
+    "gpt-5.*"
+  ]
 }

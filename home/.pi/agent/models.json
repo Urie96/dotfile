@@ -45,7 +45,7 @@
         }
       ]
     },
-    "temp": {
+    "yybbcode": {
       "baseUrl": "https://yybb.codes/v1",
       "api": "openai-completions",
       "apiKey": "YYBBCODE_API_KEY",
@@ -56,6 +56,12 @@
         {
           "id": "gpt-5.4",
           "contextWindow": 1000000,
+          "input": ["text", "image"],
+          "reasoning": true
+        },
+        {
+          "id": "gpt-5.5",
+          "contextWindow": 1050000,
           "input": ["text", "image"],
           "reasoning": true
         }
