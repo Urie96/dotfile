@@ -3,8 +3,5 @@
   "defaultProvider": "yybbcode",
   "defaultModel": "gpt-5.4",
   "defaultThinkingLevel": "medium",
-  "enabledModels": [
   "enabledModels": ["gpt-5.4*", "MiniMax-*", "deepseek-*"]
-}
-  ]
 }

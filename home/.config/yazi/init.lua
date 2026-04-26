@@ -46,6 +46,6 @@ require('mime-ext.local'):setup {
 
 require('full-border'):setup { type = ui.Border.ROUNDED }
 
-require('yamb'):setup {}
+-- require('yamb'):setup {}
 
 require('folder-rules'):setup()
