@@ -5,7 +5,7 @@ function ai
     set -l session_dir ~/.pi/agent/simple-sessions
     mkdir -p "$session_dir"
     cd "$session_dir"
-    command pi --provider openrouter --model openai/gpt-5.4 \
+    command pi --provider deepseek --model deepseek-v4-pro \
         --system-prompt "" \
         --no-skills \
         --no-extensions \
