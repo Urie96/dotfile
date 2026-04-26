@@ -4,7 +4,7 @@
   "defaultModel": "gpt-5.4",
   "defaultThinkingLevel": "medium",
   "enabledModels": [
-    "MiniMax-*",
-    "gpt-5.*"
+  "enabledModels": ["gpt-5.4*", "MiniMax-*", "deepseek-*"]
+}
   ]
 }
