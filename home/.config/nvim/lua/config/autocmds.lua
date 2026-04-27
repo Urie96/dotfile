@@ -1,28 +1,6 @@
 local au = vim.api.nvim_create_autocmd
 local function ag(name) return vim.api.nvim_create_augroup('my_' .. name, { clear = true }) end
 
-vim.g.is_edit_dir = vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv()[1]) == 1
-vim.g.is_edit_file = vim.fn.argc() == 1 and vim.fn.filereadable(vim.fn.argv()[1]) == 1
-vim.g.is_bare_enter = vim.fn.argc() == 0
-vim.g.is_read_stdin = false
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-
-local set_main_window = ag 'set_main_window'
-au({ 'UIEnter', 'TabNew' }, {
-  group = set_main_window,
-  callback = function() vim.w.is_main = true end,
-})
-
-au('StdinReadPre', {
-  group = ag 'vim_enter_set_var',
-  once = true,
-  callback = function()
-    vim.g.is_read_stdin = true
-    vim.g.is_bare_enter = false
-  end,
-})
-
 -- close some filetypes with <q>
 au('FileType', {
   group = ag 'close_with_q',

@@ -80,13 +80,11 @@ map { '<D-s>', '<cmd>w!<cr>', mode = { n, i }, desc = 'Save File' }
 map {
   '<C-q>',
   function()
-    -- if vim.w.is_main then
     local bufs = vim.fn.getbufinfo { buflisted = 1 }
     if #bufs > 1 then
       Snacks.bufdelete()
       return
     end
-    -- end
     vim.cmd 'q'
   end,
   mode = { n, i },
