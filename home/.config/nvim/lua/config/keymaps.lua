@@ -275,6 +275,19 @@ map { '<D-/>', '<C-o>gcc', mode = i, remap = true }
 map { '<D-/>', 'gc', mode = x, remap = true }
 map { '<C-Space>', function() end, mode = i } -- disable this keymap as it's for toggle system input method
 
+local function translate(text)
+  vim.system({ 'translate', '--ai' }, { stdin = text }, function(out)
+    if out.code > 0 then
+      vim.notify(
+        string.format('`%s` exited with code %d, stderr: %s', table.concat(cmd, ' '), out.code, out.stderr),
+        vim.log.levels.ERROR
+      )
+      return
+    end
+    (require 'util.vim').show_tip(out.stdout)
+  end)
+end
+
 map {
   '<D-k><D-k>',
   function()
@@ -287,7 +300,8 @@ map {
     elseif vim.startswith(vim.fn.expand '<cfile>', 'http') then
       require('util.image').show_hover_image()
     elseif require('util.treesitter').cursor_in_capture 'comment' then
-      vim.cmd 'Translate zh -comment'
+      local comment = (require 'util.treesitter').get_comment_block()
+      if comment then translate(comment) end
     else
       vim.lsp.buf.hover()
     end
@@ -304,7 +318,16 @@ map {
 }
 
 map { '<D-k><D-k>', vim.lsp.buf.signature_help, mode = i, desc = 'Signature Help' }
-map { '<D-k><D-k>', '<cmd>Translate zh<cr>', mode = x, desc = 'Translate' }
+map {
+  '<D-k><D-k>',
+  function()
+    local util = require 'util.vim'
+    local visual = util.get_visual()
+    if visual then translate(visual) end
+  end,
+  mode = x,
+  desc = 'Translate',
+}
 
 -- quickfix list
 map { 'jq', vim.cmd.cprev, desc = 'Previous Quickfix' }

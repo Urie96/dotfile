@@ -100,36 +100,6 @@ return {
     config = function() require('rip-substitute').setup {} end,
   },
   {
-    'uga-rosa/translate.nvim',
-    cmd = { 'Translate' },
-    config = function()
-      require('translate').setup {
-        default = { command = 'translate_home_server', parse_after = 'remove_newline' },
-        command = {
-          translate_home_server = {
-            cmd = function(lines)
-              local text = table.concat(lines, '\n')
-              return 'translate', { text }
-            end,
-          },
-        },
-        parse_after = {
-          remove_newline = {
-            cmd = function(text) return vim.split(table.concat(text, ''), '\n') end,
-          },
-        },
-        -- replace_symbols = {
-        --   translate_home_server = {
-        --     ['='] = '{@E@}',
-        --     ['#'] = '{@S@}',
-        --     ['/'] = '{@C@}',
-        --     ['\\n'] = '{@N@}',
-        --   },
-        -- },
-      }
-    end,
-  },
-  {
     'lambdalisue/suda.vim',
     cmd = 'SudaWrite',
     config = false,

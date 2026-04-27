@@ -147,4 +147,81 @@ function M.jump_function_name()
   end
 end
 
+-- 判断是否为注释容器节点（排除 comment_content 等子节点）
+local function is_comment_container(t)
+  -- 精确匹配常见的注释容器类型
+  local exact = {
+    comment = true,
+    line_comment = true,
+    block_comment = true,
+    doc_comment = true,
+    documentation_comment = true,
+    html_comment = true,
+    multiline_comment = true,
+  }
+  return exact[t] or false
+end
+
+-- 获取光标所在连续注释块的全部内容（跨行）
+function M.get_comment_block()
+  local buf = vim.api.nvim_get_current_buf()
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local row, col = cursor[1] - 1, cursor[2]
+
+  -- 1. 获取光标处节点
+  local node = vim.treesitter.get_node { buf = buf, pos = { row, col } }
+  if not node then
+    local parser = vim.treesitter.get_parser(buf)
+    if parser then
+      local tree = parser:parse()[1]
+      if tree then node = tree:root():descendant_for_range(row, col, row, col) end
+    end
+  end
+  if not node then return nil end
+
+  -- 2. 一直向上找，直到找到真正的注释容器节点（跳过 comment_content 等）
+  local comment_node = node
+  while comment_node do
+    if is_comment_container(comment_node:type()) then break end
+    comment_node = comment_node:parent()
+  end
+  if not comment_node then return nil end
+
+  -- 3. 收集注释容器节点的文本，以及它所有相邻的兄弟注释容器
+  local parent = comment_node:parent()
+  if not parent then return vim.treesitter.get_node_text(comment_node, buf) end
+
+  local sr, _, er, _ = comment_node:range()
+  local parts = { vim.treesitter.get_node_text(comment_node, buf) }
+  local block_sr, block_er = sr, er
+
+  -- 向上收集
+  local prev = comment_node:prev_sibling()
+  while prev and is_comment_container(prev:type()) do
+    local psr, _, per, _ = prev:range()
+    if per + 1 == block_sr then
+      table.insert(parts, 1, vim.treesitter.get_node_text(prev, buf))
+      block_sr = psr
+      prev = prev:prev_sibling()
+    else
+      break
+    end
+  end
+
+  -- 向下收集
+  local next_sib = comment_node:next_sibling()
+  while next_sib and is_comment_container(next_sib:type()) do
+    local nsr, _, ner, _ = next_sib:range()
+    if block_er + 1 == nsr then
+      table.insert(parts, vim.treesitter.get_node_text(next_sib, buf))
+      block_er = ner
+      next_sib = next_sib:next_sibling()
+    else
+      break
+    end
+  end
+
+  return table.concat(parts, '\n')
+end
+
 return M

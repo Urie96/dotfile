@@ -75,4 +75,35 @@ function M.get_visual()
   }
 end
 
+function M.show_tip(text)
+  vim.schedule(function()
+    local lines = vim.split(vim.trim(text), '\n')
+    local max_width = 0
+    for _, v in ipairs(lines) do
+      local w = vim.api.nvim_strwidth(v)
+      if w > max_width then max_width = w end
+    end
+
+    local w = Snacks.win {
+      relative = 'cursor',
+      backdrop = false,
+      row = 1,
+      col = 0,
+      width = max_width + 2,
+      height = #lines,
+      border = 'rounded',
+      text = lines,
+      focusable = false, -- 不可交互，点击自动关闭
+      wo = {
+        wrap = true,
+        linebreak = true,
+      },
+    }
+
+    -- 监听光标移动和按键自动关闭
+    w:on('CursorMoved', function() w:close() end)
+    w:on('CursorMovedI', function() w:close() end)
+  end)
+end
+
 return M
