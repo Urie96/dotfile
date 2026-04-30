@@ -1,0 +1,8 @@
+nerdfont: true
+merge_strategy: rebase
+agent: pi
+
+panes:
+  - command: <agent> # Start the configured agent (e.g., claude)
+    focus: true
+  - split: horizontal # Second pane with default shell
