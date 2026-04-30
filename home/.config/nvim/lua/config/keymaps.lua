@@ -276,7 +276,8 @@ map { '<D-/>', 'gc', mode = x, remap = true }
 map { '<C-Space>', function() end, mode = i } -- disable this keymap as it's for toggle system input method
 
 local function translate(text)
-  vim.system({ 'translate', '--ai' }, { stdin = text }, function(out)
+  local cmd = { 'translate', '--ai' }
+  vim.system(cmd, { stdin = text }, function(out)
     if out.code > 0 then
       vim.notify(
         string.format('`%s` exited with code %d, stderr: %s', table.concat(cmd, ' '), out.code, out.stderr),
@@ -323,7 +324,7 @@ map {
   function()
     local util = require 'util.vim'
     local visual = util.get_visual()
-    if visual then translate(visual) end
+    if visual then translate(visual.lines) end
   end,
   mode = x,
   desc = 'Translate',

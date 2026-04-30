@@ -1,24 +1,5 @@
 {
   "providers": {
-    "deepseek": {
-      "baseUrl": "https://api.deepseek.com",
-      "api": "openai-completions",
-      "apiKey": "DEEPSEEK_API_KEY",
-      "models": [
-        {
-          "id": "deepseek-v4-pro",
-          "contextWindow": 1000000,
-          "input": ["text"],
-          "reasoning": true
-        },
-        {
-          "id": "deepseek-v4-flash",
-          "contextWindow": 1000000,
-          "input": ["text"],
-          "reasoning": true
-        }
-      ]
-    },
     "zhipu": {
       "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
       "api": "openai-completions",
@@ -73,13 +54,13 @@
       "apiKey": "MODELHUB_API_KEY",
       "models": [
         {
-          "id": "gpt-5.4-2026-03-05",
+          "id": "gpt-5.5-2026-04-24",
           "contextWindow": 1000000,
           "input": ["text", "image"],
           "reasoning": true
         },
         {
-          "id": "gpt-5.4-pro-2026-03-05",
+          "id": "gpt-5.4-2026-03-05",
           "contextWindow": 1000000,
           "input": ["text", "image"],
           "reasoning": true

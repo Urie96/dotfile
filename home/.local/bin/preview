@@ -195,6 +195,11 @@ handle_compress() {
 }
 
 handle_bin() {
+  if exist_command ldd; then
+    exec ldd "$FILE_PATH"
+  elif exist_command otool; then
+    exec otool -L "$FILE_PATH"
+  fi
   nm "$FILE_PATH" && exit
   nm -D "$FILE_PATH" && exit
 }
