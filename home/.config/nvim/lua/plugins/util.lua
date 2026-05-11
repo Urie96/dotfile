@@ -222,10 +222,10 @@ return {
     'mikavilpas/yazi.nvim',
     cmd = 'Yazi',
     keys = {
-      { '<D-r>', '<cmd>Yazi <cr>', mode = { 'n' }, desc = 'Open yazi at the current file' },
-      { '<D-R>', '<cmd>Yazi cwd<cr>', mode = { 'n' }, desc = "Open the file manager in nvim's working directory" },
+      { '<leader>ya', '<cmd>Yazi <cr>', mode = { 'n' }, desc = 'Open yazi at the current file' },
+      { '<leader>ya', '<cmd>Yazi cwd<cr>', mode = { 'n' }, desc = "Open the file manager in nvim's working directory" },
       {
-        '<D-R>',
+        '<leader>ya',
         function()
           local visual = require('util.vim').get_visual()
           local file = visual and visual.lines and table.concat(visual.lines, '')

@@ -22,9 +22,6 @@ local unmap = function(arg)
 end
 map { 'j', '[', remap = true }
 map { 'l', ']', remap = true }
-map { '<D-Left>', '<Home>', remap = true }
-map { '<D-Right>', '<End>', remap = true }
-map { '<D-BS>', '<C-u>', mode = i, remap = true }
 map { '<Esc>', '<cmd>nohlsearch<CR>', desc = 'Clear Highlights On Search' }
 map { '<Down>', 'gj', mode = { n, x }, desc = 'Down' } -- adapt wrap line
 map { '<Up>', 'gk', mode = { n, x }, desc = 'Up' } -- adapt wrap line
@@ -63,7 +60,7 @@ map {
 }
 
 map {
-  '<D-S-s>',
+  '<C-S-s>',
   function()
     vim.notify 'Save as which file:'
     require('yazi').yazi {
@@ -75,7 +72,7 @@ map {
   mode = { n, i },
   desc = 'Save As',
 }
-map { '<D-s>', '<cmd>w!<cr>', mode = { n, i }, desc = 'Save File' }
+map { '<C-s>', '<cmd>w!<cr>', mode = { n, i }, desc = 'Save File' }
 
 map {
   '<C-q>',
@@ -104,25 +101,16 @@ map {
   desc = 'Delete buffers not in cwd',
 }
 map { '<leader>bo', function() Snacks.bufdelete.other() end, desc = 'Delete Other Buffers' }
-map { '<leader><space>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' }
-map { '<S-C-q>', '<cmd>qa<cr>', desc = 'Quit All' }
-map { '<D-k>s', '<cmd>noa w<cr><esc>', mode = { n, i }, desc = 'Save Without Format' }
+map { '<C-S-q>', '<cmd>qa<cr>', desc = 'Quit All' }
+map { '<C-S-s>', '<cmd>noa w<cr><esc>', mode = { n, i }, desc = 'Save Without Format' }
 map {
-  '<D-k>f',
+  '<leader>fm',
   function() require('util.formatter').format_buf(0, { async = true }) end,
   mode = { n, i },
   desc = 'Format',
 }
 map { '<D-k>m', function() require('util.vim').set_filetype() end, mode = { n, i }, desc = 'Set File Type' }
-map { '<D-z>', 'u', desc = 'Undo' }
-map { '<D-z>', '<C-O>u', mode = i, desc = 'Undo' }
-map { '<S-D-z>', '<C-R>', desc = 'Redo' }
-map { '<S-D-z>', '<C-O><C-R>', mode = i, desc = 'Redo' }
-map { '<D-a>', 'ggVG', desc = 'Select All' }
-map { '<D-x>', '<C-O>dd', mode = i, desc = 'Delete Current Line' }
-map { '<D-x>', 'dd', desc = 'Delete Current Line' }
-map { '<D-up>', '<C-Home>', mode = { n, i, x }, desc = 'Jump to First Line' }
-map { '<D-down>', '<C-End>', mode = { n, i, x }, desc = 'Jump to Last Line' }
+map { '<C-a>', 'ggVG', desc = 'Select All' }
 map { '<Home>', '^', mode = { n, x }, desc = 'Jump to Line First Char' }
 map { '<Home>', '<C-o>I', mode = i, desc = 'Jump to Line First Char' }
 -- windows
@@ -161,7 +149,7 @@ map { '<C-tab>q', '<cmd>tabclose<cr>', desc = 'Close Tab' }
 
 -- pickers
 -- map { '<D-p>', function() Snacks.picker.files() end, desc = 'Find Files' }
-map { '<D-p>', function() Snacks.picker.smart { filter = { cwd = true } } end, desc = 'Find Files' }
+map { '<leader>ff', function() Snacks.picker.smart { filter = { cwd = true } } end, desc = 'Find Files' }
 map { '<leader>lg', function() Snacks.lazygit { cwd = vim.fn.expand '%:h' } end, desc = 'Lazygit' }
 map { '<leader>gf', function() Snacks.picker.git_log_file() end, desc = 'Current File Git History' }
 map { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Workspace diagnostics' }
@@ -187,13 +175,12 @@ map {
   function() Snacks.picker.todo_comments { keywords = { 'TODO', 'FIX', 'FIXME' } } end,
   desc = 'Todo/Fix/Fixme',
 }
-map { '<leader><space>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' }
 map { '<leader>n', function() Snacks.picker.notifications() end, desc = 'Notification History' }
 map { '<leader>gg', function() Util.pick_git_files() end, desc = 'My Git Files' }
 map { 'ma', function() require('util.marker').add() end, desc = 'Add Marker' }
 map { 'mm', function() require('util.marker').pick() end, desc = 'List Markers' }
 -- map { 'mm', function() Snacks.picker.marks() end, desc = 'List Marks' }
-map { '<D-S-F>', function() Snacks.picker.grep() end, desc = 'Grep' }
+map { '<leader><space>', function() Snacks.picker.grep() end, desc = 'Grep' }
 map { '<D-S-F>', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = x }
 map { '<C-S-O>', function() Snacks.picker.resume() end, desc = 'Resumes Last Picker' }
 -- lsp
@@ -205,7 +192,7 @@ map { 'gI', function() Snacks.picker.lsp_implementations() end, desc = '[G]oto [
 map { 'lr', function() Snacks.words.jump(vim.v.count1) end, desc = 'Next Reference' }
 map { 'jr', function() Snacks.words.jump(-vim.v.count1) end, desc = 'Prev Reference' }
 map { '<F2>', vim.lsp.buf.rename, desc = 'Rename Symbol' }
-map { '<D-.>', vim.lsp.buf.code_action, mode = { n, i, x }, desc = 'Code Action' }
+map { '<leader>ca', vim.lsp.buf.code_action, mode = { n, i, x }, desc = 'Code Action' }
 map { '<leader>cc', vim.lsp.codelens.run, desc = 'Run Codelens' }
 map {
   '<leader>co',
@@ -290,7 +277,7 @@ local function translate(text)
 end
 
 map {
-  '<D-k><D-k>',
+  'K',
   function()
     local current_word = vim.fn.expand '<cword>'
     if current_word:match '^%d+$' and (#current_word == 10 or #current_word == 13) then
@@ -318,9 +305,9 @@ map {
   desc = 'Restore last selection',
 }
 
-map { '<D-k><D-k>', vim.lsp.buf.signature_help, mode = i, desc = 'Signature Help' }
+-- map { '<C-k><C-k>', vim.lsp.buf.signature_help, mode = i, desc = 'Signature Help' }
 map {
-  '<D-k><D-k>',
+  'K',
   function()
     local util = require 'util.vim'
     local visual = util.get_visual()
@@ -358,7 +345,7 @@ map {
 }
 
 map {
-  '<D-S-p>',
+  '<leader>cp',
   function() require('util.command_picker').pick() end,
   desc = 'My Command Picker',
   mode = { n, x, i },
