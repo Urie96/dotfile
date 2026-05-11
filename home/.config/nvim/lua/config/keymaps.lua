@@ -36,8 +36,7 @@ map { '<PageDown>', '<C-d>' }
 map { '<PageUp>', '<C-u>' }
 
 -- copy to clipboard ( use osc52 if ssh )
-map { '<leader>y', '"+y', mode = { x, n }, desc = 'Copy Using OSC52' }
-map { '<leader>Y', '^"+y$', desc = 'Copy Line Using OSC52' }
+map { '<leader>yy', '"+y', mode = { x, n }, desc = 'Copy Using OSC52' }
 
 map { '<C-p>', '"0p', mode = { x, n } }
 map { '<C-p>', '<c-r>0', mode = i }
@@ -106,7 +105,6 @@ map { '<C-S-s>', '<cmd>noa w<cr><esc>', mode = { n, i }, desc = 'Save Without Fo
 map {
   '<leader>fm',
   function() require('util.formatter').format_buf(0, { async = true }) end,
-  mode = { n, i },
   desc = 'Format',
 }
 map { '<D-k>m', function() require('util.vim').set_filetype() end, mode = { n, i }, desc = 'Set File Type' }
@@ -192,7 +190,7 @@ map { 'gI', function() Snacks.picker.lsp_implementations() end, desc = '[G]oto [
 map { 'lr', function() Snacks.words.jump(vim.v.count1) end, desc = 'Next Reference' }
 map { 'jr', function() Snacks.words.jump(-vim.v.count1) end, desc = 'Prev Reference' }
 map { '<F2>', vim.lsp.buf.rename, desc = 'Rename Symbol' }
-map { '<leader>ca', vim.lsp.buf.code_action, mode = { n, i, x }, desc = 'Code Action' }
+map { '<leader>ca', vim.lsp.buf.code_action, desc = 'Code Action' }
 map { '<leader>cc', vim.lsp.codelens.run, desc = 'Run Codelens' }
 map {
   '<leader>co',
@@ -348,7 +346,7 @@ map {
   '<leader>cp',
   function() require('util.command_picker').pick() end,
   desc = 'My Command Picker',
-  mode = { n, x, i },
+  mode = { n, x },
 }
 
 vim.defer_fn(function() -- 避免%被重新映射
