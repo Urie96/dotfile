@@ -24,6 +24,7 @@ SKIP_PATTERNS = [
     "__pycache__/",
     ".git/",
     ".git-crypt/",
+    ".envrc",
 ]
 
 if SYSTEM == "Linux":
