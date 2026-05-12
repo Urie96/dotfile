@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# proxy-run: 临时创建 proxychains 配置并运行命令
+
+set -euo pipefail
+
+# -------------------- 代理设置（可通过环境变量覆盖）--------------------
+PROXY_TYPE="${PROXY_TYPE:-http}" # socks5, socks4, http
+PROXY_HOST="${PROXY_HOST:-127.0.0.1}"
+PROXY_PORT="${PROXY_PORT:-8080}"
+PROXY_USER="${PROXY_USER:-}" # 留空则不使用认证
+PROXY_PASS="${PROXY_PASS:-}"
+
+# -------------------- 自动选择可用的 proxychains 命令 --------------------
+if command -v proxychains4 &>/dev/null; then
+  PROXYCHAINS_BIN="proxychains4"
+elif command -v proxychains &>/dev/null; then
+  PROXYCHAINS_BIN="proxychains"
+else
+  echo "错误：未找到 proxychains 或 proxychains4 命令" >&2
+  exit 1
+fi
+
+# -------------------- 生成临时配置文件 --------------------
+CONF_FILE=$(mktemp /tmp/proxychains_XXXXXX.conf)
+
+# 退出时自动删除临时文件
+trap 'rm -f "$CONF_FILE"' EXIT
+
+# 写入全局设置
+{
+  echo "# 由 proxy-run 临时生成的配置"
+  echo "strict_chain"
+  echo "proxy_dns"
+  echo "quiet_mode"
+  echo ""
+  echo "[ProxyList]"
+  # 根据是否有认证信息决定格式
+  if [[ -n "$PROXY_USER" ]]; then
+    echo "$PROXY_TYPE $PROXY_HOST $PROXY_PORT $PROXY_USER $PROXY_PASS"
+  else
+    echo "$PROXY_TYPE $PROXY_HOST $PROXY_PORT"
+  fi
+} >"$CONF_FILE"
+
+# -------------------- 执行目标命令 --------------------
+exec "$PROXYCHAINS_BIN" -f "$CONF_FILE" "$@"
