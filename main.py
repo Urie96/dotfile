@@ -32,7 +32,9 @@ if SYSTEM != "Linux":
 if SYSTEM != "Darwin":
     SKIP_PATTERNS.extend(["/Library", "/.config/raycast"])
 if SYSTEM != "Android":
-    SKIP_PATTERNS.extend([".termux"])
+    SKIP_PATTERNS.extend(["/.termux"])
+if SYSTEM != "Android":
+    SKIP_PATTERNS.extend(["/.mitmproxy"])
 
 
 def _match_skip_pattern(name: str, rel_dir: str, is_dir: bool) -> bool:
