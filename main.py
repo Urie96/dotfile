@@ -27,10 +27,12 @@ SKIP_PATTERNS = [
     ".envrc",
 ]
 
-if SYSTEM == "Linux":
-    SKIP_PATTERNS.extend(["/Library", "/.config/raycast"])
-elif SYSTEM == "Darwin":
+if SYSTEM != "Linux":
     SKIP_PATTERNS.extend(["/.config/niri", "/.config/hypr"])
+if SYSTEM != "Darwin":
+    SKIP_PATTERNS.extend(["/Library", "/.config/raycast"])
+if SYSTEM != "Android":
+    SKIP_PATTERNS.extend([".termux"])
 
 
 def _match_skip_pattern(name: str, rel_dir: str, is_dir: bool) -> bool:
