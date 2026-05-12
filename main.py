@@ -141,6 +141,25 @@ def symlink_points_to(link: Path, src: Path) -> bool:
         return False
 
 
+def symlink_needs_rebuild(link: Path, src: Path, *, relative: bool) -> bool:
+    """
+    Return True when link should be recreated.
+
+    Rebuild when the symlink points to the right source but uses a different
+    target style than requested (absolute vs relative).
+    """
+    try:
+        target = os.readlink(link)
+    except OSError:
+        return True
+
+    if not symlink_points_to(link, src):
+        return True
+
+    expected = os.path.relpath(src, link.parent) if relative else str(src)
+    return target != expected
+
+
 def backup_existing(dst: Path, backup_suffix: str) -> bool:
     """
     Back up an existing non-symlink target to dst + backup_suffix.
@@ -165,11 +184,11 @@ def make_link(
     If dst exists and is not a symlink pointing to src, either back it up when
     backup_suffix is set, or print a warning and skip.
     """
-    # Already a correct symlink?
+    # Already a correct symlink with the requested target style?
     if dst.is_symlink():
-        if symlink_points_to(dst, src):
+        if not symlink_needs_rebuild(dst, src, relative=relative):
             return False  # already linked
-        # Symlink points elsewhere — remove it
+        # Symlink points elsewhere, or needs absolute <-> relative conversion.
         dst.unlink()
     elif dst.exists():
         # A real file/directory is in the way
