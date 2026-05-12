@@ -32,8 +32,8 @@ if SYSTEM != "Linux":
 if SYSTEM != "Darwin":
     SKIP_PATTERNS.extend(["/Library", "/.config/raycast"])
 if SYSTEM != "Android":
-    SKIP_PATTERNS.extend(["/.termux"])
-if SYSTEM != "Android":
+    SKIP_PATTERNS.extend(["/.termux", "/.shortcuts"])
+if SYSTEM == "Android":
     SKIP_PATTERNS.extend(["/.mitmproxy"])
 
 

@@ -1,0 +1,10 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+proxy="$(termux-dialog spinner -t ip:port -v 10.79.227.212:8080 | jq -r .text)"
+if [ -z "$proxy" ]; then
+  exit
+fi
+
+if su -c "settings put global http_proxy $proxy"; then
+  echo "Proxy: $proxy" | termux-toast
+fi

@@ -84,7 +84,7 @@ install_one() {
 
 # Install package groups.  Arguments may contain alternatives separated by '|'.
 # The first successfully installed/already-present alternative wins.
-install-pkg() {
+install-pkgs() {
   local spec alt installed
 
   for spec in "$@"; do
@@ -121,7 +121,17 @@ setup_storage() {
 
 setup_shell() {
   if command -v fish &>/dev/null; then
+    msg "Changing default shell to fish"
     chsh -s fish
+  fi
+}
+
+install-pnpm-pkgs() {
+  if command -v pnpm &>/dev/null; then
+    msg "Installing global pnpm packages"
+    pnpm self-update
+    pnpm install -g \
+      @earendil-works/pi-coding-agent
   fi
 }
 
@@ -136,7 +146,7 @@ main() {
     pkg upgrade $(pkg_args)
   fi
 
-  install-pkg \
+  install-pkgs \
     openssh git \
     termux-api tsu \
     7zip bzip2 gzip tar unzip zip xz-utils zstd \
@@ -154,6 +164,7 @@ main() {
 
   setup_storage
   setup_shell
+  install-pnpm-pkgs
 
   msg "Termux initialization complete"
 }

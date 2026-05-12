@@ -1,0 +1,5 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+if su -c "settings put global http_proxy :0"; then
+  echo "unset proxy" | termux-toast
+fi
