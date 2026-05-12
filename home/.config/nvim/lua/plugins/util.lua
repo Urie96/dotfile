@@ -223,7 +223,7 @@ return {
     cmd = 'Yazi',
     keys = {
       { '<leader>ya', '<cmd>Yazi <cr>', mode = { 'n' }, desc = 'Open yazi at the current file' },
-      { '<leader>ya', '<cmd>Yazi cwd<cr>', mode = { 'n' }, desc = "Open the file manager in nvim's working directory" },
+      { '<leader>yA', '<cmd>Yazi cwd<cr>', mode = { 'n' }, desc = "Open the file manager in nvim's working directory" },
       {
         '<leader>ya',
         function()
