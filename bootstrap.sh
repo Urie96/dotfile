@@ -8,7 +8,7 @@ DEST="$HOME/dotfile"
 SKIP_PROMPTS=false
 while [[ $# -gt 0 ]]; do
   case "$1" in
-  --yes|-y)
+  --yes | -y)
     SKIP_PROMPTS=true
     shift
     ;;
@@ -59,6 +59,6 @@ fi
 
 # ── 3. Install ───────────────────────────────────────────────────────
 msg "运行 install.py"
-python3 ./install.py
+python3 ./install.py --backup-suffix .bak
 
 msg "安装完成 ✓"

@@ -179,7 +179,7 @@ map { 'ma', function() require('util.marker').add() end, desc = 'Add Marker' }
 map { 'mm', function() require('util.marker').pick() end, desc = 'List Markers' }
 -- map { 'mm', function() Snacks.picker.marks() end, desc = 'List Marks' }
 map { '<leader><space>', function() Snacks.picker.grep() end, desc = 'Grep' }
-map { '<D-S-F>', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = x }
+map { '<leader><space>', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = x }
 map { '<C-S-O>', function() Snacks.picker.resume() end, desc = 'Resumes Last Picker' }
 -- lsp
 map { 'gd', function() Snacks.picker.lsp_definitions { jump = { reuse_win = false } } end, desc = '[G]oto [D]efinition' }

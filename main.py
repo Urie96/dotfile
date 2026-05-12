@@ -1,10 +1,4 @@
-#!/usr/bin/env python3
-"""
-Dotfile installer: symlinks files from this repo into $HOME.
-Only individual files are linked (not directories).
-Symlinks are recorded in .symlink_record for cleanup on subsequent runs.
-"""
-
+import argparse
 import os
 import platform
 import subprocess
@@ -131,35 +125,69 @@ def ensure_parent_dir(dst: Path) -> None:
     dst.parent.mkdir(parents=True, exist_ok=True)
 
 
-def make_link(src: Path, dst: Path) -> bool:
+def symlink_points_to(link: Path, src: Path) -> bool:
+    """Return True if link (absolute or relative) resolves to src."""
+    try:
+        target = os.readlink(link)
+    except OSError:
+        return False
+
+    target_path = Path(target)
+    if not target_path.is_absolute():
+        target_path = link.parent / target_path
+    try:
+        return target_path.resolve() == src.resolve()
+    except OSError:
+        return False
+
+
+def backup_existing(dst: Path, backup_suffix: str) -> bool:
+    """
+    Back up an existing non-symlink target to dst + backup_suffix.
+    Returns True if dst was moved out of the way, False if it cannot be backed up.
+    """
+    backup = dst.with_name(dst.name + backup_suffix)
+    if backup.exists() or backup.is_symlink():
+        print(f"  ⚠ 跳过 (备份目标已存在): {backup}")
+        return False
+    dst.rename(backup)
+    print(f"  📦 备份已有配置: {dst} -> {backup}")
+    return True
+
+
+def make_link(
+    src: Path, dst: Path, *, relative: bool = False, backup_suffix: str | None = None
+) -> bool:
     """
     Create a symlink at dst pointing to src.
     Returns True if a new symlink was created, False if it already existed
     and pointed to the correct target.
-    If dst exists and is not a symlink pointing to src, print a warning and skip.
+    If dst exists and is not a symlink pointing to src, either back it up when
+    backup_suffix is set, or print a warning and skip.
     """
     # Already a correct symlink?
     if dst.is_symlink():
-        try:
-            if os.readlink(dst) == str(src):
-                return False  # already linked
-        except OSError:
-            pass
+        if symlink_points_to(dst, src):
+            return False  # already linked
         # Symlink points elsewhere — remove it
         dst.unlink()
     elif dst.exists():
         # A real file/directory is in the way
-        print(f"  ⚠ 跳过 (目标已存在且非软链接): {dst}")
-        return False
+        if backup_suffix is None:
+            print(f"  ⚠ 跳过 (目标已存在且非软链接): {dst}")
+            return False
+        if not backup_existing(dst, backup_suffix):
+            return False
 
     ensure_parent_dir(dst)
-    os.symlink(str(src), str(dst))
+    link_target = os.path.relpath(src, dst.parent) if relative else str(src)
+    os.symlink(link_target, str(dst))
     return True
 
 
 def fix_encrypted_file_permissions() -> int:
     """Run git-crypt status -e, change perms of encrypted repo files to 600.
-    
+
     Returns the number of files whose permissions were changed.
     """
     try:
@@ -197,7 +225,26 @@ def fix_encrypted_file_permissions() -> int:
     return changed
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Install dotfiles as symlinks into $HOME."
+    )
+    parser.add_argument(
+        "--relative",
+        action="store_true",
+        help="使用相对路径创建符号链接（默认使用绝对路径）",
+    )
+    parser.add_argument(
+        "--backup-suffix",
+        metavar="SUFFIX",
+        help="目标已存在且非软链接时，先备份为 [名字][SUFFIX]，例如 --backup-suffix .bak",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
+
     if not SOURCE_DIR.exists():
         print(f"错误: 源目录不存在: {SOURCE_DIR}")
         exit(1)
@@ -222,9 +269,14 @@ def main() -> None:
     # ---- Phase 2: create / verify symlinks ----
     added = 0
     for src, dst in sorted(current_mapping.items()):
-        if make_link(src, dst):
+        if make_link(
+            src, dst, relative=args.relative, backup_suffix=args.backup_suffix
+        ):
             added += 1
-            print(f"  ✅ 新建软链接: {dst} -> {src}")
+            link_target = (
+                os.path.relpath(src, dst.parent) if args.relative else str(src)
+            )
+            print(f"  ✅ 新建软链接: {dst} -> {link_target}")
 
     # ---- Phase 3: write updated record ----
     write_record(current_targets)

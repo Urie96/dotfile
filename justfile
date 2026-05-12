@@ -1,5 +1,5 @@
 install:
-    python ./install.py
+    ./install.sh
 
 status:
     git-crypt status
