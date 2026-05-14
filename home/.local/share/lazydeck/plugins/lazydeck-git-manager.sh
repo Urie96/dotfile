@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 # Lazycmd Git Manager
-# 管理 plugins 目录下所有 .lazycmd git 仓库
+# 管理 plugins 目录下所有 .lazydeck git 仓库
 
-PLUGINS_DIR="$HOME/.local/share/lazycmd/plugins"
+PLUGINS_DIR="$HOME/.local/share/lazydeck/plugins"
 
 # 切换 origin 从 HTTPS 到 SSH
 switch_to_ssh() {
   echo "🔄 正在将所有仓库的 origin 切换为 SSH 协议..."
 
-  find "$PLUGINS_DIR" -maxdepth 1 -type d -name "*.lazycmd" | while read -r dir; do
+  find "$PLUGINS_DIR" -maxdepth 1 -type d -name "*.lazydeck" | while read -r dir; do
     if [ -d "$dir/.git" ]; then
       cd "$dir" || continue
       repo_name=$(basename "$dir")
@@ -73,7 +73,7 @@ browse_changes() {
         changes_found=$((changes_found + 1))
       fi
     fi
-  done < <(find "$PLUGINS_DIR" -maxdepth 1 -type d -name "*.lazycmd")
+  done < <(find "$PLUGINS_DIR" -maxdepth 1 -type d -name "*.lazydeck")
 
   if [ $changes_found -eq 0 ]; then
     echo "没有发现任何变化的仓库"
@@ -180,7 +180,7 @@ commit_all() {
         echo "❌ $repo_name 提交失败!"
       fi
     fi
-  done < <(find "$PLUGINS_DIR" -maxdepth 1 -type d -name "*.lazycmd")
+  done < <(find "$PLUGINS_DIR" -maxdepth 1 -type d -name "*.lazydeck")
 
   echo ""
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -237,7 +237,7 @@ show_status() {
 
       printf "%-30s [%s] %s %s\n" "$repo_name" "$branch" "$status" "$origin_url"
     fi
-  done < <(find "$PLUGINS_DIR" -maxdepth 1 -type d -name "*.lazycmd")
+  done < <(find "$PLUGINS_DIR" -maxdepth 1 -type d -name "*.lazydeck")
 }
 
 # 主程序

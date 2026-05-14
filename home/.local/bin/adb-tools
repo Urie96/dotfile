@@ -52,6 +52,7 @@ clipboard-get() {
   cmd=$(
     cat <<'EOF'
 am startservice com.termux.window/.TermuxFloatService &>/dev/null
+sleep 0.5
 termux-clipboard-get
 am stopservice com.termux.window/.TermuxFloatService &>/dev/null &
 EOF

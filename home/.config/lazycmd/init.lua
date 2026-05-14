@@ -1,9 +1,9 @@
--- lazycmd plugin configuration
-lc.config {
+-- lazydeck plugin configuration
+deck.config {
   plugins = {
-    'urie96/minimal.lazycmd',
+    'urie96/minimal.lazydeck',
     {
-      'urie96/github.lazycmd',
+      'urie96/github.lazydeck',
       config = function()
         require('github').setup {
           token = os.getenv 'GITHUB_TOKEN',
@@ -11,7 +11,7 @@ lc.config {
       end,
     },
     {
-      'urie96/netease-music.lazycmd',
+      'urie96/netease-music.lazydeck',
       config = function()
         os.execute 'ssh -f -N -L 127.0.0.1:3000:127.0.0.1:3110 home.lubui.com &>/dev/null'
         require('netease-music').setup {
@@ -21,11 +21,11 @@ lc.config {
         }
       end,
     },
-    'urie96/adb.lazycmd',
-    'urie96/file.lazycmd',
-    'urie96/aria2.lazycmd',
+    'urie96/adb.lazydeck',
+    'urie96/file.lazydeck',
+    'urie96/aria2.lazydeck',
     {
-      'urie96/freshrss.lazycmd',
+      'urie96/freshrss.lazydeck',
       config = function()
         require('freshrss').setup {
           url = 'https://rss.lubui.com:8443/api/greader.php',
@@ -34,9 +34,9 @@ lc.config {
         }
       end,
     },
-    'urie96/mpv.lazycmd',
+    'urie96/music.lazydeck',
     {
-      'urie96/opensubsonic.lazycmd',
+      'urie96/opensubsonic.lazydeck',
       config = function()
         require('opensubsonic').setup {
           url = 'https://music.lubui.com:8443',
@@ -46,15 +46,15 @@ lc.config {
       end,
     },
     -- Local directory plugin example:
-    -- { dir = 'plugins/myplugin.lazycmd' },
-    'urie96/process.lazycmd',
-    'urie96/quick-access-tools.lazycmd',
-    'urie96/himalaya.lazycmd',
-    'urie96/systemd.lazycmd',
-    'urie96/launchd.lazycmd',
-    'urie96/docker.lazycmd',
+    -- { dir = 'plugins/myplugin.lazydeck' },
+    'urie96/process.lazydeck',
+    'urie96/quick-access-tools.lazydeck',
+    'urie96/himalaya.lazydeck',
+    'urie96/systemd.lazydeck',
+    'urie96/launchd.lazydeck',
+    'urie96/docker.lazydeck',
     {
-      'urie96/sftp.lazycmd',
+      'urie96/sftp.lazydeck',
       config = function()
         require('sftp').setup {
           profiles = {
@@ -67,7 +67,7 @@ lc.config {
       end,
     },
     {
-      'urie96/memos.lazycmd',
+      'urie96/memos.lazydeck',
       config = function()
         require('memos').setup {
           token = os.getenv 'MEMOS_TOKEN',
