@@ -3,6 +3,7 @@ status is-interactive; or return
 # Abbreviations
 abbr --add -- - 'cd -'
 abbr --add -- .. 'cd ..'
+abbr --add -- l lazydeck
 abbr --add --position anywhere --set-cursor -- A '| awk '\''{print $2%}'\'''
 abbr --add --position anywhere --set-cursor -- P '| pv -q -L 3%k |'
 abbr --add --position anywhere -- X '| xargs -I {}'

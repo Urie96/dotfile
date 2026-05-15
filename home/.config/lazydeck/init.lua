@@ -1,7 +1,18 @@
 -- lazydeck plugin configuration
 deck.config {
   plugins = {
-    'urie96/minimal.lazydeck',
+    -- 'urie96/minimal.lazydeck',
+    'plugins/bookmarks.lazydeck',
+    {
+      'plugins/audiobookshelf.lazydeck',
+      config = function()
+        require('audiobookshelf').setup {
+          url = 'https://audiobook.lubui.com:8443',
+          token = os.getenv 'AUDIOBOOKSHELF_TOKEN',
+          library_id = '1824413f-cbf0-41e4-8b88-c1aab95c7f40',
+        }
+      end,
+    },
     {
       'urie96/github.lazydeck',
       config = function()
