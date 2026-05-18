@@ -49,8 +49,8 @@
       ]
     },
     "modelhub": {
-      "baseUrl": "https://aidp.bytedance.net/api/modelhub/online/v2/crawl/openai/deployments/gpt_openapi",
-      "api": "openai-completions",
+      "baseUrl": "https://aidp.bytedance.net/api/modelhub/online",
+      "api": "openai-responses",
       "apiKey": "MODELHUB_API_KEY",
       "models": [
         {

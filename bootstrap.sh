@@ -27,7 +27,7 @@ err() { printf "\033[1;31m!!! %s\033[0m\n" "$*" >&2; }
 if [ -d "$DEST/.git" ]; then
   msg "仓库已存在: $DEST — 执行 pull"
   cd "$DEST"
-  git pull --ff-only https://github.com/user/repo.git main || {
+  git pull --ff-only "$REPO" main || {
     err "存在冲突，请手动解决后再运行本脚本"
     exit 1
   }

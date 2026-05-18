@@ -33,6 +33,7 @@ deck.config {
       end,
     },
     'urie96/adb.lazydeck',
+    'plugins/hackernews.lazydeck',
     'urie96/file.lazydeck',
     'urie96/aria2.lazydeck',
     {
