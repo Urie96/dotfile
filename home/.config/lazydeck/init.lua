@@ -2,7 +2,13 @@
 deck.config {
   plugins = {
     -- 'urie96/minimal.lazydeck',
-    'plugins/bookmarks.lazydeck',
+    {
+      'plugins/bookmarks.lazydeck',
+      keys = {
+        { 'ma', function() require('bookmarks').add() end, desc = 'add current page to bookmarks' },
+      },
+    },
+    'plugins/rclone.lazydeck',
     {
       'plugins/audiobookshelf.lazydeck',
       config = function()
@@ -34,7 +40,14 @@ deck.config {
     },
     'urie96/adb.lazydeck',
     'plugins/hackernews.lazydeck',
-    'urie96/file.lazydeck',
+    {
+      'urie96/file.lazydeck',
+      config = function()
+        require('file').setup {
+          root = os.getenv 'HOME',
+        }
+      end,
+    },
     'urie96/aria2.lazydeck',
     {
       'urie96/freshrss.lazydeck',

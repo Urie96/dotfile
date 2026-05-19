@@ -40,6 +40,7 @@ require('mime-ext.local'):setup {
     raf = 'image/fuji-raf',
     http = 'text/http',
     jsonl = 'application/json',
+    thrift = 'text/c',
   },
   fallback_file1 = true,
 }
