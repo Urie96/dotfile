@@ -48,7 +48,7 @@
         }
       ]
     },
-    "modelhub": {
+    "modelhub-response": {
       "baseUrl": "https://aidp.bytedance.net/api/modelhub/online",
       "api": "openai-responses",
       "apiKey": "MODELHUB_API_KEY",
@@ -63,6 +63,25 @@
           "id": "gpt-5.4-2026-03-05",
           "contextWindow": 1000000,
           "input": ["text", "image"],
+          "reasoning": true
+        }
+      ]
+    },
+    "modelhub": {
+      "baseUrl": "https://aidp.bytedance.net/api/modelhub/online/v2/crawl/openai/deployments/gpt_openapi",
+      "api": "openai-completions",
+      "apiKey": "MODELHUB_API_KEY",
+      "models": [
+        {
+          "id": "gpt-5.4-2026-03-05",
+          "contextWindow": 1000000,
+          "input": ["text", "image"],
+          "reasoning": true
+        },
+        {
+          "id": "ali-deepseek-v4-pro",
+          "contextWindow": 1000000,
+          "input": ["text"],
           "reasoning": true
         }
       ]

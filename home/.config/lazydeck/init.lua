@@ -101,4 +101,10 @@ deck.config {
       end,
     },
   },
+  keymap = {
+    tab_new = '<tab>n',
+    tab_close = '<tab>q',
+    tab_next = '<tab><tab>',
+    -- tab_prev = '<tab>',
+  },
 }

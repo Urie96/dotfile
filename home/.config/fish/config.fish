@@ -3,7 +3,7 @@ if status is-interactive
         zoxide init fish | source
     end
     if command -q atuin
-        atuin init fish | source
+        atuin init fish --disable-ctrl-r | source
     end
     if command -q direnv
         direnv hook fish | source
