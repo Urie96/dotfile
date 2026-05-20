@@ -3,14 +3,14 @@ deck.config {
   plugins = {
     -- 'urie96/minimal.lazydeck',
     {
-      'plugins/bookmarks.lazydeck',
+      'urie96/bookmarks.lazydeck',
       keys = {
         { 'ma', function() require('bookmarks').add() end, desc = 'add current page to bookmarks' },
       },
     },
-    'plugins/rclone.lazydeck',
+    'urie96/rclone.lazydeck',
     {
-      'plugins/audiobookshelf.lazydeck',
+      'urie96/audiobookshelf.lazydeck',
       config = function()
         require('audiobookshelf').setup {
           url = 'https://audiobook.lubui.com:8443',
@@ -39,7 +39,7 @@ deck.config {
       end,
     },
     'urie96/adb.lazydeck',
-    'plugins/hackernews.lazydeck',
+    'urie96/hackernews.lazydeck',
     {
       'urie96/file.lazydeck',
       config = function()
