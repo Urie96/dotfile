@@ -41,6 +41,7 @@ require('mime-ext.local'):setup {
     http = 'text/http',
     jsonl = 'application/json',
     thrift = 'text/c',
+    sql = 'text/plain',
   },
   fallback_file1 = true,
 }

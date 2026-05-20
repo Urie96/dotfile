@@ -1,6 +1,16 @@
 -- lazydeck plugin configuration
+-- Load early so this startup's notifications are captured before other plugins run.
+
+pcall(require 'notification-history')
+
 deck.config {
   plugins = {
+    {
+      'urie96/notification-history.lazydeck',
+      keys = {
+        { 'gn', function() deck.api.go_to { 'notification-history' } end, desc = 'notification history' },
+      },
+    },
     -- 'urie96/minimal.lazydeck',
     {
       'urie96/bookmarks.lazydeck',
