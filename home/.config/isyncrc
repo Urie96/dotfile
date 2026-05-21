@@ -26,3 +26,45 @@ Expunge Both
 # Save the synchronization state files in the relevant directory
 SyncState *
 Patterns * !Virtual*
+
+IMAPAccount ustc
+Host mail.ustc.edu.cn
+User urie@mail.ustc.edu.cn
+PassCmd "rbw get 'ustc imap'"
+TLSType IMAPS
+
+IMAPStore ustc-remote
+Account ustc
+
+MaildirStore ustc-local
+Inbox ~/mail/ustc/
+SubFolders Maildir++
+
+Channel ustc
+Far :ustc-remote:
+Near :ustc-local:
+Create Both
+Expunge Both
+SyncState *
+Patterns * !Virtual*
+
+IMAPAccount gmail
+Host imap.gmail.com
+User lubui.com@gmail.com
+PassCmd "rbw get 'gmail imap'"
+TLSType IMAPS
+
+IMAPStore gmail-remote
+Account gmail
+
+MaildirStore gmail-local
+Inbox ~/mail/gmail/
+SubFolders Maildir++
+
+Channel gmail
+Far :gmail-remote:
+Near :gmail-local:
+Create Both
+Expunge Both
+SyncState *
+Patterns * !Virtual*
