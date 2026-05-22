@@ -1,9 +1,12 @@
 -- lazydeck plugin configuration
 deck.config {
   plugins = {
+
     {
-      'urie96/ai.lazydeck',
-      config = function() require('ai').setup() end,
+      'urie96/bookmarks.lazydeck',
+      keys = {
+        { 'ma', function() require('bookmarks').add() end, desc = 'add current page to bookmarks' },
+      },
     },
     {
       'urie96/notification-history.lazydeck',
@@ -13,9 +16,22 @@ deck.config {
       },
     },
     {
-      'urie96/bookmarks.lazydeck',
+      'urie96/ai.lazydeck',
+      config = function() require('ai').setup() end,
+    },
+    {
+      'urie96/translate.lazydeck',
+      config = function()
+        require('translate').setup {
+          target_language = 'Chinese',
+          provider = 'deepseek',
+          model = 'deepseek-v4-flash',
+          max_input_tokens = 50000,
+          cache_ttl = 30 * 24 * 3600,
+        }
+      end,
       keys = {
-        { 'ma', function() require('bookmarks').add() end, desc = 'add current page to bookmarks' },
+        { 'tt', function() require('translate').toggle() end, desc = 'toggle preview translation' },
       },
     },
     'urie96/rclone.lazydeck',
