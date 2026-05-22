@@ -96,11 +96,41 @@ deck.config {
         }
       end,
     },
-    -- Local directory plugin example:
-    -- { dir = 'plugins/myplugin.lazydeck' },
     'urie96/process.lazydeck',
     'urie96/quick-access-tools.lazydeck',
     'urie96/himalaya.lazydeck',
+    {
+      'urie96/notmuch.lazydeck',
+      config = function()
+        require('notmuch').setup {
+          accounts = {
+            {
+              name = 'all',
+              label = 'All',
+              query = '*',
+            },
+            {
+              name = 'qq',
+              label = 'QQ',
+              query = 'tag:account-qq',
+              msmtp_account = 'qq',
+            },
+            {
+              name = 'ustc',
+              label = 'USTC',
+              query = 'tag:account-ustc',
+              msmtp_account = 'ustc',
+            },
+            {
+              name = 'gmail',
+              label = 'Gmail',
+              query = 'tag:account-gmail',
+              msmtp_account = 'gmail',
+            },
+          },
+        }
+      end,
+    },
     'urie96/systemd.lazydeck',
     'urie96/launchd.lazydeck',
     'urie96/docker.lazydeck',
