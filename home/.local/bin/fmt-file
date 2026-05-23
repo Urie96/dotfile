@@ -102,6 +102,13 @@ fmt_stdin() {
   ini)
     python -c "import sys, configparser; c=configparser.ConfigParser(); c.read_string(sys.stdin.read()); c.write(sys.stdout)" "$NAME"
     ;;
+  xml)
+    local tmp_path
+    tmp_path=$(mktemp -t tmp.XXXXXXXXXX.xml)
+    cat >"$tmp_path"
+    xmllint --format "$tmp_path"
+    rm -f "$tmp_path"
+    ;;
   *)
     echo "no formatter for $LANGUAGE" >&2
     exit 1
