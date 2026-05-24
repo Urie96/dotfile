@@ -1,0 +1,48 @@
+[general]
+status_path = "~/.local/share/vdirsyncer/status_path"
+
+[pair contacts]
+a = "local_contacts"
+b = "remote_contacts"
+collections = ["contacts"]
+
+[storage remote_contacts]
+type = "carddav"
+url = "https://caldav.lubui.com:8443"
+username = "urie"
+password.fetch = ["command", "rbw", "get", "caldav.lubui.com"]
+
+[storage local_contacts]
+type = "filesystem"
+path = "~/.contacts/"
+fileext = ".vcf"
+
+
+[pair calendar]
+a = "local_calendar"
+b = "remote_calendar"
+collections = [["personal", "personal", "D3664C55-4D0A-4300-AF38-F673529A0FAC"]]
+
+[pair work_calendar]
+a = "local_calendar"
+b = "lark_calendar"
+collections = [["work", "work" , "609B3BBF-9D91-801C-609B-3BBF9D91801C"]]
+
+[storage remote_calendar]
+type = "caldav"
+url = "https://caldav.lubui.com:8443"
+username = "urie"
+password.fetch = ["command", "rbw", "get", "caldav.lubui.com"]
+
+[storage lark_calendar]
+type = "caldav"
+url = "https://caldav.larkoffice.com"
+username = "u_unvi2037"
+password.fetch = ["command", "rbw", "get", "lark caldav"]
+
+[storage local_calendar]
+type = "filesystem"
+path = "~/.calendars/"
+fileext = ".ics"
+
+# vim:ft=ini

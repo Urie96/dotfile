@@ -100,7 +100,7 @@ fmt_stdin() {
     rm -f "$tmp_path"
     ;;
   ini)
-    python -c "import sys, configparser; c=configparser.ConfigParser(); c.read_string(sys.stdin.read()); c.write(sys.stdout)" "$NAME"
+    # python -c "import sys, configparser; c=configparser.ConfigParser(); c.read_string(sys.stdin.read()); c.write(sys.stdout)" "$NAME"
     ;;
   xml)
     local tmp_path
