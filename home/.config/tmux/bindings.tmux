@@ -1,13 +1,26 @@
 # clear both screen and history
-bind -n C-l send-keys C-l \; run 'sleep 0.2' \; clear-history
+# bind -n C-l send-keys C-l \; run 'sleep 0.2' \; clear-history
+
+bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded!"
+
+bind-key C-f run-shell "sesh connect \"$(
+  sesh list --icons | fzf-tmux -p 80%,70% \
+    --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
+    --header '  ^a all ^t tmux ^g configs ^x zoxide ^d tmux kill ^f find' \
+    --bind 'tab:down,btab:up' \
+    --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
+    --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t --icons)' \
+    --bind 'ctrl-g:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
+    --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
+    --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
+    --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
+    --preview-window 'right:55%' \
+    --preview 'sesh preview {}'
+)\""
 
 # -- navigation ----------------------------------------------------------------
 
-# create session
-bind C-c new-session
-# find session
-bind C-f command-prompt -p find-session 'switch-client -t %%'
-bind t new-window -c "#{pane_current_path}"
+bind C-t new-window -c "#{pane_current_path}"
 
 unbind '"'
 unbind %

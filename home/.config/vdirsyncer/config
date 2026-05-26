@@ -21,7 +21,7 @@ fileext = ".vcf"
 [pair calendar]
 a = "local_calendar"
 b = "remote_calendar"
-collections = [["personal", "personal", "D3664C55-4D0A-4300-AF38-F673529A0FAC"]]
+collections = ["personal", "work"]
 
 [pair work_calendar]
 a = "local_calendar"

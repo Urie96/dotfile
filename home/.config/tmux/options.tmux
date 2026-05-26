@@ -4,11 +4,15 @@ set -g mouse on
 set -g history-limit 5000
 
 set -s escape-time 10 # 程序响应esc的延迟，因为有些组合键发送的组合键是^[开头的
-set -sg repeat-time 600 # 无需前缀键，重复输入tmux快捷键
+set -sg repeat-time 800 # 无需前缀键，重复输入tmux快捷键
 set -s focus-events on # 让程序能感知到聚焦
 
-# -- display -------------------------------------------------------------------
+# sesh: smart session manager
+set -g detach-on-destroy off  # don't exit tmux when closing a session
+bind-key x kill-pane          # skip "kill-pane 1? (y/n)" prompt
 
+# -- display -------------------------------------------------------------------
+set-option -g status-position top
 set -g base-index 1           # start windows numbering at 1
 setw -g pane-base-index 1     # make pane numbering consistent with windows
 
