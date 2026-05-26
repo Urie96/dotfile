@@ -3,9 +3,6 @@
   "defaultProvider": "yybbcode",
   "defaultModel": "gpt-5.5",
   "defaultThinkingLevel": "medium",
-  "enabledModels": [
-    "gpt-5.*",
-    "MiniMax-*",
-    "deepseek-*"
-  ]
+  "enabledModels": ["gpt-5.*", "MiniMax-*", "deepseek-*"],
+  "theme": "tokyonight_night"
 }

@@ -1,45 +1,71 @@
 customCommands:
-- command: lazygit-action {{.Form.Action}}
-  context: files
-  key: <c-o>
-  output: terminal
-  prompts:
-  - key: Action
-    type: menu
-    title: Which action?
-    options:
-    - description: Open remote in web browser
-      name: browser
-      value: ''
-    - description: New merge request
-      name: merge request
-      value: mr
-    - description: Generate AI-powered commit message
-      name: AI Commit
-      value: ai
+  - command: lazygit-action {{.Form.Action}}
+    context: files
+    key: <c-o>
+    output: terminal
+    prompts:
+      - key: Action
+        type: menu
+        title: Which action?
+        options:
+          - description: Open remote in web browser
+            name: browser
+            value: ""
+          - description: New merge request
+            name: merge request
+            value: mr
+          - description: Generate AI-powered commit message
+            name: AI Commit
+            value: ai
 git:
   autoForwardBranches: none
   pagers:
-  - colorArg: always
-    pager: delta --dark --paging=never
+    - colorArg: always
+      pager: delta --dark --paging=never
 gui:
   language: zh-CN
   mainPanelSplitMode: flexible
-  nerdFontsVersion: '3'
-  shortTimeFormat: '15:04'
-  timeFormat: '2006-01-02'
+  nerdFontsVersion: "3"
+  shortTimeFormat: "15:04"
+  timeFormat: "2006-01-02"
+  # https://github.com/folke/tokyonight.nvim/blob/main/extras/lazygit/tokyonight_night.yml
+  theme:
+    activeBorderColor:
+      - "#ff9e64"
+      - "bold"
+    inactiveBorderColor:
+      - "#27a1b9"
+    searchingActiveBorderColor:
+      - "#ff9e64"
+      - "bold"
+    optionsTextColor:
+      - "#7aa2f7"
+    selectedLineBgColor:
+      - "#283457"
+    cherryPickedCommitFgColor:
+      - "#7aa2f7"
+    cherryPickedCommitBgColor:
+      - "#bb9af7"
+    markedBaseCommitFgColor:
+      - "#7aa2f7"
+    markedBaseCommitBgColor:
+      - "#e0af68"
+    unstagedChangesColor:
+      - "#db4b4b"
+    defaultFgColor:
+      - "#c0caf5"
 keybinding:
   stash:
     popStash: p
   universal:
-    nextItem-alt: ''
+    nextItem-alt: ""
     nextTab: L
-    prevItem-alt: ''
+    prevItem-alt: ""
     prevTab: J
-    scrollDownMain-alt1: ''
+    scrollDownMain-alt1: ""
     scrollLeft: j
     scrollRight: l
-    scrollUpMain-alt1: ''
+    scrollUpMain-alt1: ""
 notARepository: quit
 os:
   editPreset: nvim
