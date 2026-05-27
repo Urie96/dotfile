@@ -57,6 +57,7 @@ function M.list()
     },
     {
       ft = 'bash',
+      ext = 'sh',
       keys = {
         {
           '<cr>',

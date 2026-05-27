@@ -204,8 +204,9 @@ map {
 }
 
 -- terminal
+map { '<C-/>', 'C-_', mode = { 'i', 'n', 'v' }, remap = true }
 map {
-  '<C-/>',
+  '<C-_>',
   function() Snacks.terminal() end,
   mode = { n, i },
   desc = 'Terminal (Root Dir)',
