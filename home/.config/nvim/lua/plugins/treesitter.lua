@@ -14,13 +14,18 @@ return {
       )
       vim.api.nvim_create_autocmd('FileType', {
         pattern = need_install_langs,
-        callback = function()
-          vim.treesitter.start()
+        callback = function(event)
+          local lang = vim.treesitter.language.get_lang(event.match) or event.match
+          local ok = pcall(vim.treesitter.start)
+          if not ok then
+            ts.install(lang)
+            return
+          end
+
           vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
           vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
         end,
       })
-      ts.install(need_install_langs)
     end,
   },
   {
