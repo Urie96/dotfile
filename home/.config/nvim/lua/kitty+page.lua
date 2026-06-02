@@ -27,7 +27,20 @@ function M.load_plugin(name)
   return true
 end
 
-local on_keys = function(keys, mode, callback)
+local Config = {}
+_G.Config = Config
+
+Config.set_keymap = function(arg)
+  local mode = arg.mode or 'n'
+  local lhs = arg[1]
+  local rhs = arg[2]
+  arg.mode = nil
+  arg[1] = nil
+  arg[2] = nil
+  vim.keymap.set(mode, lhs, rhs, arg)
+end
+
+Config.on_keys = function(keys, mode, callback)
   if type(mode) == 'function' then
     callback = mode
     mode = 'n'
@@ -43,7 +56,7 @@ local on_keys = function(keys, mode, callback)
 
         if not loaded then
           loaded = true
-          misc.safely('now', callback)
+          callback()
         end
 
         local feed_lhs = m:sub(-1) == 'a' and lhs .. '<C-]>' or lhs
@@ -61,7 +74,7 @@ function M.set_keymap(buf)
   map('n', 'q', '<Cmd>qa!<CR>')
   map('n', '<C-q>', '<Cmd>qa!<CR>')
 
-  on_keys({ 's' }, { 'n', 'x', 'o' }, function()
+  Config.on_keys({ 's' }, { 'n', 'x', 'o' }, function()
     vim.pack.add { 'https://github.com/folke/flash.nvim' }
 
     require('flash').setup {
@@ -76,7 +89,7 @@ function M.set_keymap(buf)
     vim.api.nvim_set_hl(0, 'Substitute', { bg = '#ff757f', fg = '#1b1d2b' })
   end)
 
-  on_keys({ 'v' }, function()
+  Config.on_keys({ 'v' }, function()
     vim.pack.add { 'https://github.com/nvim-mini/mini.nvim' }
     require('mini.ai').setup { search_method = 'cover' }
   end)
