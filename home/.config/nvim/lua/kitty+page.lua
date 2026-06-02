@@ -1,71 +1,29 @@
+vim.loader.enable()
+require 'plugins.global_var'
+
 local M = {}
 
 local INPUT_LINE_NUMBER, CURSOR_LINE, CURSOR_COLUMN = 0, 0, 0
 
-function M.set_color()
-  local color = {
-    Substitute = { bg = '#f7768e', fg = '#15161e' },
-    Comment = { fg = '#565f89', italic = true },
-    Search = { bg = '#3d59a1', fg = '#c0caf5' },
-    IncSearch = { bg = '#ff9e64', fg = '#15161e' },
-    MsgArea = { fg = '#a9b1d6' },
+Config.on_keys({ 's' }, { 'n', 'x', 'o' }, function()
+  vim.pack.add { 'https://github.com/folke/flash.nvim' }
+
+  require('flash').setup {
+    modes = {
+      char = {
+        highlight = { backdrop = false },
+        multi_line = false,
+      },
+    },
   }
-  for k, v in pairs(color) do
-    vim.api.nvim_set_hl(0, k, v)
-  end
-end
+  vim.keymap.set({ 'n', 'x', 'o' }, 's', function() require('flash').jump() end)
+  vim.api.nvim_set_hl(0, 'Substitute', { bg = '#ff757f', fg = '#1b1d2b' })
+end)
 
-function M.load_plugin(name)
-  local plugin_path = (vim.fn.stdpath 'data') .. '/lazy/' .. name
-  local runtime_paths = vim.api.nvim_list_runtime_paths()
-  for _, path in ipairs(runtime_paths) do
-    if path == plugin_path then return true end
-  end
-  if not vim.fn.isdirectory(plugin_path) then return false end
-  vim.opt.runtimepath:append(plugin_path)
-  -- vim.cmd.packadd name
-  return true
-end
-
-local Config = {}
-_G.Config = Config
-
-Config.set_keymap = function(arg)
-  local mode = arg.mode or 'n'
-  local lhs = arg[1]
-  local rhs = arg[2]
-  arg.mode = nil
-  arg[1] = nil
-  arg[2] = nil
-  vim.keymap.set(mode, lhs, rhs, arg)
-end
-
-Config.on_keys = function(keys, mode, callback)
-  if type(mode) == 'function' then
-    callback = mode
-    mode = 'n'
-  end
-  if type(mode) == 'string' then mode = { mode } end
-
-  local loaded = false
-
-  for _, lhs in ipairs(keys) do
-    for _, m in ipairs(mode) do
-      vim.keymap.set(m, lhs, function()
-        pcall(vim.keymap.del, m, lhs)
-
-        if not loaded then
-          loaded = true
-          callback()
-        end
-
-        local feed_lhs = m:sub(-1) == 'a' and lhs .. '<C-]>' or lhs
-        local feed = vim.api.nvim_replace_termcodes('<Ignore>' .. feed_lhs, true, true, true)
-        vim.api.nvim_feedkeys(feed, 'i', false)
-      end, { expr = true })
-    end
-  end
-end
+Config.on_keys({ 'v' }, function()
+  vim.pack.add { 'https://github.com/nvim-mini/mini.nvim' }
+  require('mini.ai').setup { search_method = 'cover' }
+end)
 
 function M.set_keymap(buf)
   require 'config.keymaps'
@@ -73,26 +31,6 @@ function M.set_keymap(buf)
   map('x', 'q', 'y<Cmd>qa!<CR>')
   map('n', 'q', '<Cmd>qa!<CR>')
   map('n', '<C-q>', '<Cmd>qa!<CR>')
-
-  Config.on_keys({ 's' }, { 'n', 'x', 'o' }, function()
-    vim.pack.add { 'https://github.com/folke/flash.nvim' }
-
-    require('flash').setup {
-      modes = {
-        char = {
-          highlight = { backdrop = false },
-          multi_line = false,
-        },
-      },
-    }
-    vim.keymap.set({ 'n', 'x', 'o' }, 's', function() require('flash').jump() end)
-    vim.api.nvim_set_hl(0, 'Substitute', { bg = '#ff757f', fg = '#1b1d2b' })
-  end)
-
-  Config.on_keys({ 'v' }, function()
-    vim.pack.add { 'https://github.com/nvim-mini/mini.nvim' }
-    require('mini.ai').setup { search_method = 'cover' }
-  end)
 end
 
 function M.set_options()
@@ -199,6 +137,19 @@ function M.set_term_buf()
   })
 
   return term_buf
+end
+
+function M.set_color()
+  local color = {
+    Substitute = { bg = '#f7768e', fg = '#15161e' },
+    Comment = { fg = '#565f89', italic = true },
+    Search = { bg = '#3d59a1', fg = '#c0caf5' },
+    IncSearch = { bg = '#ff9e64', fg = '#15161e' },
+    MsgArea = { fg = '#a9b1d6' },
+  }
+  for k, v in pairs(color) do
+    vim.api.nvim_set_hl(0, k, v)
+  end
 end
 
 ---@param input_line_number string
