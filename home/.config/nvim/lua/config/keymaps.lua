@@ -3,15 +3,7 @@
 -- https://neovim.io/doc/user/lua.html#map()
 -- echo keyname: first press ctrl+v in insert mode, then press your key
 local n, i, x, c, t = 'n', 'i', 'x', 'c', 't'
-local map = function(arg)
-  local mode = arg.mode or n
-  local lhs = arg[1]
-  local rhs = arg[2]
-  arg.mode = nil
-  arg[1] = nil
-  arg[2] = nil
-  vim.keymap.set(mode, lhs, rhs, arg)
-end
+local map = Config.set_keymap
 
 local unmap = function(arg)
   if type(arg) == 'string' then vim.keymap.del(n, arg) end
@@ -20,6 +12,9 @@ local unmap = function(arg)
     vim.keymap.del(mode, lhs)
   end
 end
+unmap { 'grr', 'gri', 'gra', 'grn', 'grt' }
+unmap { '<tab>', mode = i } -- remove smart tab: https://github.com/neovim/neovim/commit/123f8d229eef05869ee4c98dfd4934c22a03b1f6
+
 map { 'j', '[', remap = true }
 map { 'l', ']', remap = true }
 map { '<Esc>', '<cmd>nohlsearch<CR>', desc = 'Clear Highlights On Search' }
@@ -73,33 +68,6 @@ map {
 }
 map { '<C-s>', '<cmd>w!<cr>', mode = { n, i }, desc = 'Save File' }
 
-map {
-  '<C-q>',
-  function()
-    local bufs = vim.fn.getbufinfo { buflisted = 1 }
-    if #bufs > 1 then
-      Snacks.bufdelete()
-      return
-    end
-    vim.cmd 'q'
-  end,
-  mode = { n, i },
-  desc = 'Close Buffer',
-}
-map {
-  '<leader>bf',
-  function()
-    local cwd = vim.uv.cwd() or vim.env.PWD
-    Snacks.bufdelete {
-      filter = function(buf)
-        local buf_name = vim.api.nvim_buf_get_name(buf)
-        return buf_name ~= '' and not vim.startswith(buf_name, cwd)
-      end,
-    }
-  end,
-  desc = 'Delete buffers not in cwd',
-}
-map { '<leader>bo', function() Snacks.bufdelete.other() end, desc = 'Delete Other Buffers' }
 map { '<C-S-q>', '<cmd>qa<cr>', desc = 'Quit All' }
 map { '<C-S-s>', '<cmd>noa w<cr><esc>', mode = { n, i }, desc = 'Save Without Format' }
 map {
@@ -140,55 +108,16 @@ map {
 }
 -- buffers
 map { '<leader>bn', function() require('util.scratch').select() end, desc = 'Scratch Buffer' }
+map { '<C-j>', '<cmd>bp<cr>' }
+map { '<C-l>', '<cmd>bn<cr>' }
 -- tabs
 map { '<C-tab>n', '<cmd>tab split<cr>', desc = 'New Tab' }
 map { '<C-tab><C-tab>', '<cmd>tabnext<cr>', desc = 'Next Tab' }
 map { '<C-tab>q', '<cmd>tabclose<cr>', desc = 'Close Tab' }
 
--- pickers
--- map { '<D-p>', function() Snacks.picker.files() end, desc = 'Find Files' }
-map { '<leader>ff', function() Snacks.picker.smart { filter = { cwd = true } } end, desc = 'Find Files' }
-map { '<leader>lg', function() Snacks.lazygit { cwd = vim.fn.expand '%:h' } end, desc = 'Lazygit' }
-map { '<leader>gf', function() Snacks.picker.git_log_file() end, desc = 'Current File Git History' }
-map { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Workspace diagnostics' }
-map { '<leader>sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' }
-map {
-  '<leader>fb',
-  function() Snacks.picker.buffers { actions = { delete = Snacks.picker.actions.bufdelete } } end,
-  desc = 'Buffers',
-}
-map {
-  '<leader>ss',
-  function()
-    Snacks.picker.lsp_symbols {
-      layout = { preset = 'vscode', preview = 'main' },
-      filter = {
-        lua = { 'Method', 'Function' },
-      },
-    }
-  end,
-}
-map {
-  '<leader>st',
-  function() Snacks.picker.todo_comments { keywords = { 'TODO', 'FIX', 'FIXME' } } end,
-  desc = 'Todo/Fix/Fixme',
-}
-map { '<leader>n', function() Snacks.picker.notifications() end, desc = 'Notification History' }
 map { '<leader>gg', function() Util.pick_git_files() end, desc = 'My Git Files' }
 map { 'ma', function() require('util.marker').add() end, desc = 'Add Marker' }
 map { 'mm', function() require('util.marker').pick() end, desc = 'List Markers' }
--- map { 'mm', function() Snacks.picker.marks() end, desc = 'List Marks' }
-map { '<leader><space>', function() Snacks.picker.grep() end, desc = 'Grep' }
-map { '<leader><space>', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = x }
-map { '<C-S-O>', function() Snacks.picker.resume() end, desc = 'Resumes Last Picker' }
--- lsp
-map { 'gd', function() Snacks.picker.lsp_definitions { jump = { reuse_win = false } } end, desc = '[G]oto [D]efinition' }
-map { 'gr', function() Snacks.picker.lsp_references() end, desc = '[G]oto [R]eferences' }
-unmap { 'grr', 'gri', 'gra', 'grn', 'grt' }
-unmap { '<tab>', mode = i } -- remove smart tab: https://github.com/neovim/neovim/commit/123f8d229eef05869ee4c98dfd4934c22a03b1f6
-map { 'gI', function() Snacks.picker.lsp_implementations() end, desc = '[G]oto [I]mplementation' }
-map { 'lr', function() Snacks.words.jump(vim.v.count1) end, desc = 'Next Reference' }
-map { 'jr', function() Snacks.words.jump(-vim.v.count1) end, desc = 'Prev Reference' }
 map { '<F2>', vim.lsp.buf.rename, desc = 'Rename Symbol' }
 map { '<leader>ca', vim.lsp.buf.code_action, desc = 'Code Action' }
 map { '<leader>cc', vim.lsp.codelens.run, desc = 'Run Codelens' }
@@ -201,25 +130,6 @@ map {
   '<leader><cr>',
   function() require('util.run_file').run_file() end,
   desc = 'Run File',
-}
-
--- terminal
-map { '<C-/>', 'C-_', mode = { 'i', 'n', 'v' }, remap = true }
-map {
-  '<C-_>',
-  function() Snacks.terminal() end,
-  mode = { n, i },
-  desc = 'Terminal (Root Dir)',
-}
-
-map {
-  '<C-S-/>',
-  function()
-    local file_dir = vim.fn.expand '%:h'
-    if file_dir and file_dir ~= '' then Snacks.terminal(nil, { cwd = file_dir }) end
-  end,
-  mode = { n, i },
-  desc = 'Terminal (File Dir)',
 }
 
 -- Add undo break-points
@@ -295,13 +205,29 @@ map {
   end,
   desc = 'Smart Hover',
 }
-map { 'v', function() require('util.treesitter').start_select() end, mode = n, desc = 'Visual mode' }
-map { 'v', function() require('util.treesitter').select_parent_node() end, mode = x, desc = 'Select parent node' }
+map {
+  'v',
+  function()
+    if vim.treesitter.get_parser(nil, nil, { error = false }) then
+      require('vim.treesitter._select').select_parent(vim.v.count1)
+    else
+      vim.lsp.buf.selection_range(vim.v.count1)
+    end
+  end,
+  mode = x,
+  desc = 'Select parent (outer) node',
+}
 map {
   '<bs>',
-  function() require('util.treesitter').restore_last_selection() end,
-  mode = x,
-  desc = 'Restore last selection',
+  function()
+    if vim.treesitter.get_parser(nil, nil, { error = false }) then
+      require('vim.treesitter._select').select_child(vim.v.count1)
+    else
+      vim.lsp.buf.selection_range(-vim.v.count1)
+    end
+  end,
+  mode = { x, o },
+  desc = 'Select child (inner) node',
 }
 
 -- map { '<C-k><C-k>', vim.lsp.buf.signature_help, mode = i, desc = 'Signature Help' }
@@ -349,15 +275,6 @@ map {
   desc = 'My Command Picker',
   mode = { n, x },
 }
-
-vim.defer_fn(function() -- 避免%被重新映射
-  map {
-    '%',
-    function() return require('util.treesitter').jump_parent_node_edge() or '%' end,
-    mode = { n, x },
-    remap = true,
-  }
-end, 1000)
 
 map {
   'jjf',

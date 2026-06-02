@@ -33,6 +33,8 @@ set -g status-right '%m-%d %H:%M'
 set -g monitor-activity on
 set -g visual-activity off
 
+set -g set-clipboard on
+
 # yazi image preview
 set -g allow-passthrough on
 set -ga update-environment TERM

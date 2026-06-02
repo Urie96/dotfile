@@ -51,18 +51,6 @@ au('TextYankPost', {
   end,
 })
 
--- au('User', {
---   group = ag 'disable-animate-for-blink',
---   pattern = 'BlinkCmpMenuOpen',
---   callback = function() vim.g.snacks_animate = false end,
--- })
---
--- au('User', {
---   group = ag 'restore-animate-for-blink',
---   pattern = 'BlinkCmpMenuClose',
---   callback = function() vim.g.snacks_animate = true end,
--- })
-
 au('FileType', {
   group = ag 'disable_spell',
   pattern = 'markdown',
@@ -92,56 +80,6 @@ au('BufReadPost', {
     local mark = vim.api.nvim_buf_get_mark(buf, '"')
     local lcount = vim.api.nvim_buf_line_count(buf)
     if mark[1] > 0 and mark[1] <= lcount then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
-  end,
-})
-
--- au('LspAttach', {
---   callback = function(args)
---     -- local buffer = args.buf ---@type number
---     local client = vim.lsp.get_client_by_id(args.data.client_id)
---     if not client then
---       return
---     end
---     if client.name == 'gopls' then
---       if not client.server_capabilities.semanticTokensProvider then
---         local semantic = client.config.capabilities.textDocument.semanticTokens
---         client.server_capabilities.semanticTokensProvider = {
---           full = true,
---           legend = {
---             tokenTypes = semantic.tokenTypes,
---             tokenModifiers = semantic.tokenModifiers,
---           },
---           range = true,
---         }
---       end
---     end
---   end,
--- })
-
-local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
-au({ 'User' }, {
-  pattern = 'CodeCompanionRequest*',
-  group = ag 'CodeCompanionFidgetHooks',
-  callback = function(request)
-    local model_name = request.data.adapter.formatted_name
-    local msg
-
-    if request.match == 'CodeCompanionRequestStarted' then
-      msg = string.format('[CodeCompanion](%s) starting...', model_name)
-    elseif request.match == 'CodeCompanionRequestStreaming' then
-      msg = string.format('[CodeCompanion](%s) streaming...', model_name)
-    else
-      msg = string.format('[CodeCompanion](%s) finished', model_name)
-    end
-
-    vim.notify(msg, 'info', {
-      id = 'code_companion_status',
-      title = 'Code Companion Status',
-      opts = function(notif)
-        notif.icon = request.match == 'CodeCompanionRequestFinished' and ' '
-          or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
-      end,
-    })
   end,
 })
 

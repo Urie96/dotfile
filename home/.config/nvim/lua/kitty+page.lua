@@ -27,45 +27,58 @@ function M.load_plugin(name)
   return true
 end
 
-function M.setup_flash()
-  if not M.load_plugin 'flash.nvim' then return false end
-  -- vim.cmd.packadd 'flash.nvim'
-  if package.loaded['flash'] then return true end
-  local flash = require 'flash'
-  flash.setup {
-    modes = {
-      char = {
-        highlight = { backdrop = false },
-        multi_line = false,
-      },
-    },
-  }
-  vim.api.nvim_set_hl(0, 'Substitute', { bg = '#ff757f', fg = '#1b1d2b' })
-  vim.keymap.set({ 'n', 'x' }, 's', function() flash.jump() end)
-  return true
-end
+local on_keys = function(keys, mode, callback)
+  if type(mode) == 'function' then
+    callback = mode
+    mode = 'n'
+  end
+  if type(mode) == 'string' then mode = { mode } end
 
-function M.setup_mini_ai()
-  if not M.load_plugin 'mini.ai' then return false end
-  require('mini.ai').setup { search_method = 'cover' }
-  return true
+  local loaded = false
+
+  for _, lhs in ipairs(keys) do
+    for _, m in ipairs(mode) do
+      vim.keymap.set(m, lhs, function()
+        pcall(vim.keymap.del, m, lhs)
+
+        if not loaded then
+          loaded = true
+          misc.safely('now', callback)
+        end
+
+        local feed_lhs = m:sub(-1) == 'a' and lhs .. '<C-]>' or lhs
+        local feed = vim.api.nvim_replace_termcodes('<Ignore>' .. feed_lhs, true, true, true)
+        vim.api.nvim_feedkeys(feed, 'i', false)
+      end, { expr = true })
+    end
+  end
 end
 
 function M.set_keymap(buf)
   require 'config.keymaps'
-  local map = function(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs, { buffer = buf }) end
+  local map = function(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs) end
   map('x', 'q', 'y<Cmd>qa!<CR>')
   map('n', 'q', '<Cmd>qa!<CR>')
   map('n', '<C-q>', '<Cmd>qa!<CR>')
-  map('n', 's', function()
-    vim.keymap.del('n', 's', { buffer = buf })
-    if not M.setup_flash() then return end
-    require('flash').jump()
+
+  on_keys({ 's' }, { 'n', 'x', 'o' }, function()
+    vim.pack.add { 'https://github.com/folke/flash.nvim' }
+
+    require('flash').setup {
+      modes = {
+        char = {
+          highlight = { backdrop = false },
+          multi_line = false,
+        },
+      },
+    }
+    vim.keymap.set({ 'n', 'x', 'o' }, 's', function() require('flash').jump() end)
+    vim.api.nvim_set_hl(0, 'Substitute', { bg = '#ff757f', fg = '#1b1d2b' })
   end)
-  map('n', 'v', function()
-    vim.keymap.del('n', 'v', { buffer = buf })
-    M.setup_mini_ai()
-    vim.cmd 'normal! v'
+
+  on_keys({ 'v' }, function()
+    vim.pack.add { 'https://github.com/nvim-mini/mini.nvim' }
+    require('mini.ai').setup { search_method = 'cover' }
   end)
 end
 

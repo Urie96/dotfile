@@ -1,60 +1,48 @@
-return {
-  {
-    'mfussenegger/nvim-dap',
-    keys = {
-      {
-        '<leader>dB',
-        function() require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ') end,
-        desc = 'Breakpoint Condition',
-      },
-      { '<leader>db', function() require('dap').toggle_breakpoint() end, desc = 'Toggle Breakpoint' },
-      { '<leader>dc', function() require('dap').continue() end, desc = 'Run/Continue' },
-      -- { '<leader>da', function() require('dap').continue { before = get_args } end, desc = 'Run with Args' },
-      { '<leader>dC', function() require('dap').run_to_cursor() end, desc = 'Run to Cursor' },
-      { '<leader>dg', function() require('dap').goto_() end, desc = 'Go to Line (No Execute)' },
-      { '<leader>di', function() require('dap').step_into() end, desc = 'Step Into' },
-      -- { '<leader>dk', function() require('dap').down() end, desc = 'Down' },
-      -- { '<leader>dk', function() require('dap').up() end, desc = 'Up' },
-      -- { '<leader>dl', function() require('dap').run_last() end, desc = 'Run Last' },
-      { '<leader>do', function() require('dap').step_out() end, desc = 'Step Out' },
-      { '<leader>dk', function() require('dap').step_over() end, desc = 'Step Over' },
-      { '<leader>dP', function() require('dap').pause() end, desc = 'Pause' },
-      { '<leader>dr', function() require('dap').repl.toggle() end, desc = 'Toggle REPL' },
-      { '<leader>ds', function() require('dap').session() end, desc = 'Session' },
-      { '<leader>dt', function() require('dap').terminate() end, desc = 'Terminate' },
-      { '<leader>dw', function() require('dap.ui.widgets').hover() end, desc = 'Widgets' },
-    },
-    config = function()
-      local sign_define = function(name, icon, texthl, hl)
-        vim.fn.sign_define(name, { text = icon, texthl = texthl, linehl = hl, numhl = hl })
-      end
-      sign_define('DapStopped', '󰁕 ', 'DiagnosticWarn', 'DapStoppedLine')
-      sign_define('DapBreakpoint', ' ')
-      sign_define('DapBreakpointCondition', ' ')
-      sign_define('DapBreakpointRejected', ' ', 'DiagnosticError')
-      sign_define('DapLogPoint', '.>')
-    end,
-    dependencies = {
-      {
-        'rcarriga/nvim-dap-ui',
-        keys = {
-          { '<leader>du', function() require('dapui').toggle {} end, desc = 'Dap UI' },
-          { '<leader>de', function() require('dapui').eval() end, desc = 'Eval', mode = { 'n', 'v' } },
-        },
-        dependencies = { 'nvim-neotest/nvim-nio' },
-        config = function()
-          require('dapui').setup()
-          local dap, dapui = require 'dap', require 'dapui'
-          dap.listeners.before.attach.dapui_config = function() dapui.open() end
-          dap.listeners.before.launch.dapui_config = function() dapui.open() end
-          dap.listeners.before.event_terminated.dapui_config = function() dapui.close() end
-          dap.listeners.before.event_exited.dapui_config = function() dapui.close() end
-        end,
-      },
-      {
-        'leoluz/nvim-dap-go',
-        config = function() require('dap-go').setup {} end,
-      },
-    },
-  },
-}
+Config.on_keys({ '<leader>du' }, function()
+  vim.pack.add {
+    'https://github.com/mfussenegger/nvim-dap',
+    'https://github.com/rcarriga/nvim-dap-ui',
+    'https://github.com/nvim-neotest/nvim-nio',
+    'https://github.com/leoluz/nvim-dap-go',
+  }
+  local sign_define = function(name, icon, texthl, hl)
+    vim.fn.sign_define(name, { text = icon, texthl = texthl, linehl = hl, numhl = hl })
+  end
+  sign_define('DapStopped', '󰁕 ', 'DiagnosticWarn', 'DapStoppedLine')
+  sign_define('DapBreakpoint', ' ')
+  sign_define('DapBreakpointCondition', ' ')
+  sign_define('DapBreakpointRejected', ' ', 'DiagnosticError')
+  sign_define('DapLogPoint', '.>')
+
+  local dapui = require 'dapui'
+  local dap = require 'dap'
+  local dapgo = require 'dapgo'
+  dapui.setup()
+  dapgo.setup {}
+  dap.listeners.before.attach.dapui_config = function() dapui.open() end
+  dap.listeners.before.launch.dapui_config = function() dapui.open() end
+  dap.listeners.before.event_terminated.dapui_config = function() dapui.close() end
+  dap.listeners.before.event_exited.dapui_config = function() dapui.close() end
+
+  vim.keymap.set('n', '<leader>du', function() dapui.toggle {} end, { desc = 'Dap UI' })
+  vim.keymap.set({ 'n', 'v' }, '<leader>de', function() dapui.eval() end, { desc = 'Eval' })
+
+  vim.keymap.set(
+    'n',
+    '<leader>dB',
+    function() dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ') end,
+    { desc = 'Breakpoint Condition' }
+  )
+  vim.keymap.set('n', '<leader>db', function() dap.toggle_breakpoint() end, { desc = 'Toggle Breakpoint' })
+  vim.keymap.set('n', '<leader>dc', function() dap.continue() end, { desc = 'Run/Continue' })
+  vim.keymap.set('n', '<leader>dC', function() dap.run_to_cursor() end, { desc = 'Run to Cursor' })
+  vim.keymap.set('n', '<leader>dg', function() dap.goto_() end, { desc = 'Go to Line (No Execute)' })
+  vim.keymap.set('n', '<leader>di', function() dap.step_into() end, { desc = 'Step Into' })
+  vim.keymap.set('n', '<leader>do', function() dap.step_out() end, { desc = 'Step Out' })
+  vim.keymap.set('n', '<leader>dk', function() dap.step_over() end, { desc = 'Step Over' })
+  vim.keymap.set('n', '<leader>dP', function() dap.pause() end, { desc = 'Pause' })
+  vim.keymap.set('n', '<leader>dr', function() dap.repl.toggle() end, { desc = 'Toggle REPL' })
+  vim.keymap.set('n', '<leader>ds', function() dap.session() end, { desc = 'Session' })
+  vim.keymap.set('n', '<leader>dt', function() dap.terminate() end, { desc = 'Terminate' })
+  vim.keymap.set('n', '<leader>dw', function() require('dap.ui.widgets').hover() end, { desc = 'Widgets' })
+end)

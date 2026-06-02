@@ -1,249 +1,107 @@
-return {
-  {
-    'saghen/blink.cmp',
-    version = '*',
-    event = { 'InsertEnter', 'CmdlineEnter' },
-    config = function()
-      local snippets_dir = { vim.fn.stdpath 'config' .. '/snippets' }
-      local cwd = vim.uv.cwd() or vim.env.PWD
-      local vscode_dir = cwd ~= vim.env.HOME
-        and vim.fs.find('.vscode', { upward = true, stop = vim.env.HOME, limit = 1, path = cwd })
-      if vscode_dir and #vscode_dir > 0 then
-        vim.notify(string.format("Snippets in '%s' will be loaded", vscode_dir[1]))
-        table.insert(snippets_dir, 1, vscode_dir[1])
-      end
+Config.on_event('InsertEnter', function()
+  vim.pack.add {
+    -- { src = 'https://github.com/saghen/blink.lib', version = vim.version.range '1.*' },
+    { src = 'https://github.com/saghen/blink.cmp', version = vim.version.range '*' },
+  }
+  local cmp = require 'blink.cmp'
 
-      require('blink.cmp').setup {
-        sources = {
-          default = { 'lsp', 'path', 'snippets', 'buffer' },
-          providers = {
-            snippets = { opts = { search_paths = snippets_dir } },
-            lsp = {
-              transform_items = function(ctx, items)
-                local item_kind = require('blink.cmp.types').CompletionItemKind
-                local ft = vim.bo[ctx.bufnr].filetype
+  local snippets_dir = { vim.fn.stdpath 'config' .. '/snippets' }
+  local cwd = vim.uv.cwd() or vim.env.PWD
+  local vscode_dir = cwd ~= vim.env.HOME
+    and vim.fs.find('.vscode', { upward = true, stop = vim.env.HOME, limit = 1, path = cwd })
+  if vscode_dir and #vscode_dir > 0 then
+    vim.notify(string.format("Snippets in '%s' will be loaded", vscode_dir[1]))
+    table.insert(snippets_dir, 1, vscode_dir[1])
+  end
 
-                local out = vim.tbl_filter(function(item)
-                  if item.kind == item_kind.Text then return false end
-                  if ft == 'go' and item.kind == item_kind.Snippet then return false end
-                  return true
-                end, items)
+  cmp.setup {
+    sources = {
+      default = { 'lsp', 'path', 'snippets', 'buffer' },
+      providers = {
+        snippets = { opts = { search_paths = snippets_dir } },
+        lsp = {
+          transform_items = function(ctx, items)
+            local item_kind = require('blink.cmp.types').CompletionItemKind
+            local ft = vim.bo[ctx.bufnr].filetype
 
-                for _, item in ipairs(out) do
-                  if item.kind == item_kind.Snippet then
-                    item.score_offset = item.score_offset - 3 -- demote
-                  elseif ft == 'go' and (item.kind == item_kind.Module or item.kind == item_kind.Keyword) then
-                    item.score_offset = item.score_offset - 3
-                  end
-                end
-                return out
-              end,
-            },
-            lazydev = {
-              name = 'LazyDev',
-              module = 'lazydev.integrations.blink',
-              score_offset = 100, -- show at a higher priority than lsp
-            },
-          },
-          per_filetype = { lua = { inherit_defaults = true, 'lazydev' } },
+            local out = vim.tbl_filter(function(item)
+              if item.kind == item_kind.Text then return false end
+              if ft == 'go' and item.kind == item_kind.Snippet then return false end
+              return true
+            end, items)
+
+            for _, item in ipairs(out) do
+              if item.kind == item_kind.Snippet then
+                item.score_offset = item.score_offset - 3 -- demote
+              elseif ft == 'go' and (item.kind == item_kind.Module or item.kind == item_kind.Keyword) then
+                item.score_offset = item.score_offset - 3
+              end
+            end
+            return out
+          end,
         },
-        keymap = {
-          preset = 'none',
-          ['<Tab>'] = {
-            'select_and_accept',
-            function(cmp)
-              local col = vim.api.nvim_win_get_cursor(0)[2]
-              if vim.api.nvim_get_current_line():sub(1, col):match '^%s*$' == nil then return cmp.show() end
-            end,
-            'fallback',
-          },
-          ['<Up>'] = { 'select_prev', 'fallback' },
-          ['<Down>'] = { 'select_next', 'fallback' },
-          ['<PageUp>'] = { 'scroll_documentation_up', 'fallback' },
-          ['<PageDown>'] = { 'scroll_documentation_down', 'fallback' },
-          ['<C-l>'] = { 'snippet_forward', 'fallback' },
-          ['<C-j>'] = { 'snippet_backward', 'fallback' },
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          score_offset = 100, -- show at a higher priority than lsp
         },
-        completion = {
-          keyword = { range = 'prefix' },
-          menu = { draw = { treesitter = { 'lsp' } } },
-          documentation = { auto_show = true, auto_show_delay_ms = 200 },
-        },
-        cmdline = {
-          keymap = {
-            preset = 'none',
-            ['<Tab>'] = { 'select_and_accept', 'fallback' },
-            ['<Up>'] = { 'select_prev', 'fallback' },
-            ['<Down>'] = { 'select_next', 'fallback' },
-          },
-          completion = {
-            menu = { auto_show = function(ctx) return vim.fn.getcmdtype() == ':' end },
-          },
-        },
-      }
-    end,
-  },
-  {
-    'folke/flash.nvim',
-    event = 'VeryLazy',
-    keys = {
-      { 's', mode = { 'n', 'x', 'o' }, function() require('flash').jump() end, desc = 'Flash' },
-      { 'S', mode = { 'n', 'o', 'x' }, function() require('flash').treesitter() end, desc = 'Flash Treesitter' },
+      },
+      per_filetype = { lua = { inherit_defaults = true, 'lazydev' } },
     },
-    config = function()
-      require('flash').setup {
-        modes = {
-          char = {
-            highlight = { backdrop = false },
-            multi_line = false,
-          },
-        },
-      }
-    end,
-  },
-  {
-    'nvim-mini/mini.ai',
-    event = 'VeryLazy',
-    config = function()
-      local ai = require 'mini.ai'
-      ai.setup {
-        n_lines = 500,
-        search_method = 'cover',
-        custom_textobjects = {
-          o = ai.gen_spec.treesitter { -- code block
-            a = { '@block.outer', '@conditional.outer', '@loop.outer' },
-            i = { '@block.inner', '@conditional.inner', '@loop.inner' },
-          },
-          f = ai.gen_spec.treesitter { a = '@function.outer', i = '@function.inner' }, -- function
-          c = ai.gen_spec.treesitter { a = '@class.outer', i = '@class.inner' }, -- class
-          u = ai.gen_spec.function_call(), -- u for "Usage"
-        },
-        mappings = {
-          goto_left = 'jj',
-          goto_right = 'll',
-        },
-      }
-    end,
-  },
-  {
-    'windwp/nvim-ts-autotag',
-    event = 'VeryLazy',
-    enabled = false,
-    config = function()
-      require('nvim-ts-autotag').setup {
-        opts = {
-          enable_close_on_slash = true,
-        },
-      }
-    end,
-  },
-  {
-    'windwp/nvim-autopairs',
-    event = 'InsertEnter',
-    config = function()
-      local npairs = require 'nvim-autopairs'
-      local ts_conds = require 'nvim-autopairs.ts-conds'
-      local cond = require 'nvim-autopairs.conds'
+    keymap = {
+      preset = 'none',
+      ['<Tab>'] = {
+        'select_and_accept',
+        function(cmp)
+          local col = vim.api.nvim_win_get_cursor(0)[2]
+          if vim.api.nvim_get_current_line():sub(1, col):match '^%s*$' == nil then return cmp.show() end
+        end,
+        'fallback',
+      },
+      ['<Up>'] = { 'select_prev', 'fallback' },
+      ['<Down>'] = { 'select_next', 'fallback' },
+      ['<PageUp>'] = { 'scroll_documentation_up', 'fallback' },
+      ['<PageDown>'] = { 'scroll_documentation_down', 'fallback' },
+      ['<C-l>'] = { 'snippet_forward', 'fallback' },
+      ['<C-j>'] = { 'snippet_backward', 'fallback' },
+    },
+    completion = {
+      keyword = { range = 'prefix' },
+      menu = { draw = { treesitter = { 'lsp' } } },
+      documentation = { auto_show = true, auto_show_delay_ms = 200 },
+    },
+    cmdline = {
+      keymap = {
+        preset = 'none',
+        ['<Tab>'] = { 'select_and_accept', 'fallback' },
+        ['<Up>'] = { 'select_prev', 'fallback' },
+        ['<Down>'] = { 'select_next', 'fallback' },
+      },
+      completion = {
+        menu = { auto_show = function(ctx) return vim.fn.getcmdtype() == ':' end },
+      },
+    },
+  }
+end)
 
-      npairs.setup {
-        fast_wrap = {
-          map = '<C-w>',
-          before_key = 'j',
-          after_key = 'l',
-          cursor_pos_before = false,
-        },
-      }
-      -- ~/.local/share/nvim/lazy/nvim-autopairs/lua/nvim-autopairs/rules/basic.lua
-      npairs
-        .get_rules("''")[1]
-        :with_pair(ts_conds.is_not_ts_node { 'indented_string_expression', 'string_fragment' })
-        :with_pair(cond.not_after_regex '[%w$]')
-    end,
-  },
-  {
-    'nvim-mini/mini.pairs',
-    event = 'InsertEnter',
-    enabled = false,
-    config = function()
-      require('mini.pairs').setup {
-        mappings = {
-          ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\].', register = { bs = false } },
-          ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\].', register = { bs = false } },
-          ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\].', register = { bs = false } },
+Config.on_keys({ 's' }, { 'n', 'x', 'o' }, function()
+  vim.pack.add { 'https://github.com/folke/flash.nvim' }
 
-          -- [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\].', register = { bs = false } },
-          -- [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\].', register = { bs = false } },
-          -- ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\].', register = { bs = false } },
+  require('flash').setup {
+    modes = {
+      char = {
+        highlight = { backdrop = false },
+        multi_line = false,
+      },
+    },
+  }
+  vim.keymap.set({ 'n', 'x', 'o' }, 's', function() require('flash').jump() end)
+end)
 
-          ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^\\].', register = { cr = false, bs = false } },
-          ["'"] = {
-            action = 'closeopen',
-            pair = "''",
-            neigh_pattern = '[^%a\\].',
-            register = { cr = false, bs = false },
-          },
-          ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^\\].', register = { cr = false, bs = false } },
-        },
-      }
-    end,
-  },
-  {
-    'nvim-mini/mini.surround',
-    keys = {
-      { '()', 'gza(', mode = 'x', remap = true },
-      { '[]', 'gza[', mode = 'x', remap = true },
-      { '{}', 'gza{', mode = 'x', remap = true },
-      { '"', 'gza"', mode = 'x', remap = true },
-      { "'", "gza'", mode = 'x', remap = true },
-      { 'gz', '', desc = '+surround' },
-    },
-    config = function()
-      require('mini.surround').setup {
-        custom_surroundings = {
-          -- default insert spaces, custom to remove spaces
-          ['('] = { output = { left = '(', right = ')' } },
-          ['['] = { output = { left = '[', right = ']' } },
-          ['{'] = { output = { left = '{', right = '}' } },
-        },
-        mappings = {
-          add = 'gza', -- Add surrounding in Normal and Visual modes
-          delete = 'gzd', -- Delete surrounding
-          find = 'gzf', -- Find surrounding (to the right)
-          find_left = 'gzF', -- Find surrounding (to the left)
-          highlight = 'gzh', -- Highlight surrounding
-          replace = 'gzr', -- Replace surrounding
-          update_n_lines = 'gzn', -- Update `n_lines`
-        },
-      }
-    end,
-  },
-  -- {
-  --   'nvim-mini/mini.splitjoin',
-  --   keys = 'gs',
-  --   config = function() require('mini.splitjoin').setup { mappings = { toggle = 'gs' } } end,
-  -- },
-  {
-    'Wansmer/treesj',
-    keys = {
-      { 'gs', function() require('treesj').toggle() end },
-    },
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    config = function() require('treesj').setup { use_default_keymaps = false, max_join_length = 500 } end,
-  },
-  {
-    'danymat/neogen',
-    cmd = 'Neogen',
-    keys = {
-      { '<leader>cg', function() require('neogen').generate() end, desc = 'Generate Annotations (Neogen)' },
-    },
-    config = function() require('neogen').setup { snippet_engine = 'nvim' } end,
-  },
-  {
-    'nvim-mini/mini.align',
-    version = false,
-    keys = {
-      { 'ga', mode = 'x' },
-    },
-    config = function() require('mini.align').setup {} end,
-  },
-}
+Config.on_keys({ '<leader>cg' }, function()
+  vim.pack.add { 'https://github.com/danymat/neogen' }
+
+  local neogen = require 'neogen'
+  neogen.setup { snippet_engine = 'nvim' }
+  vim.keymap.set('n', '<leader>cg', function() neogen.generate() end, { desc = 'Generate Annotations (Neogen)' })
+end)
