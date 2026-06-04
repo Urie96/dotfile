@@ -1,29 +1,3 @@
-local M = {}
-
-setmetatable(M, {
-  __index = function(t, k)
-    ---@diagnostic disable-next-line: no-unknown
-    t[k] = require('util.' .. k)
-    return rawget(t, k)
-  end,
-})
-
-_G.Util = M
-
-local function start_profile()
-  -- example for lazy.nvim
-  -- change this to the correct path for your plugin manager
-  local snacks = vim.fn.stdpath 'data' .. '/lazy/snacks.nvim'
-  vim.opt.rtp:append(snacks)
-  require('snacks.profiler').startup {
-    startup = {
-      -- event = 'VimEnter', -- stop profiler on this event. Defaults to `VimEnter`
-      -- event = "UIEnter",
-      event = 'VeryLazy',
-    },
-  }
-end
-
 ---@param url string
 local function kitty_open_url(url)
   local kitty_cmd_string = vim.json.encode {
@@ -36,37 +10,19 @@ local function kitty_open_url(url)
   vim.fn.chansend(vim.v.stderr, tty_string)
 end
 
-local function file_opener()
+if vim.env.SSH_TTY then
   local orig_open = vim.ui.open
-  if vim.env.SSH_TTY == nil then return orig_open end
-  return function(path, opts)
+  vim.ui.open = function(path, opts)
     if opts ~= nil and #opts.cmd > 0 then orig_open(path, opts) end
     kitty_open_url(path)
   end
 end
 
-function M.setup()
-  if vim.env.PROF then start_profile() end
-
-  vim.ui.open = file_opener()
-
-  require 'util.stdlib_extend'
-end
-
----@param key any
----@return number
-function M.hash_to_int(key)
-  if type(key) == 'table' then key = table.concat(key, ':') end
-  local h = 5381
-  for c in tostring(key):gmatch '.' do
-    h = (bit.lshift(h, 5) + h) + string.byte(c)
-  end
-  return h
-end
+_G.Util = {}
 
 ---@param unix number
 ---@return string
-function M.relative_date_desc(unix)
+function Util.relative_date_desc(unix)
   if not unix then return '-' end
   local secs = os.time() - unix
   if secs < 60 then
@@ -85,5 +41,3 @@ function M.relative_date_desc(unix)
     return string.format('%d年前', secs / 3600 / 24 / 365)
   end
 end
-
-return M

@@ -115,7 +115,7 @@ map { '<C-tab>n', '<cmd>tab split<cr>', desc = 'New Tab' }
 map { '<C-tab><C-tab>', '<cmd>tabnext<cr>', desc = 'Next Tab' }
 map { '<C-tab>q', '<cmd>tabclose<cr>', desc = 'Close Tab' }
 
-map { '<leader>gg', function() Util.pick_git_files() end, desc = 'My Git Files' }
+map { '<leader>gg', function() require('util.git_files').pick() end, desc = 'My Git Files' }
 map { 'ma', function() require('util.marker').add() end, desc = 'Add Marker' }
 map { 'mm', function() require('util.marker').pick() end, desc = 'List Markers' }
 map { '<F2>', vim.lsp.buf.rename, desc = 'Rename Symbol' }

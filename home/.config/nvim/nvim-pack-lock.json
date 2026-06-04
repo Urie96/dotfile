@@ -5,6 +5,10 @@
       "src": "https://github.com/saghen/blink.cmp",
       "version": ">=0.0.0"
     },
+    "codeverse.vim": {
+      "rev": "ae41d521b2373c6d86986f0337496c664967585b",
+      "src": "https://code.byted.org/chenjiaqi.cposture/codeverse.vim.git"
+    },
     "diffview.nvim": {
       "rev": "4516612fe98ff56ae0415a259ff6361a89419b0a",
       "src": "https://github.com/sindrets/diffview.nvim"

@@ -1,3 +1,5 @@
+local M = {}
+
 local get_color = (function()
   local colors = { 'Constant', 'Statement', 'Keyword', 'String', 'Directory' }
   local i = 0
@@ -143,6 +145,8 @@ local function confirm(picker, _, action)
   end, 100)
 end
 
-return function()
+function M.pick()
   Snacks.picker { finder = git_file_finder, format = git_file_formatter, preview = git_file_previewer, confirm = confirm }
 end
+
+return M

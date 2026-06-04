@@ -2,6 +2,7 @@ if vim.g.vscode then return end
 vim.loader.enable() -- Enable faster startup by caching compiled Lua modules
 
 require 'config.options'
+require 'config.func'
 
 require 'plugins.global_var'
 require 'plugins.snacks'
