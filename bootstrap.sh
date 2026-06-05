@@ -58,7 +58,7 @@ else
 fi
 
 # ── 3. Install ───────────────────────────────────────────────────────
-msg "运行 install.py"
-python3 ./install.py --backup-suffix .bak
+msg "安装 dotfile"
+python3 ./install.sh --backup-suffix .bak
 
 msg "安装完成 ✓"
