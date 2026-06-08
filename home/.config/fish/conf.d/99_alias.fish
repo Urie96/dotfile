@@ -42,6 +42,8 @@ abbr --add -- rsync 'rsync -auEzhv --mkpath --progress'
 abbr --add -- tldr 'tldr -o'
 abbr --add -- vi nvim
 abbr --add -- which 'type -a'
+# pi coding agent
+abbr --add -- pid 'pi --model deepseek/deepseek-v4-pro --models deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash'
 
 # Aliases
 alias gitignore 'curl -sL https://www.gitignore.io/api/$argv'

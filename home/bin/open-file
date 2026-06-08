@@ -83,7 +83,8 @@ nvim() {
     touch -m -- "$p" || true
     cd "$p"
     if [[ -z "${SSH_CONNECTION:-}" ]]; then
-      if slim-kitten @ focus-window --match "title:\"^nvim: ${PWD/#$HOME/\~}\$\"" &>/dev/null; then
+      local nvim_window_name="VI:$(basename "$PWD")"
+      if slim-kitten @ focus-window --match "title:\"^${nvim_window_name}\$\"" &>/dev/null; then
         exit
       fi
     fi

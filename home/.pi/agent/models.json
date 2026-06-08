@@ -58,12 +58,6 @@
           "contextWindow": 1000000,
           "input": ["text", "image"],
           "reasoning": true
-        },
-        {
-          "id": "gpt-5.4-2026-03-05",
-          "contextWindow": 1000000,
-          "input": ["text", "image"],
-          "reasoning": true
         }
       ]
     },
@@ -76,12 +70,6 @@
           "id": "gpt-5.4-2026-03-05",
           "contextWindow": 1000000,
           "input": ["text", "image"],
-          "reasoning": true
-        },
-        {
-          "id": "ali-deepseek-v4-pro",
-          "contextWindow": 1000000,
-          "input": ["text"],
           "reasoning": true
         }
       ]

@@ -1,8 +1,11 @@
 {
   "lastChangelogVersion": "0.75.3",
-  "defaultProvider": "yybbcode",
-  "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "medium",
-  "enabledModels": ["gpt-5.*", "MiniMax-*", "deepseek-*"],
+  "defaultProvider": "modelhub",
+  "defaultModel": "gpt-5.4-2026-03-05",
+  "defaultThinkingLevel": "high",
+  "enabledModels": [
+    "yybbcode/gpt-5.5",
+    "deepseek-*"
+  ],
   "theme": "dracula"
 }
