@@ -24,7 +24,7 @@ kitty_sesh_preview() {
     ;;
   d)
     printf '%s\n\n' "$2"
-    ls "$2" 2>/dev/null | head -200
+    ls --color=always "$2" | head -70
     ;;
   esac
 }
@@ -61,6 +61,8 @@ fi
 
 SHELL="$bash_path" selection="$(kitty_sesh_items | fzf \
   --prompt='kitty> ' \
+  --header='enter: switch/open  ctrl-e: open dir in nvim' \
+  --preview-window=border-left \
   --ansi \
   --delimiter=$'\t' \
   --with-nth=3 \

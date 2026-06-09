@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PATH="$HOME/bin:/etc/profiles/per-user/$USER/bin/:$PATH"
+
+prog="${0##*/}"
+
+die() {
+  printf '%s: %s\n' "$prog" "$*" >&2
+  exit 1
+}
+
+session_dir_for() {
+  local dir="$1"
+  local abs stripped encoded
+
+  abs="$(cd "$dir" && pwd -P)" || return
+  stripped="${abs#/}"
+  encoded="${stripped//\//-}"
+  printf '%s/.pi/agent/sessions/--%s--\n' "$HOME" "$encoded"
+}
+
+user_text_jq='def content_text:
+  if type == "string" then .
+  elif type == "array" then
+    [ .[]
+      | if type == "string" then .
+        elif type == "object" and (.type // "") == "text" then (.text // "")
+        else empty
+        end
+    ] | join("\n")
+  else ""
+  end;
+.message.content | content_text'
+
+first_user_query() {
+  local file="$1"
+  grep -m 1 '"message":{"role":"user"' -- "$file" |
+    jq -r "$user_text_jq" 2>/dev/null
+}
+
+preview_user_messages() {
+  local file="$1"
+
+  {
+    printf '# Pi Session\n\n'
+    printf '`%s`\n\n' "$file"
+
+    grep '"message":{"role":"user"' -- "$file" |
+      jq -r '
+          def content_text:
+            if type == "string" then .
+            elif type == "array" then
+              [ .[]
+                | if type == "string" then .
+                  elif type == "object" and (.type // "") == "text" then (.text // "")
+                  else empty
+                  end
+              ] | join("\n")
+            else ""
+            end;
+          "## [" + (.timestamp // "no timestamp") + "] user\n\n" + (.message.content | content_text) + "\n\n---\n"
+        ' 2>/dev/null || true
+  } | CLICOLOR_FORCE=1 glow -s dark -
+}
+
+session_items() {
+  local session_dir="$1"
+  local file query
+
+  find "$session_dir" -maxdepth 1 -type f -name '*.jsonl' -print |
+    sort -r |
+    while IFS= read -r file; do
+      query="$(first_user_query "$file" || true)"
+      [[ -n "$query" ]] || query="(no user message)"
+      query="${query//$'\t'/ }"
+      query="${query//$'\n'/ }"
+      printf '%s\t%s\n' "$file" "$query"
+    done
+}
+
+main() {
+  local target_dir="${1:-.}"
+  local session_dir selection file bash_path
+
+  command -v glow >/dev/null 2>&1 || die 'missing required command: glow'
+
+  session_dir="$(session_dir_for "$target_dir")" || die "failed to resolve directory: $target_dir"
+  [[ -d "$session_dir" ]] || die "session directory not found: $session_dir"
+
+  export -f preview_user_messages
+
+  bash_path="${BASH:-}"
+  if [[ -z "$bash_path" ]]; then
+    bash_path="$(command -v bash)" || die 'failed to find bash'
+  fi
+
+  SHELL="$bash_path" selection="$(session_items "$session_dir" | fzf \
+    --prompt='pi sessions> ' \
+    --delimiter=$'\t' \
+    --with-nth=2 \
+    --nth=2 \
+    --no-sort \
+    --preview-window='right:50%,wrap,border-left,follow' \
+    --preview 'preview_user_messages {1}')" || exit 0
+
+  file="${selection%%$'\t'*}"
+  [[ -n "$file" ]] || exit 0
+  exec pi --session "$file"
+}
+
+main "$@"

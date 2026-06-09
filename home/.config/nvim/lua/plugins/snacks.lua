@@ -7,16 +7,18 @@ local function session_name() return vim.fn.getcwd():gsub('[^%w_-]', '_') end
 Config.now(function()
   require('mini.sessions').setup { autowrite = false }
 
-  -- 自动命令：在退出前如果没有活动会话，则写一个基于 pwd 的会话
-  vim.api.nvim_create_autocmd('VimLeavePre', {
-    callback = function()
-      if vim.v.this_session == '' then
-        require('mini.sessions').write(session_name(), { force = true })
-      else
-        require('mini.sessions').write(nil, { force = true })
-      end
-    end,
-  })
+  if vim.fn.argc() == 0 then
+    -- 自动命令：在退出前如果没有活动会话，则写一个基于 pwd 的会话
+    vim.api.nvim_create_autocmd('VimLeavePre', {
+      callback = function()
+        if vim.v.this_session == '' then
+          require('mini.sessions').write(session_name(), { force = true })
+        else
+          require('mini.sessions').write(nil, { force = true })
+        end
+      end,
+    })
+  end
 end)
 
 -- Snacks ================================================================
