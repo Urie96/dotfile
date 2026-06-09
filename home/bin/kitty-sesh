@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export PATH="$HOME/bin:/etc/profiles/per-user/bytedance/bin/:$PATH"
+export PATH="$HOME/bin:/etc/profiles/per-user/$USER/bin/:$PATH"
 
 press_any_key() {
   if [[ -r /dev/tty ]]; then
@@ -30,7 +30,7 @@ kitty_sesh_preview() {
 }
 
 kitty_sesh_items() {
-  kitten @ ls |
+  kitten @ ls --match 'not state:focused' |
     jq -r '
       .[].tabs[].windows[]
       | [
@@ -61,7 +61,6 @@ fi
 
 SHELL="$bash_path" selection="$(kitty_sesh_items | fzf \
   --prompt='kitty> ' \
-  --height=80% \
   --ansi \
   --delimiter=$'\t' \
   --with-nth=3 \

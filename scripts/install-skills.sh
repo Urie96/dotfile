@@ -10,4 +10,4 @@ skills-add mattpocock/skills --skill grill-with-docs
 
 skills-add tavily-ai/skills --skill tavily-search
 uv tool install tavily-cli
-tvly login --api-key "$(rbw get tavily-api-key)"
+# tvly login --api-key "$(rbw get tavily-api-key)"
