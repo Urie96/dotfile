@@ -52,7 +52,20 @@ kitty_sesh_items() {
   done < <(zoxide query --list)
 }
 
-export -f kitty_sesh_preview
+kitty_sesh_delete() {
+  [[ $# -ge 2 ]] || return 0
+
+  case "$1" in
+  w)
+    kitten @ close-window --match "id:$2"
+    ;;
+  d)
+    zoxide remove "$2"
+    ;;
+  esac
+}
+
+export -f press_any_key die kitty_sesh_preview kitty_sesh_items kitty_sesh_delete
 
 bash_path="${BASH:-}"
 if [[ -z "$bash_path" ]]; then
@@ -61,7 +74,7 @@ fi
 
 SHELL="$bash_path" selection="$(kitty_sesh_items | fzf \
   --prompt='kitty> ' \
-  --header='enter: switch/open  ctrl-e: open dir in nvim' \
+  --header='enter: switch/open  ctrl-e: open dir in nvim  ctrl-d: close/remove' \
   --preview-window=border-left \
   --ansi \
   --delimiter=$'\t' \
@@ -70,6 +83,7 @@ SHELL="$bash_path" selection="$(kitty_sesh_items | fzf \
   --no-sort \
   --exact \
   --expect=ctrl-e \
+  --bind 'ctrl-d:execute-silent(kitty_sesh_delete {1} {2})+reload(kitty_sesh_items)' \
   --preview-window='right:70%,nowrap' \
   --preview 'kitty_sesh_preview {1} {2}')" || exit 0
 

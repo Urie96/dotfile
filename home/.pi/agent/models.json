@@ -49,7 +49,7 @@
       ]
     },
     "modelhub-response": {
-      "baseUrl": "https://aidp.bytedance.net/api/modelhub/online",
+      "baseUrl": "https://search.bytedance.net/gpt/openapi/online",
       "api": "openai-responses",
       "apiKey": "MODELHUB_API_KEY",
       "models": [

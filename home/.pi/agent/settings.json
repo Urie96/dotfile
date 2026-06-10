@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.75.3",
-  "defaultProvider": "modelhub",
-  "defaultModel": "gpt-5.4-2026-03-05",
+  "defaultProvider": "modelhub-response",
+  "defaultModel": "gpt-5.5-2026-04-24",
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "yybbcode/gpt-5.5",
