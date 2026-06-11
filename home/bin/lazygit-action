@@ -69,11 +69,14 @@ cmd_mr() {
 
 main() {
   case "${1:-}" in
-    mr) cmd_mr
+  mr)
+    cmd_mr
     ;;
-    ai) pi --no-session --no-skills --print /commit
+  ai)
+    pi --provider deepseek --model deepseek-v4-flash --no-session --no-skills --print /commit
     ;;
-    *) open_browser "$(parse_remote_url)"
+  *)
+    open_browser "$(parse_remote_url)"
     ;;
   esac
 }

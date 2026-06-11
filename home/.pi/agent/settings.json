@@ -1,11 +1,14 @@
 {
   "lastChangelogVersion": "0.75.3",
-  "defaultProvider": "modelhub-response",
-  "defaultModel": "gpt-5.5-2026-04-24",
+  "defaultProvider": "modelhub",
+  "defaultModel": "gpt-5.4-2026-03-05",
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "yybbcode/gpt-5.5",
     "deepseek-*"
   ],
-  "theme": "dracula"
+  "theme": "dracula",
+  "packages": [
+    "npm:checkpoint-pi"
+  ]
 }
