@@ -118,7 +118,7 @@ map { '<C-tab>q', '<cmd>tabclose<cr>', desc = 'Close Tab' }
 map { '<leader>gg', function() require('util.git_files').pick() end, desc = 'My Git Files' }
 map { 'ma', function() require('util.marker').add() end, desc = 'Add Marker' }
 map { 'mm', function() require('util.marker').pick() end, desc = 'List Markers' }
-map { '<F2>', vim.lsp.buf.rename, desc = 'Rename Symbol' }
+map { '<leader>rr', vim.lsp.buf.rename, desc = 'Rename Symbol' }
 map { '<leader>ca', vim.lsp.buf.code_action, desc = 'Code Action' }
 map { '<leader>cc', vim.lsp.codelens.run, desc = 'Run Codelens' }
 map {
@@ -264,7 +264,7 @@ map { 'jw', diagnostic_goto(false, 'WARN'), desc = 'Prev Warn' }
 map { '<leader>lz', '<cmd>Lazy<cr>', desc = 'Lazy' }
 
 map {
-  '<leader>r',
+  '<leader>rp',
   function() require('util.repl').smart_new() end,
   desc = 'New Repl',
 }

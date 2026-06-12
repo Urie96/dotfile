@@ -5,24 +5,24 @@
       "src": "https://github.com/saghen/blink.cmp",
       "version": ">=0.0.0"
     },
+    "codediff.nvim": {
+      "rev": "7608f3b436ce1f84a4888f75e53079caa981a2e9",
+      "src": "https://github.com/esmuellert/codediff.nvim"
+    },
     "codeverse.vim": {
       "rev": "ae41d521b2373c6d86986f0337496c664967585b",
       "src": "https://code.byted.org/chenjiaqi.cposture/codeverse.vim.git"
-    },
-    "diffview.nvim": {
-      "rev": "4516612fe98ff56ae0415a259ff6361a89419b0a",
-      "src": "https://github.com/sindrets/diffview.nvim"
     },
     "flash.nvim": {
       "rev": "fcea7ff883235d9024dc41e638f164a450c14ca2",
       "src": "https://github.com/folke/flash.nvim"
     },
     "grug-far.nvim": {
-      "rev": "5506c2f59dc9ab2ed6c233585412b24d31d51521",
+      "rev": "c995bbacf8229dc096ec1c3d60f8531059c86c1b",
       "src": "https://github.com/MagicDuck/grug-far.nvim"
     },
     "kulala.nvim": {
-      "rev": "e43f4d85c9cd57b0638cd557a1cf141fb5ef670b",
+      "rev": "e483050a54eb9d70ef733b06e129a8da8b3f1780",
       "src": "https://github.com/mistweaverco/kulala.nvim"
     },
     "lazydev.nvim": {
@@ -30,7 +30,7 @@
       "src": "https://github.com/folke/lazydev.nvim"
     },
     "mini.nvim": {
-      "rev": "8b63dc6caf94f6580e371f9b339548848f72e489",
+      "rev": "a59a9b7fb0a42cbcf022938ee5f0724320b66f63",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
     "neogen": {
@@ -54,7 +54,7 @@
       "src": "https://github.com/MunifTanjim/nui.nvim"
     },
     "nvim-lint": {
-      "rev": "d48f3a76189d03b2239f6df1b2f7e3fa8353743b",
+      "rev": "99cbc3ca8a76845fca50e496be7212bebf907dd3",
       "src": "https://github.com/mfussenegger/nvim-lint"
     },
     "nvim-nio": {
@@ -92,7 +92,7 @@
       "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
     },
     "rustaceanvim": {
-      "rev": "e9c5aaba16fead831379d5f44617547a90b913c7",
+      "rev": "5a3a4158857ee1f7ec839b6ddd87cc0083a19c5f",
       "src": "https://github.com/mrcjkb/rustaceanvim",
       "version": "9.0.0 - 10.0.0"
     },
@@ -113,7 +113,7 @@
       "src": "https://github.com/Exafunction/windsurf.nvim"
     },
     "yazi.nvim": {
-      "rev": "d4912adef07b330baf0fc92a4a621a4cbfb3e826",
+      "rev": "7514be498c56f2a57e5a72faf55c517b9576665b",
       "src": "https://github.com/mikavilpas/yazi.nvim"
     }
   }
