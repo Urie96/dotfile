@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.75.3",
-  "defaultProvider": "modelhub",
-  "defaultModel": "gpt-5.4-2026-03-05",
+  "lastChangelogVersion": "0.79.2",
+  "defaultProvider": "xiaomi",
+  "defaultModel": "mimo-v2.5",
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "yybbcode/gpt-5.5",
@@ -9,6 +9,7 @@
   ],
   "theme": "dracula",
   "packages": [
-    "npm:checkpoint-pi"
+    "npm:checkpoint-pi",
+    "npm:pi-web-access"
   ]
 }

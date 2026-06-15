@@ -8,6 +8,7 @@
 import json
 import os
 import re
+import subprocess
 import sys
 import urllib.request
 import urllib.error
@@ -38,6 +39,20 @@ def get_input_text():
     return text, force_ai
 
 
+def get_translate_server_token():
+    """从 rbw 获取翻译服务 token"""
+    try:
+        return subprocess.check_output(
+            ["rbw", "get", "translate-server-token"], text=True
+        ).strip()
+    except FileNotFoundError:
+        print("Error: rbw command not found", file=sys.stderr)
+        sys.exit(1)
+    except subprocess.CalledProcessError as e:
+        print(f"Error: failed to get translate server token: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
 def translate_en_to_zh(text):
     """使用翻译 API 将英文翻译成中文"""
     data = json.dumps({"from": "en", "to": "zh-CN", "text": text}).encode("utf-8")
@@ -46,7 +61,7 @@ def translate_en_to_zh(text):
         TRANSLATE_API_URL, data=data, headers={"Content-Type": "application/json"}
     )
 
-    token = os.environ.get("TRANSLATE_SERVER_TOKEN")
+    token = get_translate_server_token()
     if token:
         request.add_header("Authorization", token)
 

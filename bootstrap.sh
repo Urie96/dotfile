@@ -59,6 +59,6 @@ fi
 
 # ── 3. Install ───────────────────────────────────────────────────────
 msg "安装 dotfile"
-python3 ./install.sh --backup-suffix .bak
+./install.sh
 
 msg "安装完成 ✓"

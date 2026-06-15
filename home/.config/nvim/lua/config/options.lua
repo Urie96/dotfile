@@ -56,8 +56,6 @@ vim.opt.inccommand = 'split' -- Preview substitutions live, as you type!
 vim.opt.cursorline = true -- Show which line your cursor is on
 vim.opt.scrolloff = 10 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.wrap = true
-vim.opt.title = true -- enable neovim change terminal title
-vim.opt.titlestring = "VI:%{fnamemodify(getcwd(), ':t')}"
 vim.opt.conceallevel = 0 -- don't hide my json strings
 vim.opt.spelllang = { 'en', 'cjk' }
 vim.opt.spelloptions = 'camel'
@@ -72,6 +70,11 @@ vim.opt.fillchars = {
   diff = ' ',
   eob = ' ',
 }
+
+if not vim.env.PI_CODING_AGENT then
+  vim.opt.title = true -- enable neovim change terminal title
+  vim.opt.titlestring = "VI:%{fnamemodify(getcwd(), ':t')}"
+end
 
 -- https://neovim.io/doc/user/lua.html#vim.filetype.add()
 vim.filetype.add {

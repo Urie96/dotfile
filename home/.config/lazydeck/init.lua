@@ -1,4 +1,12 @@
--- lazydeck plugin configuration
+local function get_secret(key)
+  local handle = io.popen(string.format('rbw get "%s"', key))
+  if handle then
+    local result = handle:read '*a' -- 读取全部内容
+    handle:close()
+    return result
+  end
+end
+
 deck.config {
   plugin_sort = 'most',
   plugins = {
@@ -40,7 +48,7 @@ deck.config {
       config = function()
         require('audiobookshelf').setup {
           url = 'https://audiobook.lubui.com:8443',
-          token = os.getenv 'AUDIOBOOKSHELF_TOKEN',
+          token = get_secret 'audiobookshelf-token',
           library_id = '1824413f-cbf0-41e4-8b88-c1aab95c7f40',
         }
       end,
@@ -81,7 +89,7 @@ deck.config {
         require('freshrss').setup {
           url = 'https://rss.lubui.com:8443/api/greader.php',
           login = 'urie',
-          password = os.getenv 'FRESHRSS_PASSWORD',
+          password = get_secret 'freshrss-password',
         }
       end,
     },
@@ -92,7 +100,7 @@ deck.config {
         require('opensubsonic').setup {
           url = 'https://music.lubui.com:8443',
           username = 'urie',
-          password = os.getenv 'NAVIDROME_PASSWORD',
+          password = get_secret 'navidrome-password',
         }
       end,
     },
