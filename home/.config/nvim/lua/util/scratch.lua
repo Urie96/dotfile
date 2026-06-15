@@ -39,6 +39,10 @@ function M.list()
     'yaml',
     'http',
     {
+      ft = 'markdown',
+      ext = 'md',
+    },
+    {
       ft = 'go',
       keys = {
         {

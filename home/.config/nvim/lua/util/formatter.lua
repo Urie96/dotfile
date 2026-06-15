@@ -1,17 +1,5 @@
 local M = {}
 
--- Pure Lua URL encoding (RFC 3986)
--- 不编码: A-Z a-z 0-9 - _ . ~
-local function url_encode(str)
-  return (str:gsub('[^%w%~%.%-_]', function(c) return string.format('%%%02X', c:byte()) end))
-end
-
--- Pure Lua URL decoding (RFC 3986)
--- + 转空格，%XX 转字符
-local function url_decode(str)
-  return (str:gsub('+', ' '):gsub('%%[%da-fA-F][%da-fA-F]', function(m) return string.char(tonumber(m:sub(2), 16)) end))
-end
-
 ---@param cmd string[]
 ---@param stdin string[]|string
 ---@param cb fun(out: string[])
@@ -70,30 +58,19 @@ function M.range_stringify(ctx) replace_selection(ctx, { 'jq', '-Rs', '.' }) end
 function M.range_unstringify(ctx) replace_selection(ctx, { 'jq', '-r', '.' }) end
 
 ---@param ctx util.command_picker.ctx
-function M.decode_unicode_escapes(ctx)
-  local start_row, start_col, end_row, end_col =
-    ctx.visual.pos[1] - 1, ctx.visual.pos[2], ctx.visual.end_pos[1] - 1, ctx.visual.end_pos[2] + 1
-  local text = table.concat(ctx.visual.lines, '\n')
-  local decoded = text:gsub('\\u(%x%x%x%x)', function(hex) return vim.fn.json_decode('"' .. '\\u' .. hex .. '"') end)
-  vim.api.nvim_buf_set_text(ctx.buf, start_row, start_col, end_row, end_col, vim.split(decoded, '\n'))
-end
-
----@param ctx util.command_picker.ctx
 function M.url_decode(ctx)
-  local start_row, start_col, end_row, end_col =
-    ctx.visual.pos[1] - 1, ctx.visual.pos[2], ctx.visual.end_pos[1] - 1, ctx.visual.end_pos[2] + 1
-  local text = table.concat(ctx.visual.lines, '\n')
-  local decoded = url_decode(text)
-  vim.api.nvim_buf_set_text(ctx.buf, start_row, start_col, end_row, end_col, vim.split(decoded, '\n'))
+  replace_selection(
+    ctx,
+    { 'python', '-c', 'import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));' }
+  )
 end
 
 ---@param ctx util.command_picker.ctx
 function M.url_encode(ctx)
-  local start_row, start_col, end_row, end_col =
-    ctx.visual.pos[1] - 1, ctx.visual.pos[2], ctx.visual.end_pos[1] - 1, ctx.visual.end_pos[2] + 1
-  local text = table.concat(ctx.visual.lines, '\n')
-  local encoded = url_encode(text)
-  vim.api.nvim_buf_set_text(ctx.buf, start_row, start_col, end_row, end_col, vim.split(encoded, '\n'))
+  replace_selection(
+    ctx,
+    { 'python', '-c', 'import sys; from urllib.parse import quote; print(quote(sys.stdin.read(), safe=""));' }
+  )
 end
 
 ---@param ctx util.command_picker.ctx

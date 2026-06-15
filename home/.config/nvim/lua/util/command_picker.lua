@@ -87,10 +87,6 @@ local commands = {
     callback = function(_) require('util.scratch').select() end,
   },
   {
-    name = 'Decode Unicode Escapes',
-    callback = function(ctx) require('util.formatter').decode_unicode_escapes(ctx) end,
-  },
-  {
     name = 'Join String Array',
     callback = function(ctx) require('util.formatter').join_string_array(ctx) end,
   },

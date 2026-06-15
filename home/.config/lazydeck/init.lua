@@ -1,7 +1,7 @@
 -- lazydeck plugin configuration
 deck.config {
+  plugin_sort = 'most',
   plugins = {
-
     {
       'urie96/bookmarks.lazydeck',
       keys = {
