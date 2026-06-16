@@ -34,7 +34,7 @@
 	algorithm = "histogram"
 	mnemonicPrefix = true
 [merge]
-	tool = vimdiff
+	tool = codediff
   keepBackup = false
   conflictstyle = zdiff3
 [mergetool "vimdiff"]
@@ -85,3 +85,5 @@
 [tag]
 	sort = "version:refname"
 
+[mergetool "codediff"]
+	cmd = nvim \"$MERGED\" -c \"CodeDiff merge \\\"$MERGED\\\"\"
