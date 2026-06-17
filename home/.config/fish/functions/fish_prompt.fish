@@ -1,27 +1,108 @@
+# ── OS icon ──
+set -g prompt_os_icon ""
+if test -f /etc/os-release
+    switch (string match -r '^ID=([a-z]+)' </etc/os-release)[2]
+        case nixos
+            set prompt_os_icon (set_color 5277C3)" "
+        case ubuntu
+            set prompt_os_icon (set_color E95420)"󰕈 "
+    end
+else
+    switch (uname -o)
+        case Darwin
+            set prompt_os_icon "󰀵 "
+        case Android
+            set prompt_os_icon (set_color A4C639)" "
+    end
+end
+
 function fish_prompt
-    #Save the return status of the previous command
+
+    #Save the return status and duration of the previous command
     set -l last_pipestatus $pipestatus
     set -lx __fish_last_status $status # Export for __fish_print_pipestatus.
-
-    if functions -q fish_is_root_user; and fish_is_root_user
-        printf '%s@%s %s%s%s# ' $USER (prompt_hostname) (set -q fish_color_cwd_root
-                                                         and set_color $fish_color_cwd_root
-                                                         or set_color $fish_color_cwd) \
-            (prompt_pwd) (set_color normal)
-    else
-        set -l status_color (set_color $fish_color_status)
-        set -l statusb_color (set_color --bold $fish_color_status)
-        set -l pipestatus_string (__fish_print_pipestatus "[" "]" "|" "$status_color" "$statusb_color" $last_pipestatus)
-
-        # 获取后台任务数量
-        set -l job_count (jobs | count)
-        set -l job_indicator ""
-        if test $job_count -gt 0
-            set job_indicator (set_color brcyan)"[$job_count]" (set_color normal)
-        end
-
-        printf '[%s] %s%s@%s %s%s %s%s%s%s \n> ' (date "+%H:%M:%S") (set_color brblue) \
-            $USER (prompt_hostname) (set_color $fish_color_cwd) $PWD $pipestatus_string \
-            $job_indicator (set_color normal)
+    set -l last_cmd_duration 0
+    if set -q CMD_DURATION
+        set last_cmd_duration $CMD_DURATION
     end
+
+    # ── Catppuccin Mocha palette ──
+    set -l white white
+    set -l crust 11111b
+    set -l red f38ba8
+    set -l maroon eba0ac
+    set -l peach fab387
+    set -l yellow f9e2af
+    set -l green a6e3a1
+    set -l sapphire 74c7ec
+    set -l lavender b4befe
+
+    # ═══════════════════════════════════════════
+    # Render prompt segments
+    # ═══════════════════════════════════════════
+
+    # ── Segment 1: OS + Hostname (red bg, crust fg) ──
+    echo -n (set_color $white)""(set_color $crust)(set_color -b $white)$prompt_os_icon
+    set -l ssh_prompt ""
+    if set -q SSH_CONNECTION
+        set ssh_prompt "ssh://"
+    end
+    echo -n (set_color -b $red)(set_color $white)""(set_color -b $red)(set_color $crust)" $ssh_prompt"(prompt_hostname)
+
+    # ── Segment 2: Directory (peach bg, crust fg) ──
+    echo -n (set_color -b $peach)(set_color $red)""(set_color $crust)" "(prompt_pwd -d 3 -D 3)
+
+    # ── Segment 3: Git branch (yellow bg, crust fg) ──
+    set -l git_branch ""
+    if command git rev-parse --is-inside-work-tree &>/dev/null
+        set git_branch (set_color $crust)"  "(command git symbolic-ref --short HEAD 2>/dev/null; or command git rev-parse --short HEAD 2>/dev/null)
+    end
+    echo -n (set_color -b $yellow)(set_color $peach)"$git_branch"
+
+    # ── Segment 4: Env Icon ──
+    set -l env_icon (set_color $crust)
+    set -q DIRENV_DIR && set env_icon $env_icon" "
+    set -q NVIM && set env_icon $env_icon" "
+    echo -n (set_color -b $green)(set_color $yellow)"$env_icon"
+
+    # ── Segment 5: Background jobs ──
+    set -l job_count_icon ""
+    set -l job_count (jobs | count)
+    if test $job_count -gt 0
+        set job_count_icon (set_color $crust)"  $job_count "
+    end
+    echo -n (set_color -b $sapphire)(set_color $green)"$job_count_icon"
+
+    # ── Segment 6: Last command duration (lavender bg, crust fg) ──
+    set -l duration_text
+    if test $last_cmd_duration -lt 1000
+        set duration_text "$last_cmd_duration""ms"
+    else if test $last_cmd_duration -lt 60000
+        set duration_text (math --scale=1 "$last_cmd_duration / 1000")"s"
+    else if test $last_cmd_duration -lt 3600000
+        set -l minutes (math --scale=0 "floor($last_cmd_duration / 60000)")
+        set -l seconds (math --scale=0 "floor(($last_cmd_duration % 60000) / 1000)")
+        set duration_text "$minutes""m""$seconds""s"
+    else
+        set -l hours (math --scale=0 "floor($last_cmd_duration / 3600000)")
+        set -l minutes (math --scale=0 "floor(($last_cmd_duration % 3600000) / 60000)")
+        set -l seconds (math --scale=0 "floor(($last_cmd_duration % 60000) / 1000)")
+        set duration_text "$hours""h""$minutes""m""$seconds""s"
+    end
+    echo -n (set_color -b $lavender)(set_color $sapphire)""(set_color $crust)"  $duration_text"
+
+    # ── End cap ──
+    set -l status_color (set_color $fish_color_status)
+    set -l statusb_color (set_color --bold $fish_color_status)
+    set -l pipestatus_string (__fish_print_pipestatus "[" "]" " | " "$status_color" "$statusb_color" $last_pipestatus)
+    echo -n (set_color normal)(set_color $lavender)" $pipestatus_string"(set_color normal)
+
+    # ── Second line: prompt character ──
+    echo
+    if test $__fish_last_status -eq 0
+        set_color -o $green
+    else
+        set_color -o $red
+    end
+    echo -n "❯ "(set_color normal)
 end

@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.79.2",
-  "defaultProvider": "xiaomi",
-  "defaultModel": "mimo-v2.5",
+  "defaultProvider": "yybbcode",
+  "defaultModel": "gpt-5.5",
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "yybbcode/gpt-5.5",
@@ -10,6 +10,7 @@
   "theme": "dracula",
   "packages": [
     "npm:checkpoint-pi",
-    "npm:pi-web-access"
+    "npm:pi-web-access",
+    "npm:@juicesharp/rpiv-btw"
   ]
 }

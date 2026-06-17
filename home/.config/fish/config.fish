@@ -9,3 +9,5 @@ if status is-interactive
         direnv hook fish | source
     end
 end
+
+fish_config theme choose catppuccin-mocha --color-theme=dark
