@@ -100,7 +100,7 @@ def collect_source_files() -> dict[Path, Path]:
     """
     Walk SOURCE_DIR and build a mapping of:
         source_file (in repo) -> target_file (in $HOME)
-    Only regular files are collected (no directories, no symlinks).
+    Collects regular files and symlinks (including symlinks to directories).
     """
     mapping: dict[Path, Path] = {}
     for root, dirs, files in os.walk(SOURCE_DIR):
@@ -111,6 +111,17 @@ def collect_source_files() -> dict[Path, Path]:
 
         # Prune directories that match a skip pattern
         dirs[:] = [d for d in dirs if not _match_skip_pattern(d, rel_dir, is_dir=True)]
+
+        # Collect symlinks to directories (they appear in dirs, not files)
+        symlink_dirs = []
+        for d in dirs[:]:
+            dir_src = root_path / d
+            if dir_src.is_symlink():
+                if not _match_skip_pattern(d, rel_dir, is_dir=False):
+                    mapping[dir_src] = HOME / dir_src.relative_to(SOURCE_DIR)
+                symlink_dirs.append(d)
+        # Remove symlink dirs so os.walk doesn't report them again
+        dirs[:] = [d for d in dirs if d not in symlink_dirs]
 
         for fname in files:
             if _match_skip_pattern(fname, rel_dir, is_dir=False):
