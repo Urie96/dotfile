@@ -2,7 +2,6 @@
 ratio        = [1, 3, 4]
 sort_by      = "mtime"
 sort_reverse = true
-title_format = "YA:{cwd}"
 
 [preview]
 max_height  = 1000
@@ -35,23 +34,23 @@ preloaders = []
   url = "*"
 
   [[plugin.prepend_fetchers]]
-  id   = "mime"
-  prio = "high"
-  run  = "mime-ext.local"
-  url  = "local://*"
+  group = "mime"
+  prio  = "high"
+  run   = "mime-ext.local"
+  url   = "local://*"
 
   [[plugin.prepend_fetchers]]
-  id   = "mime"
-  prio = "high"
-  run  = "mime-ext.remote"
-  url  = "remote://*"
+  group = "mime"
+  prio  = "high"
+  run   = "mime-ext.remote"
+  url   = "remote://*"
 
   [[plugin.prepend_fetchers]]
-  id   = "git"
-  name = "*"
-  run  = "git"
+  group = "git"
+  url   = "*"
+  run   = "git"
 
   [[plugin.prepend_fetchers]]
-  id   = "git"
-  name = "*/"
-  run  = "git"
+  group = "git"
+  url   = "*/"
+  run   = "git"

@@ -20,7 +20,7 @@ die() {
 tmux_sesh_preview() {
   case "$1" in
   p)
-    IFS='|' read -r wid pid <<< "$2"
+    IFS='|' read -r wid pid <<<"$2"
     tmux capture-pane -t "$wid" -p -e -S -60 2>/dev/null || echo "(unavailable)"
     ;;
   d)
@@ -36,9 +36,8 @@ tmux_sesh_items() {
   # format: win_active|pane_active|window_id|pane_id|title|cwd|window_name
   # skip only the globally focused pane (win_active=1 AND pane_active=1)
   # target = win_id.pane_index (e.g. @0.2) so tmux can find the pane across windows
-  tmux list-panes -a -F '#{?window_active,1,0}|#{?pane_active,1,0}|#{window_id}|#{pane_id}|#{pane_title}|#{pane_current_path}|#{window_name}' 2>/dev/null |
-    while IFS='|' read -r wactive pactive win_id pid title cwd win; do
-      [[ "$wactive" == 1 && "$pactive" == 1 ]] && continue  # skip globally focused pane
+  tmux list-panes -a -F '#{window_id}|#{pane_id}|#{pane_title}|#{pane_current_path}|#{window_name}' 2>/dev/null |
+    while IFS='|' read -r win_id pid title cwd win; do
       [[ -z "$title" ]] && title="$win"
       target="${win_id}|${pid}"
       printf 'p\t%s\t\033[38;5;75m󰖲 \033[0m\033[38;5;214m%s\033[0m  \033[38;5;245m%s\033[0m\n' "$target" "$title" "$cwd"
@@ -60,7 +59,7 @@ tmux_sesh_delete() {
 
   case "$1" in
   p)
-    IFS='|' read -r wid pid <<< "$2"
+    IFS='|' read -r wid pid <<<"$2"
     tmux select-window -t "$wid" \; kill-pane -t "$pid" 2>/dev/null || true
     ;;
   d)
@@ -99,7 +98,7 @@ IFS=$'\t' read -r kind target _display <<<"$selected"
 
 case "$kind:$key" in
 p:*)
-  IFS='|' read -r wid pid <<< "$target"
+  IFS='|' read -r wid pid <<<"$target"
   tmux select-window -t "$wid" \; select-pane -t "$pid"
   ;;
 d:ctrl-e)
