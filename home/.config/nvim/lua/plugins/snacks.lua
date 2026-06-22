@@ -201,7 +201,7 @@ map {
 }
 
 map {
-  '<C-S-/>',
+  '<M-/>',
   function()
     local file_dir = vim.fn.expand '%:h'
     if file_dir and file_dir ~= '' then Snacks.terminal(nil, { cwd = file_dir }) end

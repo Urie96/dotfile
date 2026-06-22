@@ -21,12 +21,6 @@ map { '<Esc>', '<cmd>nohlsearch<CR>', desc = 'Clear Highlights On Search' }
 map { '<Down>', 'gj', mode = { n, x }, desc = 'Down' } -- adapt wrap line
 map { '<Up>', 'gk', mode = { n, x }, desc = 'Up' } -- adapt wrap line
 
--- local map = vim.keymap.set
-local function termcodes(str)
-  -- Adjust boolean arguments as needed
-  return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
 map { '<PageDown>', '<C-d>' }
 map { '<PageUp>', '<C-u>' }
 
@@ -43,39 +37,15 @@ map { '<M-BS>', '<C-w>', mode = { i, c }, desc = 'Delete Word' }
 map { '<M-Left>', '<C-Left>', mode = i, desc = 'Jump Backward Word' }
 map { '<M-Right>', '<C-Right>', mode = i, desc = 'Jump Forward Word' }
 
-map {
-  '<C-S-O>',
-  function()
-    local buf = vim.api.nvim_get_current_buf()
-    vim.cmd.normal(termcodes '<C-o>')
-    vim.api.nvim_buf_delete(buf, {})
-  end,
-  desc = 'Close Buffer And Jump Back',
-}
-
-map {
-  '<C-S-s>',
-  function()
-    vim.notify 'Save as which file:'
-    require('yazi').yazi {
-      open_file_function = function(chosen_file)
-        if type(chosen_file) == 'string' and chosen_file ~= '' then vim.cmd('w! ' .. chosen_file) end
-      end,
-    }
-  end,
-  mode = { n, i },
-  desc = 'Save As',
-}
 map { '<C-s>', '<cmd>w!<cr>', mode = { n, i }, desc = 'Save File' }
 
-map { '<C-S-q>', '<cmd>qa<cr>', desc = 'Quit All' }
+map { '<leader>qa', '<cmd>qa<cr>', desc = 'Quit All' }
 map { '<C-S-s>', '<cmd>noa w<cr><esc>', mode = { n, i }, desc = 'Save Without Format' }
 map {
   '<leader>fm',
   function() require('util.formatter').format_buf(0, { async = true }) end,
   desc = 'Format',
 }
-map { '<D-k>m', function() require('util.vim').set_filetype() end, mode = { n, i }, desc = 'Set File Type' }
 map { '<C-a>', 'ggVG', desc = 'Select All' }
 map { '<Home>', '^', mode = { n, x }, desc = 'Jump to Line First Char' }
 map { '<Home>', '<C-o>I', mode = i, desc = 'Jump to Line First Char' }

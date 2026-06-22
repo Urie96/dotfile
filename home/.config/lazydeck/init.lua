@@ -151,6 +151,10 @@ deck.config {
               host = 'home.lubui.com',
               base_dir = '/home/urie',
             },
+            kindle = {
+              host = 'kindle.lan',
+              base_dir = '/mnt/us',
+            },
           },
         }
       end,
