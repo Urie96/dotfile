@@ -9,7 +9,7 @@ NAME=""
 fmt_stdin() {
   case "$LANGUAGE" in
   nix)
-    nixfmt
+    nixfmt -
     ;;
   bash | sh | shellscript | zsh)
     shfmt -i 2 -
