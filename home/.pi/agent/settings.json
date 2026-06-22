@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.79.2",
-  "defaultProvider": "yybbcode",
-  "defaultModel": "gpt-5.5",
+  "defaultProvider": "deepseek",
+  "defaultModel": "deepseek-v4-flash",
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "yybbcode/gpt-5.5",
@@ -9,8 +9,7 @@
   ],
   "theme": "dracula",
   "packages": [
-    "npm:checkpoint-pi",
     "npm:pi-web-access",
-    "npm:@juicesharp/rpiv-btw"
+    "npm:@ayulab/pi-rewind"
   ]
 }

@@ -77,7 +77,7 @@ copy_for_urie() { # root
 }
 
 nvim() {
-  local paths=$1
+  local -a paths=("$@")
   local p="${paths[0]}"
   if [[ -d "$p" ]]; then
     touch -m -- "$p" || true
