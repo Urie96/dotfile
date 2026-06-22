@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export PATH="$HOME/bin:/etc/profiles/per-user/$USER/bin/:$PATH"
+export PATH="$HOME/bin:/run/current-system/sw/bin:$PATH"
 
 press_any_key() {
   if [[ -r /dev/tty ]]; then
