@@ -53,7 +53,7 @@ function M.highlight_buffer(bufnr, ft) return ts_highlighter(bufnr, ft) or regex
 
 ---@return util.visual|nil
 function M.get_visual()
-  local modes = { 'v', 'V', Snacks.util.keycode '<C-v>' }
+  local modes = { 'v', 'V', vim.api.nvim_replace_termcodes('<C-v>', true, true, true) }
   local mode = vim.fn.mode():sub(1, 1) ---@type string
   if not vim.tbl_contains(modes, mode) then return end
   -- stop visual mode

@@ -144,14 +144,11 @@ map { '<C-Space>', function() end, mode = i } -- disable this keymap as it's for
 local function translate(text)
   local cmd = { 'translate', '--ai' }
   vim.system(cmd, { stdin = text }, function(out)
+    local tips = out.stdout
     if out.code > 0 then
-      vim.notify(
-        string.format('`%s` exited with code %d, stderr: %s', table.concat(cmd, ' '), out.code, out.stderr),
-        vim.log.levels.ERROR
-      )
-      return
+      tips = string.format('`%s` exited with code %d, stderr: %s', table.concat(cmd, ' '), out.code, out.stderr)
     end
-    (require 'util.vim').show_tip(out.stdout)
+    (require 'util.vim').show_tip(tips)
   end)
 end
 

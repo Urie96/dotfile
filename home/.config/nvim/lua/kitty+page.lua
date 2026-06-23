@@ -1,5 +1,16 @@
 vim.loader.enable()
+vim.env.PATH = vim.env.HOME .. '/bin:/run/current-system/sw/bin:' .. vim.env.PATH -- translate
 require 'plugins.global_var'
+
+--- Lazy-load snacks.nvim on field access
+_G.Snacks = setmetatable({}, {
+  __index = function(_, k)
+    vim.pack.add { 'https://github.com/folke/snacks.nvim' }
+    local snacks = require 'snacks'
+    return snacks[k]
+  end,
+  __newindex = function() end,
+})
 
 local M = {}
 
@@ -27,10 +38,8 @@ end)
 
 function M.set_keymap(buf)
   require 'config.keymaps'
-  local map = function(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs) end
-  map('x', 'q', 'y<Cmd>qa!<CR>')
-  map('n', 'q', '<Cmd>qa!<CR>')
-  map('n', '<C-q>', '<Cmd>qa!<CR>')
+  vim.keymap.set('n', 'q', '<Cmd>qa!<CR>', { buf = buf })
+  vim.keymap.set('n', '<C-q>', '<Cmd>qa!<CR>', { buf = buf })
 end
 
 function M.set_options()

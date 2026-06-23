@@ -6,7 +6,6 @@
 """
 
 import json
-import os
 import re
 import subprocess
 import sys
@@ -39,17 +38,17 @@ def get_input_text():
     return text, force_ai
 
 
-def get_translate_server_token():
-    """从 rbw 获取翻译服务 token"""
+def rbw_get(key):
+    """从 rbw 获取指定 key 的值"""
     try:
         return subprocess.check_output(
-            ["rbw", "get", "translate-server-token"], text=True
+            ["rbw", "get", key], text=True
         ).strip()
     except FileNotFoundError:
         print("Error: rbw command not found", file=sys.stderr)
         sys.exit(1)
     except subprocess.CalledProcessError as e:
-        print(f"Error: failed to get translate server token: {e}", file=sys.stderr)
+        print(f"Error: failed to get {key}: {e}", file=sys.stderr)
         sys.exit(1)
 
 
@@ -61,7 +60,7 @@ def translate_en_to_zh(text):
         TRANSLATE_API_URL, data=data, headers={"Content-Type": "application/json"}
     )
 
-    token = get_translate_server_token()
+    token = rbw_get("translate-server-token")
     if token:
         request.add_header("Authorization", token)
 
@@ -102,7 +101,7 @@ def call_llm(system_prompt):
         headers={"Content-Type": "application/json", "Accept": "application/json"},
     )
 
-    api_key = os.environ.get("DEEPSEEK_API_KEY")
+    api_key = rbw_get("DEEPSEEK_API_KEY")
     if api_key:
         request.add_header("Authorization", f"Bearer {api_key}")
 
