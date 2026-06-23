@@ -127,44 +127,6 @@ push() {
   fi
 }
 
-watch_local_sync_remote() {
-  local remote_dir="$2"
-  local local_dir="$1"
-  cd "$local_dir" || exit
-  local prefix_length=$((${#local_dir} + 1))
-
-  local files_pending_sync=()
-  echo "start to watch file change..."
-  watchexec --emit-events-to stdio --only-emit-events -d 500ms | while IFS= read -r line; do
-    if [ -z "$line" ] && [ "${#files_pending_sync[@]}" -gt 0 ]; then
-      echo "detected file changed, start rsync"
-      push "${files_pending_sync[@]}" "$remote_dir"
-      echo "rsync done"
-      # for file in "${files_pending_sync[@]}"; do
-      #   echo "${file}"
-      # done
-
-      files_pending_sync=()
-    else
-      local f="${line##*:}"
-      f="${f:${prefix_length}}"
-      if [ ! -e "$f" ]; then
-        continue
-      fi
-      local found=false
-      for i in "${files_pending_sync[@]}"; do
-        if [ "${i}" == "$f" ]; then
-          found=true
-          break
-        fi
-      done
-      if ! $found; then
-        files_pending_sync+=("$f")
-      fi
-    fi
-  done
-}
-
 main() {
   case "$ACTION" in
   pull)
@@ -183,15 +145,6 @@ main() {
     push "${local_files[@]}" "${remote_dir}"
     local first=${local_files[0]}
     # reveal_remote "${remote_dir}/${first##*/}"
-    ;;
-  sync-dir-to-remote)
-    if [ ${#FILES[@]} -ne 1 ]; then
-      die "remote dir count is ${#FILES[@]}, must be 1"
-    fi
-    local remote_dir="${FILES[0]}"
-    local local_dir
-    local_dir="$(select_local_dir "Select which local directory to sync remote files")"
-    watch_local_sync_remote "$local_dir" "$remote_dir"
     ;;
   *)
     echo default

@@ -12,7 +12,16 @@ Config.now(function()
   vim.cmd.colorscheme 'tokyonight-night'
 end)
 
-Config.now(function() require('mini.statusline').setup() end)
+Config.now(function()
+  require('mini.statusline').setup()
+  -- Override: always show relative path instead of absolute
+  MiniStatusline.section_filename = function(args)
+    if vim.bo.buftype == 'terminal' then return '%t' end
+    local rel = vim.fn.fnamemodify(vim.fn.expand('%'), ':.')
+    if rel == '' then rel = vim.fn.expand('%:t') end
+    return rel .. '%m%r'
+  end
+end)
 
 -- Config.later(function()
 --   vim.pack.add { 'https://github.com/nvim-lualine/lualine.nvim' }

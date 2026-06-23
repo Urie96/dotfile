@@ -22,12 +22,10 @@ def handle_result(
     parser.add_argument(
         "action",
         choices=[
-            "code",
             "mpv_audio",
             "mpv_video",
             "pull",
             "push",
-            "sync-dir-to-remote",
         ],
     )
     parser.add_argument("files", nargs="+")
@@ -120,25 +118,6 @@ def handle_result(
                     "rsync-tool",
                     "--action",
                     "push",
-                    "--host",
-                    conn_data.hostname,
-                    *(["--port", str(conn_data.port)] if conn_data.port else []),
-                    "--",
-                    *parsed_args.files,
-                ),
-            )
-        case "sync-dir-to-remote":
-            boss.call_remote_control(
-                w,
-                (
-                    "launch",
-                    "--type=tab",
-                    "--title=remote",
-                    "--hold",
-                    "--copy-env",
-                    "rsync-tool",
-                    "--action",
-                    "sync-dir-to-remote",
                     "--host",
                     conn_data.hostname,
                     *(["--port", str(conn_data.port)] if conn_data.port else []),
