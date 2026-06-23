@@ -3,7 +3,7 @@
 
 bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded!"
 
-bind-key C-f display-popup -E -w 80% -h 80% -b rounded 'tmux-sesh'
+bind-key C-f display-popup -E -w 80% -h 80% -b rounded 'pick-window'
 
 # -- navigation ----------------------------------------------------------------
 
