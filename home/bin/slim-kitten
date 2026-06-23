@@ -229,13 +229,24 @@ def call_via_socket(cmd: str, payload: dict) -> dict | None:
 
 
 def _generic_payload(args: list[str], opts: dict) -> dict:
-    """Build payload from remaining args (--key=value style)."""
+    """Build payload from remaining args.
+
+    Supports --key value, --key=value, and boolean --flag options.
+    """
     payload = {}
-    while args and args[0].startswith("--"):
-        key = args[0][2:].replace("-", "_")
-        val = args[1] if len(args) > 1 else True
-        payload[key] = val
-        args = args[1:]
+    i = 0
+    while i < len(args) and args[i].startswith("--"):
+        raw = args[i][2:]
+        if "=" in raw:
+            key, val = raw.split("=", 1)
+            i += 1
+        elif i + 1 < len(args) and not args[i + 1].startswith("--"):
+            key, val = raw, args[i + 1]
+            i += 2
+        else:
+            key, val = raw, True
+            i += 1
+        payload[key.replace("-", "_")] = val
     return payload
 
 
@@ -244,7 +255,12 @@ def dispatch(cmd: str, args: list[str], opts: dict) -> dict | None:
     if cmd == "run":
         return cmd_run(args, opts)
 
-    payload = _generic_payload(args, opts)
+    if cmd == "kitten":
+        if not args:
+            die("kitten: missing kitten name")
+        payload = {"kitten": args[0], "args": args[1:]}
+    else:
+        payload = _generic_payload(args, opts)
 
     via_tty = opts.get("tty", False)
     if via_tty:
