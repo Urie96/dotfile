@@ -199,9 +199,16 @@ def cmd_run(args: list[str], opts: dict) -> dict | None:
         for pkt in packets:
             send_via_tty("run", pkt)
         return None
-    else:
-        # Socket mode: all packets over one connection, read final response
-        return send_packets_via_socket(packets)
+
+    # Socket mode: all packets over one connection, read final response
+    result = send_packets_via_socket(packets)
+    if result is not None:
+        return result
+
+    # Fallback to TTY (no_response) when no socket available
+    for pkt in packets:
+        send_via_tty("run", pkt)
+    return None
 
 
 # ── Generic command dispatch ──────────────────────────────────────────
