@@ -1,142 +1,524 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-export PATH="$HOME/bin:/run/current-system/sw/bin:/etc/profiles/per-user/$USER/bin:$PATH"
-
-prog="${0##*/}"
-kitten_script="scripts/coding_agent_status.py"
-
-press_any_key() {
-  if [[ -r /dev/tty ]]; then
-    printf 'Press any key to exit...' >&2
-    IFS= read -r -n 1 _ </dev/tty || true
-    printf '\n' >&2
-  fi
-}
-
-die() {
-  printf '%s: %s\n' "$prog" "$*" >&2
-  exit 1
-}
-
-usage() {
-  cat >&2 <<EOF
-Usage: $prog start|end|status [--agent NAME]
+#!/usr/bin/env python3
+"""coding-agent-status -- track coding agent work and view status via fzf.
 
 Commands:
-  start       Record that the current coding agent started working
-  end         Record that the current coding agent finished working
-  status      Pick a coding agent window with fzf and focus it
+    start  [--agent NAME]     Record that the current agent started working
+    end    [--agent NAME]     Record that the current agent finished working
+    status                    Pick a coding agent window/pane with fzf and focus it
+    write  (internal)         Write a state entry (called by the kitty kitten proxy)
 
-Options:
-  --agent NAME  Agent name to record (default: pi, or CODING_AGENT_NAME)
-EOF
-}
+Supports both kitty and tmux.  In kitty, start/end notifies through the kitten
+proxy to resolve target_window_id.  In tmux, start/end writes directly using
+TMUX_PANE as the window ID.
 
-run_git_numstat() {
-  git diff --numstat 2>/dev/null || true
-}
+Cache files:
+    kitty: ~/.cache/coding-agent-status/kitty.json
+    tmux:  ~/.cache/coding-agent-status/tmux.json
+"""
 
-sum_numstat() {
-  awk '
-    $1 ~ /^[0-9]+$/ { added += $1 }
-    $2 ~ /^[0-9]+$/ { deleted += $2 }
-    END { printf "%d\t%d", added, deleted }
-  '
-}
+from __future__ import annotations
 
-send_update() {
-  local event="$1"
-  local agent="$2"
-  local cwd numstat added_deleted added deleted encoded
+import argparse
+import base64
+import json
+import os
+import subprocess
+import sys
+import tempfile
+from datetime import datetime, timezone
+from pathlib import Path
 
-  cwd="${PWD:-$(pwd)}"
-  numstat="$(run_git_numstat)"
-  added_deleted="$(printf '%s\n' "$numstat" | sum_numstat)"
-  IFS=$'\t' read -r added deleted <<<"$added_deleted"
-  encoded="$(printf '%s' "$numstat" | base64 | tr -d '\n')"
+CACHE_DIR = Path.home() / ".cache" / "coding-agent-status"
+KITTEN_SCRIPT = "scripts/coding_agent_status.py"
 
-  # Use --tty so kitty associates this request with the originating window,
-  # which matters for SSH panes/windows where KITTY_WINDOW_ID is not exported.
-  slim-kitten --tty @ kitten "$kitten_script" update \
-    --event "$event" \
-    --agent "$agent" \
-    --cwd "$cwd" \
-    --added "$added" \
-    --deleted "$deleted" \
-    --numstat-b64 "$encoded" >/dev/null 2>&1 || true
-}
 
-status_preview() {
-  local window_id="$1"
-  slim-kitten @ get-text --match "id:$window_id" --extent screen --ansi 2>/dev/null || echo "(unavailable)"
-}
+# ── terminal detection ─────────────────────────────────────────────────────
 
-status_items() {
-  slim-kitten @ kitten "$kitten_script" status 2>/dev/null || true
-}
 
-pick_status() {
-  local selection window_id bash_path
+def _is_tmux() -> bool:
+    return bool(os.environ.get("TMUX"))
 
-  command -v fzf >/dev/null 2>&1 || die 'missing required command: fzf'
 
-  export -f status_preview status_items
-  bash_path="${BASH:-}"
-  if [[ -z "$bash_path" ]]; then
-    bash_path="$(command -v bash)" || die 'failed to find bash'
-  fi
+def _is_kitty() -> bool:
+    return bool(os.environ.get("KITTY_WINDOW_ID"))
 
-  SHELL="$bash_path" selection="$(status_items | fzf \
-    --prompt='coding agents> ' \
-    --header='enter: focus window' \
-    --preview-window='right:70%,nowrap,border-left' \
-    --ansi \
-    --delimiter=$'\t' \
-    --with-nth=2 \
-    --nth=2 \
-    --no-sort \
-    --exact \
-    --preview 'status_preview {1}')" || exit 0
 
-  [[ -n "$selection" ]] || exit 0
-  IFS=$'\t' read -r window_id _ <<<"$selection"
-  [[ -n "$window_id" ]] || exit 0
-  slim-kitten @ focus-window --match "id:$window_id" >/dev/null
-}
+def _cache_file() -> Path:
+    if _is_tmux():
+        return CACHE_DIR / "tmux.json"
+    return CACHE_DIR / "kitty.json"
 
-main() {
-  local command="" agent="${CODING_AGENT_NAME:-pi}"
 
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-    start|end|status)
-      [[ -z "$command" ]] || die 'multiple commands specified'
-      command="$1"
-      shift
-      ;;
-    --agent)
-      [[ $# -ge 2 ]] || die '--agent requires a value'
-      agent="$2"
-      shift 2
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      usage
-      die "unknown argument: $1"
-      ;;
-    esac
-  done
+def _current_window_id() -> str:
+    """Return the current window/pane ID based on terminal type."""
+    if _is_tmux():
+        return os.environ.get("TMUX_PANE", "?")
+    if _is_kitty():
+        return os.environ.get("KITTY_WINDOW_ID", "?")
+    return "?"
 
-  [[ -n "$command" ]] || { usage; exit 2; }
 
-  case "$command" in
-  start|end) send_update "$command" "$agent" ;;
-  status) pick_status ;;
-  esac
-}
+# ── helpers ────────────────────────────────────────────────────────────────
 
-main "$@"
+
+def now_iso() -> str:
+    return (
+        datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    )
+
+
+def relative_time(ts: str) -> str:
+    if not ts:
+        return ""
+    try:
+        dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    except ValueError:
+        return ""
+    diff = (datetime.now(timezone.utc) - dt).total_seconds()
+    if diff < 60:
+        return f"{int(diff)}s"
+    if diff < 3600:
+        return f"{int(diff / 60)}m"
+    if diff < 86400:
+        return f"{int(diff / 3600)}h"
+    return f"{int(diff / 86400)}d"
+
+
+def slim_kitten(*args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["slim-kitten", *args],
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+
+
+def read_cache(path: Path | None = None) -> dict:
+    p = path or _cache_file()
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {"version": 1, "windows": {}}
+    if not isinstance(data, dict):
+        return {"version": 1, "windows": {}}
+    data.setdefault("version", 1)
+    if not isinstance(data.get("windows"), dict):
+        data["windows"] = {}
+    return data
+
+
+def write_cache(data: dict, path: Path | None = None) -> None:
+    p = path or _cache_file()
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix="status.", suffix=".json", dir=str(CACHE_DIR))
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2, sort_keys=True)
+            f.write("\n")
+        os.replace(tmp, p)
+    finally:
+        try:
+            os.unlink(tmp)
+        except FileNotFoundError:
+            pass
+
+
+def b64enc(s: str) -> str:
+    return base64.b64encode(s.encode("utf-8")).decode("ascii")
+
+
+def b64dec(s: str) -> str:
+    if not s:
+        return ""
+    try:
+        return base64.b64decode(s.encode("ascii"), validate=True).decode(
+            "utf-8", "replace"
+        )
+    except Exception:
+        return ""
+
+
+# ── git helpers ────────────────────────────────────────────────────────────
+
+
+def git_numstat() -> tuple[str, int, int]:
+    """Return (raw numstat, total added, total deleted)."""
+    try:
+        r = subprocess.run(
+            ["git", "diff", "--numstat"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        raw = r.stdout.strip()
+    except Exception:
+        raw = ""
+
+    added = deleted = 0
+    for line in raw.split("\n"):
+        parts = line.split("\t")
+        if len(parts) >= 2:
+            try:
+                added += int(parts[0])
+            except ValueError:
+                pass
+            try:
+                deleted += int(parts[1])
+            except ValueError:
+                pass
+    return raw, added, deleted
+
+
+# ── write entry (shared between tmux direct and kitty proxy) ───────────────
+
+
+def _do_write(
+    window_id: str,
+    event: str,
+    agent: str,
+    cwd: str,
+    added: int,
+    deleted: int,
+    numstat_b64: str,
+    cache_path: Path | None = None,
+) -> None:
+    data = read_cache(cache_path)
+    data["windows"][window_id] = {
+        "windowId": window_id,
+        "agent": agent,
+        "cwd": cwd,
+        "working": event == "start",
+        "event": event,
+        "added": added,
+        "deleted": deleted,
+        "numstat": b64dec(numstat_b64),
+        "updatedAt": now_iso(),
+    }
+    write_cache(data, cache_path)
+
+
+# ── fzf line formatting ────────────────────────────────────────────────────
+
+
+def _format_fzf_line(entry: dict, max_cwd: int) -> str:
+    wid = str(entry.get("windowId", "?"))
+    working = bool(entry.get("working"))
+    added = int(entry.get("added") or 0)
+    deleted = int(entry.get("deleted") or 0)
+    cwd = entry.get("cwd") or ""
+    base = Path(cwd).name if cwd else "?"
+    updated = relative_time(entry.get("updatedAt", ""))
+
+    if working:
+        icon = "\033[38;5;214m\033[0m"  # amber spinner
+    else:
+        icon = "\033[38;5;114m󰗡\033[0m"  # green check
+
+    cwd_padded = base.ljust(max_cwd)
+
+    added_padded = f"+{added}".rjust(5)
+    deleted_padded = f"-{deleted}".rjust(5)
+    added_str = f"\033[38;5;114m{added_padded}\033[0m"
+    deleted_str = f"\033[38;5;203m{deleted_padded}\033[0m"
+    updated_str = f"\033[38;5;244m{updated:>5}\033[0m"
+
+    line = f"{icon} {cwd_padded}  {added_str} {deleted_str}  {updated_str}"
+    return f"{wid}\t{line}"
+
+
+# ── kitty helpers ──────────────────────────────────────────────────────────
+
+
+def _live_kitty_window_ids() -> set[str]:
+    try:
+        r = slim_kitten("@", "ls")
+        windows = json.loads(r.stdout)
+    except Exception:
+        return set()
+    ids: set[str] = set()
+    for item in windows if isinstance(windows, list) else []:
+        tabs = item.get("tabs", []) if isinstance(item, dict) else []
+        for tab in tabs if isinstance(tabs, list) else []:
+            for w in tab.get("windows", []) if isinstance(tab, dict) else []:
+                if isinstance(w, dict):
+                    wid = w.get("id")
+                    if wid is not None:
+                        ids.add(str(wid))
+    return ids
+
+
+def _focused_kitty_window_id() -> str | None:
+    try:
+        r = slim_kitten("@", "ls")
+        windows = json.loads(r.stdout)
+    except Exception:
+        return None
+    for item in windows if isinstance(windows, list) else []:
+        tabs = item.get("tabs", []) if isinstance(item, dict) else []
+        for tab in tabs if isinstance(tabs, list) else []:
+            for w in tab.get("windows", []) if isinstance(tab, dict) else []:
+                if isinstance(w, dict) and w.get("is_focused"):
+                    wid = w.get("id")
+                    if wid is not None:
+                        return str(wid)
+    return None
+
+
+def _focus_kitty_window(window_id: str) -> None:
+    try:
+        slim_kitten("@", "focus-window", "--match", f"id:{window_id}")
+    except Exception:
+        pass
+
+
+# ── tmux helpers ───────────────────────────────────────────────────────────
+
+
+def _live_tmux_pane_ids() -> set[str]:
+    try:
+        r = subprocess.run(
+            ["tmux", "list-panes", "-a", "-F", "#{pane_id}"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        return {line.strip() for line in r.stdout.strip().split("\n") if line.strip()}
+    except Exception:
+        return set()
+
+
+def _focused_tmux_pane_id() -> str | None:
+    try:
+        r = subprocess.run(
+            ["tmux", "display-message", "-p", "#{pane_id}"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        return r.stdout.strip() or None
+    except Exception:
+        return None
+
+
+def _focus_tmux_pane(pane_id: str) -> None:
+    # select-pane only switches within the current window,
+    # so resolve the window ID first, then select window + pane.
+    r = subprocess.run(
+        ["tmux", "display-message", "-p", "-t", pane_id, "-F", "#{window_id}"],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+    window_id = r.stdout.strip()
+    if window_id:
+        subprocess.run(
+            ["tmux", "select-window", "-t", window_id],
+            capture_output=True,
+            timeout=5,
+        )
+    subprocess.run(
+        ["tmux", "select-pane", "-t", pane_id],
+        capture_output=True,
+        timeout=5,
+    )
+
+
+# ── commands ───────────────────────────────────────────────────────────────
+
+
+def cmd_start_end(event: str, agent: str) -> None:
+    """Collect git diff and record state."""
+    numstat, added, deleted = git_numstat()
+
+    if _is_tmux():
+        # Direct write using TMUX_PANE
+        _do_write(
+            _current_window_id(),
+            event,
+            agent,
+            os.getcwd(),
+            added,
+            deleted,
+            b64enc(numstat),
+        )
+    else:
+        # Notify kitty via kitten proxy to resolve target_window_id
+        try:
+            slim_kitten(
+                "--tty",
+                "@",
+                "kitten",
+                KITTEN_SCRIPT,
+                "update",
+                "--event",
+                event,
+                "--agent",
+                agent,
+                "--cwd",
+                os.getcwd(),
+                "--added",
+                str(added),
+                "--deleted",
+                str(deleted),
+                "--numstat-b64",
+                b64enc(numstat),
+            )
+        except Exception:
+            pass
+
+
+def cmd_write(args: argparse.Namespace) -> None:
+    """Write a state entry (called by the kitty kitten proxy)."""
+    _do_write(
+        args.window_id,
+        args.event,
+        args.agent,
+        args.cwd,
+        args.added,
+        args.deleted,
+        args.numstat_b64,
+    )
+
+
+def _do_status(
+    cache_path: Path,
+    live_ids: set[str],
+    preview_cmd: str,
+    focused_id: str | None,
+    focus_fn,
+    label: str,
+) -> None:
+    """Core status logic: read cache, clean stale, run fzf, focus."""
+    data = read_cache(cache_path)
+    windows = data.get("windows", {}) if isinstance(data.get("windows"), dict) else {}
+
+    # Clean stale windows/panes
+    stale = [wid for wid in windows if wid not in live_ids]
+    for wid in stale:
+        del windows[wid]
+    if stale:
+        data["windows"] = windows
+        write_cache(data, cache_path)
+
+    if not windows:
+        # Still open fzf with an empty list
+        fzf_input = ""
+        max_cwd = 1
+        entries = []
+    else:
+        max_cwd = max(
+            (
+                len(Path(e.get("cwd") or "").name or "?")
+                for e in windows.values()
+                if isinstance(e, dict)
+            ),
+            default=1,
+        )
+
+        entries = sorted(
+            [(k, v) for k, v in windows.items() if isinstance(v, dict)],
+            key=lambda kv: kv[1].get("updatedAt", ""),
+            reverse=True,
+        )
+
+        fzf_input = "\n".join(_format_fzf_line(v, max_cwd) for _, v in entries)
+
+    fzf_extra_args: list[str] = []
+    if focused_id and focused_id in windows:
+        # --select-1 auto-picks the line if there's exactly one match
+        fzf_extra_args = ["--select-1"]
+
+    try:
+        result = subprocess.run(
+            [
+                "fzf",
+                f"--prompt={label}> ",
+                "--header=enter: focus",
+                "--preview-window=right:70%,nowrap,border-left",
+                "--ansi",
+                "--delimiter=\t",
+                "--with-nth=2",
+                "--no-sort",
+                "--preview",
+                preview_cmd,
+                *fzf_extra_args,
+            ],
+            input=fzf_input,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+    except subprocess.TimeoutExpired:
+        sys.exit(0)
+
+    selection = result.stdout.strip()
+    if not selection:
+        sys.exit(0)
+
+    window_id = selection.split("\t")[0]
+    if window_id:
+        focus_fn(window_id)
+
+
+def cmd_status() -> None:
+    """Show fzf picker for coding agent windows/panes."""
+    if _is_tmux():
+        _do_status(
+            cache_path=CACHE_DIR / "tmux.json",
+            live_ids=_live_tmux_pane_ids(),
+            preview_cmd="tmux capture-pane -t {1} -p -e -S -60",
+            focused_id=_focused_tmux_pane_id(),
+            focus_fn=_focus_tmux_pane,
+            label="tmux agents",
+        )
+    else:
+        _do_status(
+            cache_path=CACHE_DIR / "kitty.json",
+            live_ids=_live_kitty_window_ids(),
+            preview_cmd="slim-kitten @ get-text --match 'id:{1}' --extent screen --ansi",
+            focused_id=_focused_kitty_window_id(),
+            focus_fn=_focus_kitty_window,
+            label="coding agents",
+        )
+
+
+# ── entry point ────────────────────────────────────────────────────────────
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="coding-agent-status", add_help=False)
+    subs = parser.add_subparsers(dest="command", required=True)
+
+    st = subs.add_parser("start", add_help=False)
+    st.add_argument("--agent", default="pi")
+
+    en = subs.add_parser("end", add_help=False)
+    en.add_argument("--agent", default="pi")
+
+    subs.add_parser("status", add_help=False)
+
+    wr = subs.add_parser(
+        "write", add_help=False, description="internal: called by kitten proxy"
+    )
+    wr.add_argument("--window-id", required=True)
+    wr.add_argument("--event", choices=["start", "end"], required=True)
+    wr.add_argument("--agent", default="coding-agent")
+    wr.add_argument("--cwd", default="")
+    wr.add_argument("--added", type=int, default=0)
+    wr.add_argument("--deleted", type=int, default=0)
+    wr.add_argument("--numstat-b64", default="")
+
+    parser.add_argument("-h", "--help", action="help")
+
+    args = parser.parse_args()
+
+    if args.command in ("start", "end"):
+        cmd_start_end(args.command, args.agent)
+    elif args.command == "status":
+        cmd_status()
+    elif args.command == "write":
+        cmd_write(args)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export PATH="$HOME/bin:/etc/profiles/per-user/$USER/bin/:$PATH"
-
 prog="${0##*/}"
 
 die() {
