@@ -344,24 +344,31 @@ def cmd_start_end(event: str, agent: str) -> None:
     else:
         # Notify kitty via kitten proxy to resolve target_window_id
         try:
-            slim_kitten(
-                "--tty",
-                "@",
-                "kitten",
-                KITTEN_SCRIPT,
-                "update",
-                "--event",
-                event,
-                "--agent",
-                agent,
-                "--cwd",
-                os.getcwd(),
-                "--added",
-                str(added),
-                "--deleted",
-                str(deleted),
-                "--numstat-b64",
-                b64enc(numstat),
+            subprocess.run(
+                [
+                    "slim-kitten",
+                    "--tty",
+                    "@",
+                    "kitten",
+                    KITTEN_SCRIPT,
+                    "update",
+                    "--event",
+                    event,
+                    "--agent",
+                    agent,
+                    "--cwd",
+                    os.getcwd(),
+                    "--added",
+                    str(added),
+                    "--deleted",
+                    str(deleted),
+                    "--numstat-b64",
+                    b64enc(numstat),
+                ],
+                stdout=sys.stdout,
+                stderr=sys.stderr,
+                text=True,
+                timeout=15,
             )
         except Exception:
             pass

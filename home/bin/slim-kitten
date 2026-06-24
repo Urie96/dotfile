@@ -34,10 +34,19 @@ def encode_dcs(payload: dict) -> bytes:
 
 
 def write_tty(data: bytes) -> None:
-    """Write raw bytes to /dev/tty."""
-    with open("/dev/tty", "wb") as tty:
-        tty.write(data)
-        tty.flush()
+    """Write raw bytes to /dev/tty.
+
+    When /dev/tty is unavailable (e.g. running in a subprocess without
+    a controlling terminal), fall back to writing the DCS sequence to
+    stdout.
+    """
+    try:
+        with open("/dev/tty", "wb") as tty:
+            tty.write(data)
+            tty.flush()
+    except OSError:
+        sys.stdout.buffer.write(data)
+        sys.stdout.buffer.flush()
 
 
 # ── Socket handling ───────────────────────────────────────────────────
