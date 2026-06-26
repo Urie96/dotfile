@@ -230,11 +230,8 @@ def _format_fzf_line(entry: dict, max_cwd: int) -> str:
 
 
 def _live_kitty_window_ids() -> set[str]:
-    try:
-        r = slim_kitten("@", "ls")
-        windows = json.loads(r.stdout)
-    except Exception:
-        return set()
+    r = slim_kitten("@", "ls")
+    windows = json.loads(r.stdout)
     ids: set[str] = set()
     for item in windows if isinstance(windows, list) else []:
         tabs = item.get("tabs", []) if isinstance(item, dict) else []

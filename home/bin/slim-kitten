@@ -14,6 +14,7 @@ Environment:
   KITTY_LISTEN_ON  - socket address (unix:/path or tcp:host:port)
 """
 
+import codecs
 import json
 import os
 import re
@@ -21,6 +22,14 @@ import secrets
 import socket
 import sys
 from base64 import standard_b64encode
+
+
+def expand_ansi_c_escapes(text: str) -> bytes:
+    r"""Expand ANSI C-style escape sequences (\n, \t, \e, \x.., etc.) to bytes.
+    Compatible with kitty's parse_send_text_bytes."""
+    # \e (escape) is a kitty extension → map it to \x1b first
+    text = re.sub(r"\\e", r"\\x1b", text)
+    return codecs.decode(text, "unicode_escape").encode("utf-8")
 
 # ── Protocol helpers ──────────────────────────────────────────────────
 
@@ -241,6 +250,8 @@ def _generic_payload(args: list[str], opts: dict) -> dict:
     """Build payload from remaining args.
 
     Supports --key value, --key=value, and boolean --flag options.
+    Trailing positional args (after all --flags) are collected under the
+    ``data`` key — used by commands like ``send-text``.
     """
     payload = {}
     i = 0
@@ -256,6 +267,10 @@ def _generic_payload(args: list[str], opts: dict) -> dict:
             key, val = raw, True
             i += 1
         payload[key.replace("-", "_")] = val
+    # remaining positional args (after all --flags) → data
+    positional = args[i:]
+    if positional:
+        payload["data"] = " ".join(positional)
     return payload
 
 
@@ -268,6 +283,11 @@ def dispatch(cmd: str, args: list[str], opts: dict) -> dict | None:
         if not args:
             die("kitten: missing kitten name")
         payload = {"kitten": args[0], "args": args[1:]}
+    elif cmd == "send_text" or cmd == "send-text":
+        payload = _generic_payload(args, opts)
+        if "data" in payload:
+            raw_bytes = expand_ansi_c_escapes(payload["data"])
+            payload["data"] = "base64:" + standard_b64encode(raw_bytes).decode("ascii")
     else:
         payload = _generic_payload(args, opts)
 
@@ -351,7 +371,7 @@ def main() -> None:
                 print(data, end="")
             else:
                 print(json.dumps(data))
-        else:
+        elif result.get("ok") is not True:
             print(json.dumps(result))
 
 

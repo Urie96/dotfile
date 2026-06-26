@@ -45,6 +45,9 @@
           "contextWindow": 1000000,
           "input": ["text", "image"],
           "reasoning": true
+        },
+        {
+          "id": "ali-deepseek-v4-flash"
         }
       ]
     }

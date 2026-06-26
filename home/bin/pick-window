@@ -26,7 +26,7 @@ pick_window_preview() {
       IFS='|' read -r wid _pid <<<"$2"
       tmux capture-pane -t "$wid" -p -e -S -60 2>/dev/null || echo "(unavailable)"
     else
-      kitten @ get-text --match "id:$2" --extent screen --ansi 2>/dev/null || echo "(unavailable)"
+      slim-kitten @ get-text --match "id:$2" --extent screen --ansi 2>/dev/null || echo "(unavailable)"
     fi
     ;;
   d)
@@ -45,7 +45,7 @@ pick_window_items() {
         printf 'w\t%s\t\033[38;5;75m󰖲 \033[0m\033[38;5;214m%s\033[0m  \033[38;5;245m%s\033[0m\n' "$target" "$title" "$cwd"
       done
   else
-    kitten @ ls --match 'not state:focused' 2>/dev/null |
+    slim-kitten @ ls --match 'not state:focused' 2>/dev/null |
       jq -r '
         .[].tabs[].windows[]
         | [
@@ -77,7 +77,7 @@ pick_window_delete() {
       IFS='|' read -r wid pid <<<"$2"
       tmux select-window -t "$wid" \; kill-pane -t "$pid" 2>/dev/null || true
     else
-      kitten @ close-window --match "id:$2" 2>/dev/null || true
+      slim-kitten @ close-window --match "id:$2" 2>/dev/null || true
     fi
     ;;
   d)
@@ -126,7 +126,7 @@ w:*)
     IFS='|' read -r wid pid <<<"$target"
     tmux select-window -t "$wid" \; select-pane -t "$pid"
   else
-    kitten @ focus-window --match "id:$target"
+    slim-kitten @ focus-window --match "id:$target"
   fi
   ;;
 d:ctrl-e)
@@ -134,15 +134,15 @@ d:ctrl-e)
     window_id="$(tmux new-window -P -a -c "$target" -n "nvim" 2>/dev/null)"
     tmux send-keys -t "$window_id" 'nvim' Enter
   else
-    window_id="$(kitten @ launch --type=tab --location=after --cwd "$target")"
-    kitten @ send-text --match "id:$window_id" 'nvim\n'
+    window_id="$(slim-kitten @ launch --type=tab --location=after --cwd "$target")"
+    slim-kitten @ send-text --match "id:$window_id" 'nvim\n'
   fi
   ;;
 d:*)
   if _is_tmux; then
     tmux new-window -a -c "$target" >/dev/null
   else
-    kitten @ launch --type=tab --location=after --cwd "$target" >/dev/null
+    slim-kitten @ launch --type=tab --location=after --cwd "$target" >/dev/null
   fi
   ;;
 *)
