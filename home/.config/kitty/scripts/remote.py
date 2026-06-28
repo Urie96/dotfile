@@ -1,5 +1,6 @@
 import argparse
 import os
+import shutil
 import subprocess
 from typing import List, NamedTuple, Optional
 
@@ -79,9 +80,10 @@ def handle_result(
                 if conn_data.port is None
                 else f"{conn_data.hostname}:{conn_data.port}"
             )
+            mpv_bin = _resolve_binary("mpv")
             subprocess.Popen(
                 [
-                    "mpv",
+                    mpv_bin,
                     "--keep-open",
                     "--no-terminal",
                     f"sftp://{sftphost}{parsed_args.files[0]}",
@@ -125,6 +127,18 @@ def handle_result(
                     *parsed_args.files,
                 ),
             )
+
+
+def _resolve_binary(name: str) -> str:
+    """Find a binary, trying the kitten's PATH then common fallbacks."""
+    path = shutil.which(name)
+    if path:
+        return path
+    for d in ("/run/current-system/sw/bin", "/opt/homebrew/bin", "/usr/local/bin"):
+        candidate = os.path.join(d, name)
+        if os.path.isfile(candidate):
+            return candidate
+    return name  # last resort
 
 
 class SSHConnectionData(NamedTuple):
