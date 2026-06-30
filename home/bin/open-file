@@ -60,22 +60,6 @@ get_mime() {
   file -bL --mime-type -- "$file"
 }
 
-copy_for_urie() { # root
-  local file="$1"
-  if sudo -u urie test -r "$file"; then
-    echo "$file"
-    return
-  fi
-  local base
-  base="$(basename -- "$file")"
-  local tmp="/tmp/$base.$$" # 添加PID避免文件名冲突
-  cp -a -- "$file" "$tmp"
-  chmod 400 -- "$tmp"
-  chown urie -- "$tmp"
-  echo "已将文件复制到 $tmp 并设置为仅urie可读" >&2
-  echo "$tmp"
-}
-
 nvim() {
   local -a paths=("$@")
   local p="${paths[0]}"
@@ -124,18 +108,12 @@ mpv_background() {
 }
 
 remote_mpv_video() {
-  local paths=$1
-  local p
-  p="$(copy_for_urie "${paths[0]}")"
-  slim-kitten @ kitten scripts/remote.py mpv_video "$p"
+  slim-kitten @ kitten scripts/remote.py mpv_video "$1"
 }
 
 # remote-audio / mpv audio via remote — best-effort fallback to mpv
 remote_mpv_audio() {
-  local paths=$1
-  local p
-  p="$(copy_for_urie "${paths[0]}")"
-  slim-kitten @ kitten scripts/remote.py mpv_audio "$p"
+  slim-kitten @ kitten scripts/remote.py mpv_audio "$1"
 }
 
 pdf_to_png() {

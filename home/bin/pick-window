@@ -47,7 +47,8 @@ pick_window_items() {
   else
     slim-kitten @ ls --match 'not state:focused' 2>/dev/null |
       jq -r '
-        .[].tabs[].windows[]
+        [.[].tabs[].windows[]]
+        | sort_by(-.last_focused_at)[]
         | [
             "w",
             (.id | tostring),
