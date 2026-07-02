@@ -1,15 +1,13 @@
 {
   "lastChangelogVersion": "0.80.2",
-  "defaultProvider": "yybbcode",
-  "defaultModel": "gpt-5.5",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4-flash",
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "yybbcode/gpt-5.5",
-    "deepseek-*"
+    "opencode-go/deepseek-*",
+    "opencode-go/glm-5.2"
   ],
   "theme": "dracula",
-  "packages": [
-    "npm:pi-web-access",
-    "npm:@ayulab/pi-rewind"
-  ]
+  "packages": ["npm:pi-web-access", "npm:@ayulab/pi-rewind"]
 }
