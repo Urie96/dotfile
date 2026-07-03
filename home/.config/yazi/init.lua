@@ -4,14 +4,20 @@ require('session'):setup {
 
 function Linemode:mime() return ui.Line(self._file:mime() or '') end
 
-local os_icon, os_icon_color = '', ''
+local os_icon, os_icon_color = '', 'green'
 local target = ya.target_os()
 if target == 'linux' then
   local f = io.open('/etc/os-release', 'r')
-  if f then
-    local id_line = f:read '*l' or ''
-    f:close()
-    local id = id_line:match '^ID=([a-z]+)'
+  if not f then return nil end
+  local id
+  for line in f:lines() do
+    -- 匹配可能带引号的值
+    id = line:match '^ID="?([%w_]+)"?%s*$'
+    if id then break end
+  end
+  f:close()
+
+  if id then
     if id == 'nixos' then
       os_icon = ' '
       os_icon_color = '#5277C3'
@@ -34,7 +40,7 @@ elseif target == 'windows' then
   os_icon_color = '#0078d7'
 end
 
-local hostname = ' ' .. (os.getenv 'SSH_CONNECTION' and 'ssh:// ' or '') .. ya.host_name()
+local hostname = ' ' .. (os.getenv 'SSH_CONNECTION' and 'ssh://' or '') .. ya.host_name()
 
 local is_root = ya.user_name() == 'root'
 
