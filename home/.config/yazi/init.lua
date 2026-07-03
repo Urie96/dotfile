@@ -4,10 +4,59 @@ require('session'):setup {
 
 function Linemode:mime() return ui.Line(self._file:mime() or '') end
 
--- top bar add host@name
+local os_icon, os_icon_color = '', ''
+local target = ya.target_os()
+if target == 'linux' then
+  local f = io.open('/etc/os-release', 'r')
+  if f then
+    local id_line = f:read '*l' or ''
+    f:close()
+    local id = id_line:match '^ID=([a-z]+)'
+    if id == 'nixos' then
+      os_icon = ' '
+      os_icon_color = '#5277C3'
+    elseif id == 'ubuntu' then
+      os_icon = '󰕈 '
+      os_icon_color = '#E95420'
+    else
+      os_icon = ' '
+      os_icon_color = '#5277C3'
+    end
+  end
+elseif target == 'macos' then
+  os_icon = '󰀵 '
+  os_icon_color = '#11111b'
+elseif target == 'android' then
+  os_icon = ' '
+  os_icon_color = '#A4C639'
+elseif target == 'windows' then
+  os_icon = ' '
+  os_icon_color = '#0078d7'
+end
+
+local hostname = ' ' .. (os.getenv 'SSH_CONNECTION' and 'ssh:// ' or '') .. ya.host_name()
+
+local is_root = ya.user_name() == 'root'
+
 Header:children_add(function()
-  if ya.target_family() ~= 'unix' then return ui.Line {} end
-  return ui.Span(ya.user_name() .. '@' .. ya.host_name() .. ':'):fg('green'):bold()
+  if ya.target_family() ~= 'unix' and ya.target_os() ~= 'windows' then return ui.Line {} end
+  if is_root then return ui.Span(ya.user_name() .. '@' .. ya.host_name() .. ':'):fg('red'):bold() end
+
+  local crust, white, red, peach, yellow, green, sapphire, lavender =
+    '#11111b', '#cdd6f4', '#f38ba8', '#fab387', '#f9e2af', '#a6e3a1', '#74c7ec', '#b4befe'
+  return ui.Line {
+    ui.Span(''):fg(white),
+    ui.Span(os_icon):fg(os_icon_color):bg(white),
+    ui.Span(''):fg(white):bg(peach),
+    ui.Span(hostname):fg(crust):bg(peach):bold(),
+    -- ui.Span(''):fg(red):bg(peach),
+    -- ui.Span(' ' .. ya.user_name()):fg(crust):bg(peach),
+    ui.Span(''):fg(peach):bg(yellow),
+    ui.Span(''):fg(yellow):bg(green),
+    ui.Span(''):fg(green):bg(sapphire),
+    ui.Span(''):fg(sapphire):bg(lavender),
+    ui.Span(' '):fg(lavender),
+  }
 end, 500, Header.LEFT)
 
 -- bottom bar add owner:group
@@ -53,7 +102,7 @@ require('full-border'):setup { type = ui.Border.ROUNDED }
 -- Folder-specific sort rules (replaces folder-rules plugin)
 ps.sub('ind-sort', function(opt)
   local cwd = cx.active.current.cwd
-  if cwd:ends_with('Downloads') then
+  if cwd:ends_with 'Downloads' then
     opt.by, opt.reverse, opt.dir_first = 'mtime', true, false
   else
     opt.by, opt.reverse, opt.dir_first = 'mtime', true, true
