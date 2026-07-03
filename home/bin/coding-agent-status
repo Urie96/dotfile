@@ -143,8 +143,8 @@ def read_all_entries(tt: str = "") -> dict[str, dict]:
     for f in sorted(d.iterdir()):
         if f.suffix == ".json":
             entry = read_entry(f)
-            if entry and "windowId" in entry:
-                entries[str(entry["windowId"])] = entry
+            if entry:
+                entries[f.stem] = entry
     return entries
 
 
@@ -152,7 +152,6 @@ def read_all_entries(tt: str = "") -> dict[str, dict]:
 
 
 def build_entry(
-    window_id: str,
     event: str,
     agent: str,
     cwd: str,
@@ -162,7 +161,6 @@ def build_entry(
     session: str = "",
 ) -> dict:
     return {
-        "windowId": str(window_id),
         "agent": agent,
         "cwd": cwd,
         "session": session,
@@ -209,8 +207,7 @@ def git_numstat() -> tuple[str, int, int]:
 # ── fzf line formatting ────────────────────────────────────────────────────
 
 
-def _format_fzf_line(entry: dict, max_cwd: int) -> str:
-    wid = str(entry.get("windowId", "?"))
+def _format_fzf_line(wid: str, entry: dict, max_cwd: int) -> str:
     working = bool(entry.get("working"))
     added = int(entry.get("added") or 0)
     deleted = int(entry.get("deleted") or 0)
@@ -355,13 +352,14 @@ def _focus_tmux_pane(pane_id: str) -> None:
 def cmd_start_end(event: str, agent: str, session: str = "") -> None:
     """Collect git diff, build the entry, and write it."""
     numstat, added, deleted = git_numstat()
+    window_id = _current_window_id()
 
     entry = build_entry(
-        _current_window_id(), event, agent, os.getcwd(), added, deleted, numstat, session
+        event, agent, os.getcwd(), added, deleted, numstat, session
     )
 
     if _is_tmux():
-        _atomic_write(_entry_path(entry["windowId"]), entry)
+        _atomic_write(_entry_path(window_id), entry)
     else:
         content = json.dumps(entry, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
         _notify_kitty("write", "--content-b64", b64enc(content))
@@ -420,7 +418,7 @@ def _do_status(
             reverse=True,
         )
         fzf_input = "\n".join(
-            _format_fzf_line(v, max_cwd) for _, v in sorted_entries
+            _format_fzf_line(k, v, max_cwd) for k, v in sorted_entries
         )
 
     fzf_extra_args: list[str] = []
