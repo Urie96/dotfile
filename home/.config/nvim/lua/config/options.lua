@@ -87,7 +87,6 @@ vim.filetype.add {
     rpc = 'rpc',
   },
   filename = {
-    ['.env'] = 'dotenv',
     ['.envrc'] = 'bash',
   },
 }
