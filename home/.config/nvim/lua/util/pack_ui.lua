@@ -668,7 +668,7 @@ local function setup_keymaps()
     local msg = string.format('Remove %d non-active plugin(s)?\n\n%s', #to_clean, table.concat(to_clean, '\n'))
     local choice = vim.fn.confirm(msg, '&Yes\n&No', 2, 'Question')
     if choice == 1 then
-      close()
+      M.close()
       local ok, err = pcall(vim.pack.del, to_clean)
       if ok then
         vim.notify(string.format('vim.pack: removed %d plugin(s)', #to_clean), vim.log.levels.INFO)
@@ -696,7 +696,7 @@ local function setup_keymaps()
 
     local choice = vim.fn.confirm(string.format('Delete plugin %s?', name), '&Yes\n&No', 2, 'Question')
     if choice == 1 then
-      close()
+      M.close()
       local del_ok, err = pcall(vim.pack.del, { name })
       if del_ok then
         vim.notify(string.format('vim.pack: removed %s', name), vim.log.levels.INFO)
@@ -708,7 +708,7 @@ local function setup_keymaps()
 
   -- Open log
   vim.keymap.set('n', 'L', function()
-    close()
+    M.close()
     local log_path = vim.fs.joinpath(vim.fn.stdpath 'log', 'nvim-pack.log')
     if vim.uv.fs_stat(log_path) then
       vim.cmd.edit(log_path)
