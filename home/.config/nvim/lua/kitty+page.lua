@@ -14,7 +14,7 @@ _G.Snacks = setmetatable({}, {
 
 local M = {}
 
-local INPUT_LINE_NUMBER, CURSOR_LINE, CURSOR_COLUMN = 0, 0, 0
+local INPUT_LINE_NUMBER, CURSOR_LINE, CURSOR_COLUMN = nil, 0, 0
 
 Config.on_keys({ 's' }, { 'n', 'x', 'o' }, function()
   vim.pack.add { 'https://github.com/folke/flash.nvim' }
@@ -83,11 +83,22 @@ function M.set_autocmd(term_buf)
 
   local set_cursor = function()
     local max_line_nr = vim.api.nvim_buf_line_count(term_buf)
-    local input_line_nr = bounded_number(INPUT_LINE_NUMBER > 0 and INPUT_LINE_NUMBER or max_line_nr, 1, max_line_nr)
-    local cursor_line_nr = bounded_number(CURSOR_LINE + input_line_nr, 0, max_line_nr)
+    local input_line_nr
+    local cursor_line_nr
+    local cursor_column = CURSOR_COLUMN
+
+    if INPUT_LINE_NUMBER == nil then
+      input_line_nr = bounded_number(max_line_nr - vim.api.nvim_win_get_height(0), 1, max_line_nr)
+      cursor_line_nr = max_line_nr
+      local last_line = vim.api.nvim_buf_get_lines(term_buf, -2, -1, false)[1] or ''
+      cursor_column = #last_line
+    else
+      input_line_nr = bounded_number(INPUT_LINE_NUMBER > 0 and INPUT_LINE_NUMBER or max_line_nr, 1, max_line_nr)
+      cursor_line_nr = bounded_number(CURSOR_LINE + input_line_nr, 1, max_line_nr)
+    end
 
     vim.fn.winrestview { topline = input_line_nr }
-    vim.api.nvim_win_set_cursor(0, { cursor_line_nr, CURSOR_COLUMN })
+    vim.api.nvim_win_set_cursor(0, { cursor_line_nr, cursor_column })
   end
 
   local group = vim.api.nvim_create_augroup('kitty+page', { clear = true })
@@ -161,11 +172,11 @@ function M.set_color()
   end
 end
 
----@param input_line_number string
----@param cursor_line string
----@param cursor_column string
+---@param input_line_number? string
+---@param cursor_line? string
+---@param cursor_column? string
 function M.entry(input_line_number, cursor_line, cursor_column)
-  INPUT_LINE_NUMBER = tonumber(input_line_number) or 0
+  INPUT_LINE_NUMBER = tonumber(input_line_number)
   CURSOR_LINE = tonumber(cursor_line) or 0
   CURSOR_COLUMN = tonumber(cursor_column) or 0
 

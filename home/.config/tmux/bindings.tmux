@@ -3,7 +3,8 @@
 
 bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded!"
 
-bind-key C-f display-popup -E -w 80% -h 80% -b rounded 'pick-window'
+bind-key f display-popup -E -w 80% -h 80% -b rounded 'pick-window'
+bind-key C-f display-popup -E -w 100% -h 100% -b rounded '~/.config/tmux/scripts/scrollback-pager'
 bind-key a display-popup -E -w 80% -h 80% -b rounded 'coding-agent-status status'
 bind-key v new-window nvim -c 'call feedkeys("\<Space>bn")'
 

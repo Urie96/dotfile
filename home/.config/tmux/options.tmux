@@ -4,7 +4,7 @@ set -g mouse on
 set -g history-limit 5000
 
 set -s escape-time 10 # 程序响应esc的延迟，因为有些组合键发送的组合键是^[开头的
-set -sg repeat-time 800 # 无需前缀键，重复输入tmux快捷键
+set -sg repeat-time 300 # 无需前缀键，重复输入tmux快捷键
 set -s focus-events on # 让程序能感知到聚焦
 
 # sesh: smart session manager

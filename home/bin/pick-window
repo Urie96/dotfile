@@ -23,8 +23,8 @@ pick_window_preview() {
   case "$1" in
   w)
     if _is_tmux; then
-      IFS='|' read -r wid _pid <<<"$2"
-      tmux capture-pane -t "$wid" -p -e -S -60 2>/dev/null || echo "(unavailable)"
+      IFS='|' read -r _wid pid <<<"$2"
+      tmux capture-pane -t "$pid" -p -e -S -60 2>/dev/null || echo "(unavailable)"
     else
       slim-kitten @ get-text --match "id:$2" --extent screen --ansi 2>/dev/null || echo "(unavailable)"
     fi
@@ -112,7 +112,7 @@ SHELL="$bash_path" selection="$(pick_window_items | fzf \
   --exact \
   --expect=ctrl-e \
   --bind 'ctrl-d:execute-silent(bash -c "pick_window_delete {1} {2}")+reload(pick_window_items)' \
-  --preview-window='right:70%,nowrap' \
+  --preview-window='right:70%,nowrap,follow' \
   --preview 'pick_window_preview {1} {2}')" || exit 0
 
 key="${selection%%$'\n'*}"
