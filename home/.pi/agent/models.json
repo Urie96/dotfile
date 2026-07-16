@@ -31,7 +31,10 @@
           "id": "gpt-5.5-2026-04-24",
           "contextWindow": 1000000,
           "input": ["text", "image"],
-          "reasoning": true
+          "reasoning": true,
+          "headers": {
+            "extra": "{\"session_id\":\"$PI_SESSION_ID\"}"
+          }
         }
       ]
     },
@@ -47,7 +50,8 @@
           "reasoning": true
         },
         {
-          "id": "ali-deepseek-v4-flash"
+          "id": "ali-deepseek-v4-flash",
+          "contextWindow": 500000
         }
       ]
     }
