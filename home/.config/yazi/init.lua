@@ -7,28 +7,27 @@ function Linemode:mime() return ui.Line(self._file:mime() or '') end
 local os_icon, os_icon_color = '', 'green'
 local target = ya.target_os()
 if target == 'linux' then
-  local f = io.open('/etc/os-release', 'r')
-  if not f then return nil end
-  local id
-  for line in f:lines() do
-    -- 匹配可能带引号的值
-    id = line:match '^ID="?([%w_]+)"?%s*$'
-    if id then break end
-  end
-  f:close()
+  local distro_icons = {
+    arch = { ' ', '#1793D1' },
+    centos = { ' ', '#932279' },
+    debian = { ' ', '#D70A53' },
+    manjaro = { ' ', '#35BF5C' },
+    nixos = { ' ', '#5277C3' },
+    ubuntu = { ' ', '#E95420' },
+  }
 
-  if id then
-    if id == 'nixos' then
-      os_icon = ' '
-      os_icon_color = '#5277C3'
-    elseif id == 'ubuntu' then
-      os_icon = '󰕈 '
-      os_icon_color = '#E95420'
-    else
-      os_icon = ' '
-      os_icon_color = '#5277C3'
+  local id
+  local f = io.open('/etc/os-release', 'r')
+  if f then
+    for line in f:lines() do
+      id = line:match '^ID="?([^"%s]+)"?%s*$'
+      if id then break end
     end
+    f:close()
   end
+
+  local distro = distro_icons[id] or { ' ', '#333333' }
+  os_icon, os_icon_color = distro[1], distro[2]
 elseif target == 'macos' then
   os_icon = '󰀵 '
   os_icon_color = '#11111b'

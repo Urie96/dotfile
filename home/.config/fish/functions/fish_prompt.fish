@@ -1,19 +1,29 @@
 # ── OS icon ──
 set -g prompt_os_icon ""
-if test -f /etc/os-release
-    switch (string match -r '^ID=([a-z]+)' </etc/os-release)[2]
+if test (uname -o 2>/dev/null) = Android
+    set prompt_os_icon (set_color A4C639)" "
+else if test (uname -s) = Linux
+    set prompt_os_icon (set_color 333333)" "
+    set -l distro_id
+    if test -f /etc/os-release
+        set distro_id (string match -rg '^ID="?([^"[:space:]]+)"?' </etc/os-release)
+    end
+    switch $distro_id
+        case arch
+            set prompt_os_icon (set_color 1793D1)" "
+        case centos
+            set prompt_os_icon (set_color 932279)" "
+        case debian
+            set prompt_os_icon (set_color D70A53)" "
+        case manjaro
+            set prompt_os_icon (set_color 35BF5C)" "
         case nixos
             set prompt_os_icon (set_color 5277C3)" "
         case ubuntu
-            set prompt_os_icon (set_color E95420)"󰕈 "
+            set prompt_os_icon (set_color E95420)" "
     end
-else
-    switch (uname -o)
-        case Darwin
-            set prompt_os_icon "󰀵 "
-        case Android
-            set prompt_os_icon (set_color A4C639)" "
-    end
+else if test (uname -s) = Darwin
+    set prompt_os_icon "󰀵 "
 end
 
 function fish_prompt
