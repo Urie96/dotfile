@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+tmp=$(mktemp "${TMPDIR:-/tmp}/tmux-scrollback.XXXXXX")
+
+cleanup() {
+  rm -f "$tmp"
+}
+trap cleanup EXIT
+
+tmux capture-pane -epS - >"$tmp"
+nvim -u NONE -R -c "lua require('kitty+page').entry()" "$tmp"
