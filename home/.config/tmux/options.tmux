@@ -3,8 +3,11 @@ set -g extended-keys-format csi-u
 set -g mouse on
 set -g history-limit 5000
 
+set -g allow-rename on
+set -g automatic-rename off
+
 set -s escape-time 10 # 程序响应esc的延迟，因为有些组合键发送的组合键是^[开头的
-set -sg repeat-time 300 # 无需前缀键，重复输入tmux快捷键
+set -sg repeat-time 800 # 无需前缀键，重复输入tmux快捷键
 set -s focus-events on # 让程序能感知到聚焦
 
 # sesh: smart session manager
@@ -19,7 +22,8 @@ setw -g pane-base-index 1     # make pane numbering consistent with windows
 setw -g automatic-rename on   # rename window to reflect current program
 set -g renumber-windows on    # renumber windows when a window is closed
 
-set -g set-titles on          # set terminal title
+set -g set-titles on          # tmux之外的终端title，比如kitty终端的窗口title
+set -g set-titles-string "tmux:#{session_name}"
 
 set -g display-panes-time 800 # slightly longer pane indicators display time
 set -g display-time 1000      # slightly longer status messages display time
