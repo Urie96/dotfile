@@ -16,5 +16,4 @@ function ai
         --no-context-files \
         --session-dir "$session_dir" \
         $argv
-    cd "$prev_cwd"
 end
