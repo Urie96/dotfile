@@ -71,8 +71,9 @@ function fish_prompt
 
     # ── Segment 4: Env Icon ──
     set -l env_icon (set_color $crust)
-    set -q DIRENV_DIR && set env_icon $env_icon" "
-    set -q NVIM && set env_icon $env_icon" "
+    set -q DIRENV_DIR && set env_icon $env_icon"(direnv)"
+    set -q NVIM && set env_icon $env_icon"(neovim)"
+    set -q DEVENV_ROOT && set env_icon $env_icon"(devenv)"
     echo -n (set_color -b $green)(set_color $yellow)"$env_icon"
 
     # ── Segment 5: Background jobs ──
