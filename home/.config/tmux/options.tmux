@@ -37,7 +37,7 @@ set -g status-right '%m-%d %H:%M'
 set -g monitor-activity off # 程序有新增输出时, title出现井号#
 set -g visual-activity off
 set -g monitor-bell on
-set -g visual-bell on
+set -g visual-bell off
 set -g bell-action any # 任何窗口的bell都响应
 
 set -g set-clipboard on
