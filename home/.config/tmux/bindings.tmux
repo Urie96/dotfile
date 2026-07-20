@@ -3,7 +3,7 @@
 
 bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded!"
 
-bind-key f display-popup -E -w 80% -h 80% -b rounded 'pick-window'
+bind-key f display-popup -E -w 100% -h 100% -b none 'pick-window'
 bind-key C-f display-popup -E -w 100% -h 100% -b none '~/.config/tmux/scripts/scrollback-pager'
 bind-key a display-popup -E -w 80% -h 80% -b rounded 'coding-agent-status status'
 bind-key v new-window nvim -c 'call feedkeys("\<Space>bn")'
@@ -22,8 +22,11 @@ bind j select-pane -L  # move left
 bind k select-pane -D  # move down
 bind i select-pane -U  # move up
 bind l select-pane -R  # move right
-bind J swap-pane -D
-bind L swap-pane -U
+bind J "select-pane -m; select-pane -L; swap-pane; select-pane -L; select-pane -M"
+bind K "select-pane -m; select-pane -D; swap-pane; select-pane -D; select-pane -M"
+bind I "select-pane -m; select-pane -U; swap-pane; select-pane -U; select-pane -M"
+bind L "select-pane -m; select-pane -R; swap-pane; select-pane -R; select-pane -M"
+
 
 bind -r C-j previous-window # select previous window
 bind -r C-l next-window     # select next window
