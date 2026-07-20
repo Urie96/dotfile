@@ -12,8 +12,18 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 
 function notifyOSC99(title: string, body: string): void {
   // Kitty OSC 99: i=notification id, d=0 means not done yet, p=body for second part
-  process.stdout.write(`\x1b]99;i=1:d=0;${title}\x1b\\`);
-  process.stdout.write(`\x1b]99;i=1:p=body;${body}\x1b\\`);
+  const titleSequence = `\x1b]99;i=1:d=0;${title}\x1b\\`;
+  const bodySequence = `\x1b]99;i=1:p=body;${body}\x1b\\`;
+  process.stdout.write(wrapForTmux(titleSequence));
+  process.stdout.write(wrapForTmux(bodySequence));
+}
+
+function wrapForTmux(sequence: string): string {
+  if (!process.env.TMUX) return sequence;
+
+  // tmux passthrough: wrap in DCS and escape inner ESC bytes.
+  const escaped = sequence.split("\x1b").join("\x1b\x1b");
+  return `\x1bPtmux;${escaped}\x1b\\`;
 }
 
 export default function (pi: ExtensionAPI) {
