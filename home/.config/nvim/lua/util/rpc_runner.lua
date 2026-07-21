@@ -21,7 +21,7 @@ local function is_blank(line)
 end
 
 local function is_separator(line)
-  return line ~= nil and line:match '^%s*###%s*$' ~= nil
+  return line ~= nil and line:match '^%s*###' ~= nil
 end
 
 local function is_metadata_comment(line)
