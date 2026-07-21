@@ -192,20 +192,20 @@ map { 'gI', function() Snacks.picker.lsp_implementations() end, desc = '[G]oto [
 map { 'lr', function() Snacks.words.jump(vim.v.count1) end, desc = 'Next Reference' }
 map { 'jr', function() Snacks.words.jump(-vim.v.count1) end, desc = 'Prev Reference' }
 -- terminal
-map { '<C-/>', '<C-_>', mode = { 'i', 'n', 'v' }, remap = true }
+map { '<C-/>', '<C-_>', mode = { 'i', 'n', 'v', 't' }, remap = true }
 map {
   '<C-_>',
   function() Snacks.terminal() end,
-  mode = { 'n', 'i' },
+  mode = { 'n', 'i', 't' },
   desc = 'Terminal (Root Dir)',
 }
 
 map {
-  '<M-/>',
+  '<leader><C-_>',
   function()
     local file_dir = vim.fn.expand '%:h'
     if file_dir and file_dir ~= '' then Snacks.terminal(nil, { cwd = file_dir }) end
   end,
-  mode = { 'n', 'i' },
+  mode = { 'n', 'i', 't' },
   desc = 'Terminal (File Dir)',
 }

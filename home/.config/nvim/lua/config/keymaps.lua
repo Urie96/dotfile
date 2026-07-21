@@ -81,9 +81,9 @@ map { '<leader>bn', function() require('util.scratch').select() end, desc = 'Scr
 map { '<C-j>', '<cmd>bp<cr>' }
 map { '<C-l>', '<cmd>bn<cr>' }
 -- tabs
-map { '<C-tab>n', '<cmd>tab split<cr>', desc = 'New Tab' }
-map { '<C-tab><C-tab>', '<cmd>tabnext<cr>', desc = 'Next Tab' }
-map { '<C-tab>q', '<cmd>tabclose<cr>', desc = 'Close Tab' }
+map { '<leader><tab>n', '<cmd>tab split<cr>', desc = 'New Tab' }
+map { '<leader><tab><tab>', '<cmd>tabnext<cr>', desc = 'Next Tab' }
+map { '<leader><tab>q', '<cmd>tabclose<cr>', desc = 'Close Tab' }
 
 map { '<leader>gg', function() require('util.git_files').pick() end, desc = 'My Git Files' }
 map { 'ma', function() require('util.marker').add() end, desc = 'Add Marker' }
