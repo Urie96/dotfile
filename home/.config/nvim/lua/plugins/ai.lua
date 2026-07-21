@@ -33,9 +33,7 @@ if not use_work_ai then
         filetypes = ft_table,
         default_filetype_enabled = false,
         key_bindings = {
-          accept = '<C-Tab>',
-          next = '<C-l>',
-          prev = '<C-j>',
+          accept = '<C-l>',
         },
       },
     }
