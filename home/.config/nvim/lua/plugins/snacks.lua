@@ -32,13 +32,13 @@ Config.now(function()
     input = { enabled = true },
     notifier = { enabled = true },
     scope = { enabled = true },
-    bigfile = { enabled = true },
+    bigfile = { enabled = true, line_length = 100000 },
     -- quickfile = { enabled = true },
     terminal = {
       win = {
         style = 'float',
         keys = {
-          ['<C-/>'] = { 'hide', mode = { 'n', 't' } },
+          ['<C-_>'] = { 'hide', mode = { 'n', 't' } },
         },
         border = 'rounded',
       },
@@ -124,6 +124,15 @@ Config.now(function()
         -- { section = 'startup' },
       },
     },
+    lazygit = {
+      config = {
+        os = {
+          edit = [[flatnvim --no-wait {{filename}}]],
+          editAtLine = [[flatnvim --no-wait +{{line}} {{filename}}]],
+          editPreset = '',
+        },
+      },
+    },
   }
 end)
 
@@ -147,11 +156,6 @@ map {
       },
     }
   end,
-}
-map {
-  '<leader>st',
-  function() Snacks.picker.todo_comments { keywords = { 'TODO', 'FIX', 'FIXME' } } end,
-  desc = 'Todo/Fix/Fixme',
 }
 map { '<leader>n', function() Snacks.picker.notifications() end, desc = 'Notification History' }
 map {
@@ -183,7 +187,6 @@ map {
 map { '<leader>bo', function() Snacks.bufdelete.other() end, desc = 'Delete Other Buffers' }
 -- map { 'mm', function() Snacks.picker.marks() end, desc = 'List Marks' }
 map { '<leader><space>', function() Snacks.picker.grep() end, desc = 'Grep' }
-map { '<leader><space>', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = 'x' }
 map { '<C-S-O>', function() Snacks.picker.resume() end, desc = 'Resumes Last Picker' }
 -- lsp
 map { 'gd', function() Snacks.picker.lsp_definitions { jump = { reuse_win = false } } end, desc = '[G]oto [D]efinition' }
@@ -196,7 +199,7 @@ map { '<C-/>', '<C-_>', mode = { 'n', 't' }, remap = true }
 map {
   '<C-_>',
   function() Snacks.terminal() end,
-  mode = { 'n', 't' },
+  mode = { 'n' },
   desc = 'Terminal (Root Dir)',
 }
 
@@ -206,6 +209,6 @@ map {
     local file_dir = vim.fn.expand '%:h'
     if file_dir and file_dir ~= '' then Snacks.terminal(nil, { cwd = file_dir }) end
   end,
-  mode = { 'n', 't' },
+  mode = { 'n' },
   desc = 'Terminal (File Dir)',
 }

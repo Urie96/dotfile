@@ -73,7 +73,11 @@ main() {
     cmd_mr
     ;;
   ai)
-    pi --provider deepseek --model deepseek-v4-flash --no-session --no-skills --print /commit
+    if [[ -n "$WORK" ]]; then
+      pi --provider modelhub --model ali-deepseek-v4-flash --no-session --no-skills --print /commit
+    else
+      pi --provider deepseek --model deepseek-v4-flash --no-session --no-skills --print /commit
+    fi
     ;;
   *)
     open_browser "$(parse_remote_url)"
