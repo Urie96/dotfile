@@ -48,5 +48,7 @@ bind -T copy-mode-vi Home send -X start-of-line
 bind -T copy-mode-vi End send -X end-of-line
 bind -T copy-mode-vi i send-keys -X previous-prompt # 跳到上一个prompt
 bind -T copy-mode-vi k send-keys -X next-prompt # 跳到下一个prompt
+bind -T copy-mode-vi PageUp send -X halfpage-up
+bind -T copy-mode-vi PageDown send -X halfpage-down
 
 # vim:ft=tmux
