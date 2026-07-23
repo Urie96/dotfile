@@ -41,7 +41,8 @@ bind p paste-buffer
 
 bind -T copy-mode-vi v send -X begin-selection
 bind -T copy-mode-vi C-v send -X rectangle-toggle
-bind -T copy-mode-vi y send -X copy-selection-and-cancel
+bind -T copy-mode-vi y send -X copy-selection
+bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-selection
 bind -T copy-mode-vi Escape send -X cancel
 bind -T copy-mode-vi Home send -X start-of-line
 bind -T copy-mode-vi End send -X end-of-line

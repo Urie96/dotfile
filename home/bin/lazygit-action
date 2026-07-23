@@ -73,7 +73,7 @@ main() {
     cmd_mr
     ;;
   ai)
-    if [[ -n "$WORK" ]]; then
+    if [[ -n "${WORK:-}" ]]; then
       pi --provider modelhub --model ali-deepseek-v4-flash --no-session --no-skills --print /commit
     else
       pi --provider deepseek --model deepseek-v4-flash --no-session --no-skills --print /commit
