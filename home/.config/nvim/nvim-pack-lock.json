@@ -92,7 +92,7 @@
       "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
     },
     "rpc.nvim": {
-      "rev": "a5660742a1fc4726f4b562f653ad3645141f00fb",
+      "rev": "59b7a66ae5c1a770ad5f61553ca3f6a4ff91621f",
       "src": "git@github.com:Urie96/rpc.nvim.git"
     },
     "rustaceanvim": {
