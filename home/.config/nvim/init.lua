@@ -5,6 +5,7 @@ require 'config.options'
 require 'config.func'
 
 require 'plugins.global_var'
+
 require 'plugins.snacks'
 require 'plugins.treesitter'
 require 'plugins.mini'
@@ -20,3 +21,5 @@ require 'plugins.ai'
 require 'config.keymaps'
 require 'config.autocmds'
 require 'config.commands'
+
+require 'config.local_spec'
