@@ -32,6 +32,8 @@ Config.on_keys({ '<leader>ya' }, function()
   vim.keymap.set('n', '<leader>yA', '<cmd>Yazi cwd<cr>', { desc = "Open the file manager in nvim's working directory" })
 end)
 
+Config.on_filetype('rpc', function() vim.pack.add { 'https://github.com/urie96/rpc.nvim' } end)
+
 Config.on_filetype('http', function()
   vim.pack.add { 'https://github.com/mistweaverco/kulala.nvim' }
   require('kulala').setup {
