@@ -31,6 +31,7 @@ from pathlib import Path
 CACHE_DIR = Path.home() / ".cache" / "coding-agent-status"
 KITTEN_SCRIPT = "scripts/coding_agent_status.py"
 
+os.environ.setdefault("FZF_DEFAULT_OPTS_FILE", "~/.fzfrc")
 
 # ── terminal detection ─────────────────────────────────────────────────────
 
@@ -107,9 +108,7 @@ def b64enc(s: str) -> str:
 
 def _atomic_write(path: Path, data: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(
-        prefix="entry.", suffix=".json", dir=str(path.parent)
-    )
+    fd, tmp = tempfile.mkstemp(prefix="entry.", suffix=".json", dir=str(path.parent))
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2, sort_keys=True)
@@ -354,9 +353,7 @@ def cmd_start_end(event: str, agent: str, session: str = "") -> None:
     numstat, added, deleted = git_numstat()
     window_id = _current_window_id()
 
-    entry = build_entry(
-        event, agent, os.getcwd(), added, deleted, numstat, session
-    )
+    entry = build_entry(event, agent, os.getcwd(), added, deleted, numstat, session)
 
     if _is_tmux():
         _atomic_write(_entry_path(window_id), entry)
@@ -403,10 +400,7 @@ def _do_status(
     else:
         max_cwd = max(
             (
-                len(
-                    (e.get("session") or "")
-                    or (Path(e.get("cwd") or "").name or "?")
-                )
+                len((e.get("session") or "") or (Path(e.get("cwd") or "").name or "?"))
                 for e in entries.values()
                 if isinstance(e, dict)
             ),

@@ -4,7 +4,8 @@ if set -qg __fish_01_env_ran
 end
 set -gx __fish_01_env_ran 1
 
-set -gx FZF_DEFAULT_OPTS "--bind='page-up:preview-page-up,page-down:preview-page-down' --cycle"
+set -gx FZF_DEFAULT_OPTS_FILE ~/.fzfrc
+
 set -gx HF_ENDPOINT 'https://hf-mirror.com'
 set -gx LANG 'zh_CN.UTF-8'
 set -gx MANPAGER 'nvim +Man!'
