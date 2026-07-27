@@ -1,15 +1,21 @@
 ---@diagnostic disable: missing-fields
 
 Config.now(function()
-  vim.pack.add { 'https://github.com/folke/tokyonight.nvim' }
-  require('tokyonight').setup {
-    style = 'night',
-    on_colors = function(colors)
-      colors.border = '#565f89' -- make windows gap noticeable
-    end,
-  }
+  -- vim.pack.add { 'https://github.com/folke/tokyonight.nvim' }
+  -- require('tokyonight').setup {
+  --   style = 'night',
+  --   on_colors = function(colors)
+  --     colors.border = '#565f89' -- make windows gap noticeable
+  --   end,
+  -- }
+  --
+  -- vim.cmd.colorscheme 'tokyonight-night'
 
-  vim.cmd.colorscheme 'tokyonight-night'
+  vim.pack.add { { src = 'https://github.com/catppuccin/nvim', name = 'catppuccin' } }
+  require('catppuccin').setup {
+    flavour = 'macchiato',
+  }
+  vim.cmd.colorscheme 'catppuccin-nvim'
 end)
 
 Config.now(function()
@@ -17,8 +23,8 @@ Config.now(function()
   -- Override: always show relative path instead of absolute
   MiniStatusline.section_filename = function(args)
     if vim.bo.buftype == 'terminal' then return '%t' end
-    local rel = vim.fn.fnamemodify(vim.fn.expand('%'), ':.')
-    if rel == '' then rel = vim.fn.expand('%:t') end
+    local rel = vim.fn.fnamemodify(vim.fn.expand '%', ':.')
+    if rel == '' then rel = vim.fn.expand '%:t' end
     return rel .. '%m%r'
   end
 end)

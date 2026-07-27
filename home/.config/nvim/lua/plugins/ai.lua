@@ -48,6 +48,6 @@ else
 
     vim.cmd 'inoremap <script><silent><nowait><expr> <C-Tab> trae#Accept()'
     vim.cmd 'imap <C-Enter> <Plug>(marscode-next-or-complete)'
-    vim.defer_fn(function() vim.cmd.colorscheme 'tokyonight' end, 100) -- 不然virtualtext是白色的
+    -- vim.defer_fn(function() vim.cmd.colorscheme 'tokyonight' end, 100) -- 不然virtualtext是白色的
   end)
 end

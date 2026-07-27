@@ -1,10 +1,10 @@
 [mgr]
-syntect_theme = "~/.config/tmTheme/dracula.tmTheme"
+syntect_theme = "~/.config/bat/themes/Catppuccin Mocha.tmTheme"
 
   [mgr.border_style]
   fg = "darkgray"
 
-  [indicator.preview]
+[indicator.preview]
 
 
 [[filetype.rules]]

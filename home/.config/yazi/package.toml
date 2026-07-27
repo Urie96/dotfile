@@ -33,5 +33,7 @@ use = "yazi-rs/plugins:chmod"
 rev = "38efe09"
 hash = "f0c8c378184d5f8abd1b095a443d336d"
 
-[flavor]
-deps = []
+[[flavor.deps]]
+use = "yazi-rs/flavors:catppuccin-mocha"
+rev = "4770a34"
+hash = "7dfe41c9c3d9be76da8a844263d0bbed"

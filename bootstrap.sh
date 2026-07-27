@@ -27,13 +27,13 @@ err() { printf "\033[1;31m!!! %s\033[0m\n" "$*" >&2; }
 if [ -d "$DEST/.git" ]; then
   msg "仓库已存在: $DEST — 执行 pull"
   cd "$DEST"
-  git pull --ff-only "$REPO" main || {
+  git pull --ff-only --recurse-submodules "$REPO" main || {
     err "存在冲突，请手动解决后再运行本脚本"
     exit 1
   }
 else
   msg "克隆 $REPO → $DEST"
-  git clone "$REPO" "$DEST"
+  git clone --recurse-submodules "$REPO" "$DEST"
   cd "$DEST"
 
   chmod 700 "$DEST"
