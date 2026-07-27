@@ -256,12 +256,11 @@ def call_via_socket(cmd: str, payload: dict) -> dict | None:
         sock.close()
 
 
-def _generic_payload(args: list[str], opts: dict) -> dict:
-    """Build payload from remaining args.
+def _parse_options(args: list[str]) -> tuple[dict, list[str]]:
+    """Parse --key=value, --key value, and boolean --flag options.
 
-    Supports --key value, --key=value, and boolean --flag options.
-    Trailing positional args (after all --flags) are collected under the
-    ``data`` key — used by commands like ``send-text``.
+    Returns (options_dict, positional_args) where options_dict contains
+    the parsed --flags and positional_args is the list of remaining args.
     """
     payload = {}
     i = 0
@@ -277,11 +276,8 @@ def _generic_payload(args: list[str], opts: dict) -> dict:
             key, val = raw, True
             i += 1
         payload[key.replace("-", "_")] = val
-    # remaining positional args (after all --flags) → data
     positional = args[i:]
-    if positional:
-        payload["data"] = " ".join(positional)
-    return payload
+    return payload, positional
 
 
 def dispatch(cmd: str, args: list[str], opts: dict) -> dict | None:
@@ -294,12 +290,19 @@ def dispatch(cmd: str, args: list[str], opts: dict) -> dict | None:
             die("kitten: missing kitten name")
         payload = {"kitten": args[0], "args": args[1:]}
     elif cmd == "send_text" or cmd == "send-text":
-        payload = _generic_payload(args, opts)
-        if "data" in payload:
-            raw_bytes = expand_ansi_c_escapes(payload["data"])
+        payload, positional = _parse_options(args)
+        if positional:
+            raw_bytes = expand_ansi_c_escapes(" ".join(positional))
             payload["data"] = "base64:" + standard_b64encode(raw_bytes).decode("ascii")
+    elif cmd == "launch":
+        payload, positional = _parse_options(args)
+        # The launch command expects positional args (the command to run)
+        # as a list under the "args" key, NOT as a string under "data".
+        payload["args"] = positional
     else:
-        payload = _generic_payload(args, opts)
+        payload, positional = _parse_options(args)
+        if positional:
+            payload["data"] = " ".join(positional)
 
     via_tty = opts.get("tty", False)
     if via_tty:
