@@ -1,24 +1,25 @@
 {
+  "$upstream": "https://github.com/hasit/pi-community-themes/raw/refs/heads/main/themes/catppuccin-mocha.json",
   "$schema": "https://raw.githubusercontent.com/badlogic/pi-mono/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
-  "name": "dracula",
+  "name": "catppuccin-mocha",
   "vars": {
-    "bg": "#282a36",
-    "panel": "#282a36",
-    "panelAlt": "#44475a",
-    "selected": "#44475a",
-    "border": "#6272a4",
-    "accent": "#bd93f9",
-    "cyan": "#8be9fd",
-    "green": "#50fa7b",
-    "red": "#ff5555",
-    "yellow": "#f1fa8c",
-    "orange": "#ffb86c",
-    "purple": "#ff79c6",
-    "text": "#f8f8f2",
-    "muted": "#c2c6d8",
-    "dim": "#7f88aa",
-    "toolSuccessBg": "#2d4133",
-    "toolErrorBg": "#4a2e36"
+    "bg": "#1e1e2e",
+    "panel": "#181825",
+    "panelAlt": "#11111b",
+    "selected": "#313244",
+    "border": "#585b70",
+    "accent": "#89b4fa",
+    "cyan": "#94e2d5",
+    "green": "#a6e3a1",
+    "red": "#f38ba8",
+    "yellow": "#f9e2af",
+    "orange": "#fab387",
+    "purple": "#cba6f7",
+    "text": "#cdd6f4",
+    "muted": "#a6adc8",
+    "dim": "#7f849c",
+    "toolSuccessBg": "#2e363c",
+    "toolErrorBg": "#382b3d"
   },
   "colors": {
     "accent": "accent",
@@ -74,8 +75,8 @@
     "bashMode": "green"
   },
   "export": {
-    "pageBg": "#282a36",
-    "cardBg": "#282a36",
-    "infoBg": "#404340"
+    "pageBg": "#1e1e2e",
+    "cardBg": "#181825",
+    "infoBg": "#38363d"
   }
 }
