@@ -37,7 +37,9 @@ if not use_work_ai then
         },
       },
     }
-    -- vim.defer_fn(function() vim.cmd.colorscheme 'tokyonight' end, 100) -- 不然virtualtext是白色的
+    -- 让插件在懒加载完成后正确初始化 virtual text 高亮（CodeiumSuggestion），
+    -- 否则高亮组未定义，回退到 Normal.fg = 白色，与已输入代码无法区分。
+    vim.schedule(function() vim.cmd.colorscheme 'catppuccin-nvim' end)
   end)
 else
   Config.on_event('InsertEnter', function()
@@ -48,6 +50,9 @@ else
 
     vim.cmd 'inoremap <script><silent><nowait><expr> <C-Tab> trae#Accept()'
     vim.cmd 'imap <C-Enter> <Plug>(marscode-next-or-complete)'
-    -- vim.defer_fn(function() vim.cmd.colorscheme 'tokyonight' end, 100) -- 不然virtualtext是白色的
+
+    -- 同上：vim.schedule 确保插件初始化完成后触发 ColorScheme 事件，
+    -- 让插件有机会定义 virtual text 高亮组，避免白色无法区分。
+    vim.schedule(function() vim.cmd.colorscheme 'catppuccin-nvim' end)
   end)
 end
