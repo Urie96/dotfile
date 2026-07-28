@@ -166,6 +166,7 @@ function M.set_color()
     Search = { bg = '#3d59a1', fg = '#c0caf5' },
     IncSearch = { bg = '#ff9e64', fg = '#15161e' },
     MsgArea = { fg = '#a9b1d6' },
+    Normal = { bg = '#2a2a2a', fg = '#cdd6f4' },
   }
   for k, v in pairs(color) do
     vim.api.nvim_set_hl(0, k, v)

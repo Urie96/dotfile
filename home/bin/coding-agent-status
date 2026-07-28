@@ -31,7 +31,9 @@ from pathlib import Path
 CACHE_DIR = Path.home() / ".cache" / "coding-agent-status"
 KITTEN_SCRIPT = "scripts/coding_agent_status.py"
 
-os.environ.setdefault("FZF_DEFAULT_OPTS_FILE", "~/.fzfrc")
+print(1)
+
+os.environ.setdefault("FZF_DEFAULT_OPTS_FILE", str(Path.home() / ".fzfrc"))
 
 # ── terminal detection ─────────────────────────────────────────────────────
 

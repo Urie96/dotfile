@@ -97,7 +97,7 @@
     },
     "rpc.nvim": {
       "rev": "59b7a66ae5c1a770ad5f61553ca3f6a4ff91621f",
-      "src": "git@github.com:Urie96/rpc.nvim.git"
+      "src": "https://github.com/urie96/rpc.nvim"
     },
     "rustaceanvim": {
       "rev": "5a3a4158857ee1f7ec839b6ddd87cc0083a19c5f",
