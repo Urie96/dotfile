@@ -14,6 +14,7 @@ Config.now(function()
   vim.pack.add { { src = 'https://github.com/catppuccin/nvim', name = 'catppuccin' } }
   require('catppuccin').setup {
     flavour = 'macchiato',
+    kitty = false, -- 禁止颜色偏移
   }
   vim.cmd.colorscheme 'catppuccin-nvim'
 end)
