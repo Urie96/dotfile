@@ -4,6 +4,7 @@ Config.on_event('InsertEnter', function()
     { src = 'https://github.com/saghen/blink.cmp', version = vim.version.range '*' },
   }
   local cmp = require 'blink.cmp'
+  local cmp_list = require 'blink.cmp.completion.list'
 
   local snippets_dir = { vim.fn.stdpath 'config' .. '/snippets' }
   local cwd = vim.uv.cwd() or vim.env.PWD
@@ -12,6 +13,21 @@ Config.on_event('InsertEnter', function()
   if vscode_dir and #vscode_dir > 0 then
     vim.notify(string.format("Snippets in '%s' will be loaded", vscode_dir[1]))
     table.insert(snippets_dir, 1, vscode_dir[1])
+  end
+
+  -- Get the first n rime items' index in the completion list
+  -- Uses pcall for lazy access since blink.cmp is loaded on InsertEnter
+  local function get_n_rime_item_index(n, items)
+    items = items or cmp_list.items
+    local result = {}
+    if items == nil or #items == 0 then return result end
+    for i, item in ipairs(items) do
+      if item.client_name == 'rime_ls' then
+        result[#result + 1] = i
+        if #result == n then break end
+      end
+    end
+    return result
   end
 
   cmp.setup {
@@ -25,7 +41,7 @@ Config.on_event('InsertEnter', function()
             local ft = vim.bo[ctx.bufnr].filetype
 
             local out = vim.tbl_filter(function(item)
-              if item.kind == item_kind.Text then return false end
+              if ft ~= 'markdown' and item.kind == item_kind.Text then return false end
               if ft == 'go' and item.kind == item_kind.Snippet then return false end
               return true
             end, items)
@@ -64,6 +80,15 @@ Config.on_event('InsertEnter', function()
       ['<PageDown>'] = { 'scroll_documentation_down', 'fallback' },
       ['<C-l>'] = { 'snippet_forward', 'fallback' },
       ['<C-j>'] = { 'snippet_backward', 'fallback' },
+      ['<space>'] = {
+        function(cmp)
+          if not vim.g.rime_enabled then return false end
+          local rime_item_index = get_n_rime_item_index(1)
+          if #rime_item_index ~= 1 then return false end
+          return cmp.accept { index = rime_item_index[1] }
+        end,
+        'fallback',
+      },
     },
     completion = {
       keyword = { range = 'prefix' },
