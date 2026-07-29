@@ -1,23 +1,23 @@
-local Path = require 'plenary.path'
-
 local M = {}
 
 ---@class util.storage.Item
 ---@field json table
----@field path any
+---@field path string
 local Item = {}
 Item.__index = Item
 
-local data_dir = Path:new(vim.fn.stdpath 'data')
+local data_dir = vim.fn.stdpath 'data'
 
 ---@param namespace string
 ---@param key string
 ---@return table
 function Item.new(namespace, key)
-  local path = data_dir:joinpath(namespace, key .. '.json')
+  local path = vim.fs.joinpath(data_dir, namespace, key .. '.json')
 
   local json_string
-  if path:exists() then json_string = path:read() end
+  if vim.fn.filereadable(path) == 1 then
+    json_string = table.concat(vim.fn.readfile(path), '\n')
+  end
   if not json_string or json_string == '' then json_string = '{}' end
 
   return setmetatable({
@@ -28,11 +28,13 @@ end
 
 function Item:sync()
   local path = self.path
-  if not path:exists() then
-    local parent = path:parent()
-    if not parent:exists() then parent:mkdir { parents = true } end
+  if vim.fn.filereadable(path) == 0 then
+    local parent = vim.fn.fnamemodify(path, ':h')
+    if vim.fn.isdirectory(parent) == 0 then
+      vim.fn.mkdir(parent, 'p')
+    end
   end
-  path:write(vim.json.encode(self.json), 'w')
+  vim.fn.writefile({ vim.json.encode(self.json) }, path)
 end
 
 ---@type table<string, table<string, util.storage.Item>>

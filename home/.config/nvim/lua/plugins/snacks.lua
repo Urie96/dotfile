@@ -114,7 +114,6 @@ Config.now(function()
             desc = 'Recent Files',
             action = function() Snacks.picker.recent { filter = { paths = { [vim.uv.cwd()] = true } } } end,
           },
-          { icon = ' ', key = 'l', desc = 'LeetCode', action = ':Leet' },
           { icon = ' ', title = 'Projects', section = 'projects', indent = 2, padding = 1 },
         },
       },
