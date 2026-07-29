@@ -56,8 +56,16 @@ Config.now(function()
       end)(),
     },
     rime_ls = {
-      cmd = vim.lsp.rpc.connect('127.0.0.1', 9257),
+      cmd = function(...)
+        vim.fn.jobstart({ 'rime_ls', '--listen', '127.0.0.1:9257' }, { detach = true })
+
+        return vim.lsp.rpc.connect('127.0.0.1', 9257)(...)
+      end,
       filetypes = { 'markdown' },
+      init_options = {
+        shared_data_dir = '~/.config/rime',
+        log_dir = '~/.local/share/rime-ls',
+      },
       settings = {
         long_filter_text = true, -- 解决blink补全场景中文之后接中文无法出候选项
       },
