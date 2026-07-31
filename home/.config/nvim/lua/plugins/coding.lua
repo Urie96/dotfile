@@ -4,7 +4,7 @@ Config.on_event('InsertEnter', function()
     { src = 'https://github.com/saghen/blink.cmp', version = vim.version.range '*' },
   }
   local cmp = require 'blink.cmp'
-  local cmp_list = require 'blink.cmp.completion.list'
+  local cmp_types = require 'blink.cmp.types'
 
   local snippets_dir = { vim.fn.stdpath 'config' .. '/snippets' }
   local cwd = vim.uv.cwd() or vim.env.PWD
@@ -15,21 +15,6 @@ Config.on_event('InsertEnter', function()
     table.insert(snippets_dir, 1, vscode_dir[1])
   end
 
-  -- Get the first n rime items' index in the completion list
-  -- Uses pcall for lazy access since blink.cmp is loaded on InsertEnter
-  local function get_n_rime_item_index(n, items)
-    items = items or cmp_list.items
-    local result = {}
-    if items == nil or #items == 0 then return result end
-    for i, item in ipairs(items) do
-      if item.client_name == 'rime_ls' then
-        result[#result + 1] = i
-        if #result == n then break end
-      end
-    end
-    return result
-  end
-
   cmp.setup {
     sources = {
       default = { 'lsp', 'path', 'snippets', 'buffer' },
@@ -37,7 +22,8 @@ Config.on_event('InsertEnter', function()
         snippets = { opts = { search_paths = snippets_dir } },
         lsp = {
           transform_items = function(ctx, items)
-            local item_kind = require('blink.cmp.types').CompletionItemKind
+            if vim.b.iminsert then return {} end -- 输入法开启时不自动补全
+            local item_kind = cmp_types.CompletionItemKind
             local ft = vim.bo[ctx.bufnr].filetype
 
             local out = vim.tbl_filter(function(item)
@@ -80,15 +66,6 @@ Config.on_event('InsertEnter', function()
       ['<PageDown>'] = { 'scroll_documentation_down', 'fallback' },
       ['<C-l>'] = { 'snippet_forward', 'fallback' },
       ['<C-j>'] = { 'snippet_backward', 'fallback' },
-      ['<space>'] = {
-        function(cmp)
-          if not vim.g.rime_enabled then return false end
-          local rime_item_index = get_n_rime_item_index(1)
-          if #rime_item_index ~= 1 then return false end
-          return cmp.accept { index = rime_item_index[1] }
-        end,
-        'fallback',
-      },
     },
     completion = {
       keyword = { range = 'prefix' },
@@ -107,17 +84,6 @@ Config.on_event('InsertEnter', function()
       },
     },
   }
-
-  -- 按数字键直接选择rime候选词
-  cmp_list.show_emitter:on(function(event)
-    if not vim.g.rime_enabled then return end
-    local col = vim.fn.col '.' - 1
-    -- if you don't want use number to select, change the match pattern by yourself
-    if event.context.line:sub(col, col):match '%d' == nil then return end
-    local rime_item_index = get_n_rime_item_index(2, event.items)
-    if #rime_item_index ~= 1 then return end
-    cmp.accept { index = rime_item_index[1] }
-  end)
 end)
 
 Config.on_keys({ 's' }, { 'n', 'x', 'o' }, function()

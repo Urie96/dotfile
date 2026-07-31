@@ -55,38 +55,6 @@ Config.now(function()
         return cmd
       end)(),
     },
-    rime_ls = {
-      cmd = function(...)
-        vim.fn.jobstart({ 'rime_ls', '--listen', '127.0.0.1:9257' }, { detach = true })
-
-        return vim.lsp.rpc.connect('127.0.0.1', 9257)(...)
-      end,
-      filetypes = { 'markdown' },
-      init_options = {
-        shared_data_dir = '~/.config/rime',
-        log_dir = '~/.local/share/rime-ls',
-      },
-      settings = {
-        long_filter_text = true, -- 解决blink补全场景中文之后接中文无法出候选项
-      },
-      on_attach = function(client, bufnr)
-        vim.g.rime_enabled = true
-        local toggle_rime = function()
-          client:request(
-            'workspace/executeCommand',
-            { command = 'rime-ls.toggle-rime' },
-            function(_, result, ctx) vim.g.rime_enabled = result end
-          )
-        end
-        vim.keymap.set('i', '<C-space>', toggle_rime, { desc = 'Toggle Rime', buf = bufnr })
-        vim.keymap.set(
-          'n',
-          '<leader>rs',
-          function() client:exec_cmd { command = 'rime-ls.sync-user-data' } end,
-          { desc = '[R]ime [S]ync', buf = bufnr }
-        )
-      end,
-    },
   }
 
   ---@type vim.lsp.Config
