@@ -1,5 +1,5 @@
-[include]
-	path = ~/.config/git/delta-catppuccin.gitconfig
+; [include]
+; 	path = ~/.config/git/delta-catppuccin.gitconfig
 
 [core]
 	pager = "delta"
