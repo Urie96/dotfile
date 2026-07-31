@@ -110,15 +110,11 @@ Config.on_event('InsertEnter', function()
     },
   }
 
-  -- 按数字键直接选择rime候选词
+  -- rime只有1个时直接上屏
   cmp_list.show_emitter:on(function(event)
     if not vim.g.rime_enabled then return end
-    local col = vim.fn.col '.' - 1
-    -- if you don't want use number to select, change the match pattern by yourself
-    if event.context.line:sub(col, col):match '%d' == nil then return end
     local rime_item_index = get_n_rime_item_index(2, event.items)
-    if #rime_item_index ~= 1 then return end
-    cmp.accept { index = rime_item_index[1] }
+    if #rime_item_index == 1 then cmp.accept { index = rime_item_index[1], force = true } end
   end)
 end)
 

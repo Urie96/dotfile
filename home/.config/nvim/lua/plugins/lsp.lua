@@ -65,9 +65,11 @@ Config.now(function()
       init_options = {
         shared_data_dir = '~/.config/rime',
         log_dir = '~/.local/share/rime-ls',
+        trigger_characters = { '-', '=', ',', '.', '!' },
       },
       settings = {
         long_filter_text = true, -- 解决blink补全场景中文之后接中文无法出候选项
+        trigger_characters = { '-', '=', ',', '.', '!' },
       },
       on_attach = function(client, bufnr)
         vim.g.rime_enabled = true
