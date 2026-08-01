@@ -57,6 +57,7 @@ Config.now(function()
     },
     rime_ls = {
       cmd = function(...)
+        vim.fn.mkdir(vim.fn.expand '~/.local/share/rime-ls/rime_ice.userdb', 'p')
         vim.fn.jobstart({ 'rime_ls', '--listen', '127.0.0.1:9257' }, { detach = true })
 
         return vim.lsp.rpc.connect('127.0.0.1', 9257)(...)
@@ -65,11 +66,10 @@ Config.now(function()
       init_options = {
         shared_data_dir = '~/.config/rime',
         log_dir = '~/.local/share/rime-ls',
-        trigger_characters = { '-', '=', ',', '.', '!' },
+        user_data_dir = '~/.local/share/rime-ls',
       },
       settings = {
         long_filter_text = true, -- 解决blink补全场景中文之后接中文无法出候选项
-        trigger_characters = { '-', '=', ',', '.', '!' },
       },
       on_attach = function(client, bufnr)
         vim.g.rime_enabled = true
@@ -80,7 +80,7 @@ Config.now(function()
             function(_, result, ctx) vim.g.rime_enabled = result end
           )
         end
-        vim.keymap.set('i', '<C-space>', toggle_rime, { desc = 'Toggle Rime', buf = bufnr })
+        vim.keymap.set('i', '<C-c>', toggle_rime, { desc = 'Toggle Rime', buf = bufnr })
         vim.keymap.set(
           'n',
           '<leader>rs',

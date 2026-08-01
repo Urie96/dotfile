@@ -34,11 +34,11 @@ Config.on_event('InsertEnter', function()
   cmp.setup {
     sources = {
       default = { 'lsp', 'path', 'snippets', 'buffer' },
+      transform_items = function(_, items) return vim.b.iminsert and {} or items end, -- 输入法开启时不自动补全
       providers = {
         snippets = { opts = { search_paths = snippets_dir } },
         lsp = {
           transform_items = function(ctx, items)
-            if vim.b.iminsert then return {} end -- 输入法开启时不自动补全
             local item_kind = cmp_types.CompletionItemKind
             local ft = vim.bo[ctx.bufnr].filetype
 
@@ -86,9 +86,13 @@ Config.on_event('InsertEnter', function()
         function(cmp)
           if not vim.g.rime_enabled then return false end
           local rime_item_index = get_n_rime_item_index(1)
-          if #rime_item_index ~= 1 then return false end
+          if #rime_item_index == 0 then return false end
           return cmp.accept { index = rime_item_index[1] }
         end,
+        'fallback',
+      },
+      ['<CR>'] = {
+        function(cmp) return vim.g.rime_enabled and cmp.cancel() or false end,
         'fallback',
       },
     },
