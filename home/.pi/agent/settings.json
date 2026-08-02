@@ -1,9 +1,10 @@
 {
   "lastChangelogVersion": "0.81.1",
-  "defaultProvider": "opencode-go",
+  "defaultProvider": "deepseek",
   "defaultModel": "deepseek-v4-flash",
   "defaultThinkingLevel": "high",
   "enabledModels": [
+    "deepseek/*",
     "yybbcode/gpt-5.6-*",
     "opencode-go/deepseek-*",
     "opencode-go/glm-5.2"

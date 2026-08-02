@@ -74,21 +74,10 @@ end
 Config.on_keys({ '<leader>cr' }, setup_codediff)
 Config.on_cmd({ 'CodeDiff' }, setup_codediff)
 
-Config.on_packchanged('rime.nvim', { 'update', 'install' }, function(d)
-  local res = vim.system({ './build.sh' }, { cwd = d.path }):wait()
-  if res.code ~= 0 then
-    vim.notify('Failed to build rimeshim.so: ' .. res.stderr, 'error')
-  else
-    vim.notify('Build rimeshim.so done', 'info')
-  end
-end, 'Build rimeshim.so')
-
 Config.on_keys({ '<C-.>' }, 'i', function()
   vim.pack.add { 'https://github.com/Urie96/rime.nvim' }
   local rime = require 'rime'
-  rime.setup {
-    shared_data_dir = '~/.config/rime',
-  }
+  rime.setup {}
 
   vim.keymap.set('i', '<C-.>', function() rime.toggle() end, { desc = 'Toggle Rime' })
 end)
