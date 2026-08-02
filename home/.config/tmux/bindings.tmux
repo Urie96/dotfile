@@ -7,7 +7,7 @@ bind-key f display-popup -E -w 100% -h 100% -b none 'pick-window'
 bind-key C-f run-shell '~/.config/tmux/scripts/scrollback-pager-popup "#{pane_id}"'  # popup exactly covering the current pane
 bind-key a display-popup -E -w 80% -h 80% -b rounded 'coding-agent-status status'
 bind-key v new-window nvim -c 'call feedkeys("\<Space>bn")'
-bind-key C-x display-popup -Tㄓ -h2 -w 100% -xR -yP -EE -b none 'rime-cli --exec "tmux send-keys {key}"'
+bind-key C-x display-popup -T ㄓ -h 2 -w 100% -x "#{e|+:#{popup_pane_left},#{cursor_x}}" -y "#{e|+:#{e|+:#{popup_pane_top},#{cursor_y}},1}" -EE -b none 'rime-cli --exec "tmux send-keys {key}"'
 
 # -- navigation ----------------------------------------------------------------
 
