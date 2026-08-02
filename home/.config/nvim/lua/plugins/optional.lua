@@ -83,14 +83,14 @@ Config.on_packchanged('rime.nvim', { 'update', 'install' }, function(d)
   end
 end, 'Build rimeshim.so')
 
-Config.on_keys({ '<C-x>' }, 'i', function()
+Config.on_keys({ '<C-.>' }, 'i', function()
   vim.pack.add { 'https://github.com/Urie96/rime.nvim' }
   local rime = require 'rime'
   rime.setup {
     shared_data_dir = '~/.config/rime',
   }
 
-  vim.keymap.set('i', '<C-x>', function() rime.toggle() end, { desc = 'Toggle Rime' })
+  vim.keymap.set('i', '<C-.>', function() rime.toggle() end, { desc = 'Toggle Rime' })
 end)
 
 local function setup_obsidian()

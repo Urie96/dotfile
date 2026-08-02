@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Open the scrollback pager in a popup sized and positioned to exactly
+# cover the pane where the key was pressed.
+#
+# Positions are computed as LITERAL numbers here because:
+#   1. display-popup -w/-h do not accept formats.
+#   2. The #{popup_pane_left}/#{popup_pane_top} formats are off by one row
+#      when the status line is at the top (they subtract the window offset
+#      that the client coordinate system already includes).
+set -euo pipefail
+PANE="${1:?usage: scrollback-pager-popup <pane-id>}"
+
+read -r PL PT PW PH CW CH WH < <(tmux display-message -p -t "$PANE" \
+  '#{pane_left} #{pane_top} #{pane_width} #{pane_height} #{client_width} #{client_height} #{window_height}')
+
+# Window offset within the client: status line at top pushes the window down.
+OY=0
+SP=$(tmux show -g status-position 2>/dev/null)
+[ "${SP##* }" = top ] && OY=$((CH - WH))
+
+PX="$PL"
+PY=$((PT + OY))
+
+# -y is treated by tmux as the popup's BOTTOM edge, so pass PY + height.
+exec tmux display-popup -t "$PANE" -E -b none \
+  -w "$PW" -h "$PH" \
+  -x "$PX" -y "$((PY + PH))" \
+  '~/.config/tmux/scripts/scrollback-pager'
