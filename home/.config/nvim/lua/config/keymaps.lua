@@ -139,7 +139,7 @@ map {
 map { '<D-/>', 'gcc', remap = true }
 map { '<D-/>', '<C-o>gcc', mode = i, remap = true }
 map { '<D-/>', 'gc', mode = x, remap = true }
-map { '<C-Space>', function() end, mode = i } -- disable this keymap as it's for toggle system input method
+-- map { '<C-Space>', function() end, mode = i } -- disable this keymap as it's for toggle system input method
 
 local function translate(text)
   local cmd = { 'translate', '--ai' }
