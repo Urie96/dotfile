@@ -91,3 +91,6 @@
 
 [mergetool "codediff"]
 	cmd = nvim \"$MERGED\" -c \"CodeDiff merge \\\"$MERGED\\\"\"
+[safe]
+	directory = /storage/emulated/0/rime
+	directory = /storage/emulated/0/rime/trime-config

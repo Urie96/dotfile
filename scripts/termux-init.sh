@@ -135,6 +135,10 @@ install-pnpm-pkgs() {
   fi
 }
 
+install-cargo-pkgs() {
+  cargo install --git https://github.com/Urie96/rime-cli.git rime-cli rime-daemon
+}
+
 main() {
   require_termux
 
@@ -164,6 +168,7 @@ main() {
 
   setup_storage
   setup_shell
+  install-cargo-pkgs
   install-pnpm-pkgs
 
   msg "Termux initialization complete"
