@@ -74,13 +74,15 @@ end
 Config.on_keys({ '<leader>cr' }, setup_codediff)
 Config.on_cmd({ 'CodeDiff' }, setup_codediff)
 
-Config.on_keys({ '<C-space>' }, 'i', function()
+local function setup_rime()
   vim.pack.add { 'https://github.com/Urie96/rime.nvim' }
   local rime = require 'rime'
   rime.setup {}
 
   vim.keymap.set('i', '<C-space>', function() rime.toggle() end, { desc = 'Toggle Rime' })
-end)
+end
+Config.on_keys({ '<C-space>' }, 'i', setup_rime)
+Config.on_filetype('markdown', setup_rime)
 
 local function setup_obsidian()
   vim.pack.add {

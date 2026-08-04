@@ -1,17 +1,14 @@
 {
   "lastChangelogVersion": "0.82.1",
-  "defaultProvider": "opencode-go",
+  "defaultProvider": "deepseek",
   "defaultModel": "deepseek-v4-flash",
   "defaultThinkingLevel": "high",
   "enabledModels": [
-    "deepseek/*",
+    "deepseek/deepseek-v4-*",
     "yybbcode/gpt-5.6-*",
     "opencode-go/deepseek-*",
     "opencode-go/glm-5.2"
   ],
   "theme": "catppuccin-mocha",
-  "packages": [
-    "npm:pi-web-access",
-    "npm:@ayulab/pi-rewind"
-  ]
+  "packages": ["npm:pi-web-access", "npm:@ayulab/pi-rewind"]
 }
