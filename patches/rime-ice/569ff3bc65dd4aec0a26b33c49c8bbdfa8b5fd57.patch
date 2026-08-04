@@ -33,13 +33,15 @@ index 0000000..4e6f65c
 +      - { accept: equal, send: Page_Down, when: has_menu }
 diff --git c/double_pinyin_flypy.custom.yaml w/double_pinyin_flypy.custom.yaml
 new file mode 100644
-index 0000000..1ee1f6b
+index 0000000..36370d3
 --- /dev/null
 +++ w/double_pinyin_flypy.custom.yaml
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,10 @@
 +# 小鹤双拼（雾凇拼音）自定义补丁
 +# 由 rime-cli 会话按需生成；升级配置后可原样保留。
 +patch:
++  # ascii_mode 开关加 reset，新 session 固定默认中文模式（0=中，1=英文）
++  switches/@0/reset: 0
 +  # 关闭拼音提示：候选词后面不再显示全拼编码（［ni hao］）
 +  translator/spelling_hints: 0
 +  # 清空 preedit_format：输入时 preedit 直接显示双拼编码（如 nihc），

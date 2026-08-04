@@ -1,14 +1,10 @@
 {
   "caution": {
     "body": "> [!CAUTION]\n> $0\n",
-    "prefix": [
-      "caution",
-      "error",
-      "danger"
-    ]
+    "prefix": ["caution", "error", "danger"]
   },
   "co": {
-    "body": "```${1:json}\n$0\n```\n",
+    "body": "```${1}\n$0\n```\n",
     "prefix": "co"
   },
   "important": {

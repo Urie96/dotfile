@@ -19,7 +19,7 @@ Config.on_event('InsertEnter', function()
     sources = {
       default = { 'lsp', 'path', 'snippets', 'buffer' },
       transform_items = function(_, items)
-        if vim.b.iminsert then
+        if vim.b.rime_auto or (vim.b.rime_auto == nil and vim.b.iminsert) then
           return {}
         else
           return items

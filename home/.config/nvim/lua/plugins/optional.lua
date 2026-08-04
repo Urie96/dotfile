@@ -45,11 +45,7 @@ Config.on_keys({ '<leader>sr' }, { 'x' }, function()
   map { '<leader>sr', function() rip.sub() end, mode = { 'x' }, desc = ' rip substitute' }
 end)
 
-local codediff_setupped = false
-
-local function setup_codediff()
-  if codediff_setupped then return end
-  codediff_setupped = true
+local setup_codediff = Config.once(function()
   vim.pack.add { 'https://github.com/esmuellert/codediff.nvim' }
   require('codediff').setup {
     diff = {
@@ -69,22 +65,22 @@ local function setup_codediff()
     },
   }
   vim.keymap.set('n', '<leader>cr', '<cmd>CodeDiff origin/HEAD<cr>', { desc = 'Code review' })
-end
+end)
 
 Config.on_keys({ '<leader>cr' }, setup_codediff)
 Config.on_cmd({ 'CodeDiff' }, setup_codediff)
 
-local function setup_rime()
+local setup_rime = Config.once(function()
   vim.pack.add { 'https://github.com/Urie96/rime.nvim' }
   local rime = require 'rime'
-  rime.setup {}
+  rime.setup {} -- 按上下文自动切换中/英文输入已内置在插件 setup 中
 
   vim.keymap.set('i', '<C-space>', function() rime.toggle() end, { desc = 'Toggle Rime' })
-end
+end)
 Config.on_keys({ '<C-space>' }, 'i', setup_rime)
 Config.on_filetype('markdown', setup_rime)
 
-local function setup_obsidian()
+local setup_obsidian = Config.once(function()
   vim.pack.add {
     {
       src = 'https://github.com/obsidian-nvim/obsidian.nvim',
@@ -104,6 +100,6 @@ local function setup_obsidian()
       },
     },
   }
-end
+end)
 
 Config.on_cmd({ 'Obsidian' }, setup_obsidian)

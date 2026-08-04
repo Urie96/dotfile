@@ -101,7 +101,7 @@
       "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
     },
     "rime.nvim": {
-      "rev": "efaf96ad4efe842c268cf90d934b6504f4ecb720",
+      "rev": "dc4f7725a8113036bed2d007d0d9ad8f31fc8d56",
       "src": "https://github.com/Urie96/rime.nvim"
     },
     "rpc.nvim": {

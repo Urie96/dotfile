@@ -80,6 +80,16 @@ Config.on_cmd = function(cmds, callback)
   end
 end
 
+Config.once = function(f)
+  local done = false
+  return function()
+    if not done then
+      done = true
+      f()
+    end
+  end
+end
+
 Config.set_keymap = function(arg)
   local mode = arg.mode or 'n'
   local lhs = arg[1]
