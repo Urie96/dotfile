@@ -67,7 +67,7 @@ clipboard-set() {
   else
     text="$(cat)"
   fi
-  try-ssh "printf %s $(printf "%q" "$text") | termux-clipboard-set"
+  printf %s "$text" | try-ssh "termux-clipboard-set"
 }
 
 screenshot() {
