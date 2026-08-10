@@ -74,6 +74,7 @@ main() {
     ;;
   ai)
     if [[ -n "${WORK:-}" ]]; then
+      echo "Use modelhub"
       pi --provider modelhub --model ali-deepseek-v4-flash --no-session --no-skills --print /commit
     else
       pi --provider deepseek --model deepseek-v4-flash --no-session --no-skills --print /commit
