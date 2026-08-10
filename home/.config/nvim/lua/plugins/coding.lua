@@ -18,13 +18,13 @@ Config.on_event('InsertEnter', function()
   cmp.setup {
     sources = {
       default = { 'lsp', 'path', 'snippets', 'buffer' },
-      transform_items = function(_, items)
-        if vim.b.rime_auto or (vim.b.rime_auto == nil and vim.b.iminsert) then
-          return {}
-        else
-          return items
-        end
-      end, -- 输入法开启时不自动补全
+      -- transform_items = function(_, items)
+      --   if vim.b.rime_auto or (vim.b.rime_auto == nil and vim.b.iminsert) then
+      --     return {}
+      --   else
+      --     return items
+      --   end
+      -- end, -- 输入法开启时不自动补全
       providers = {
         snippets = { opts = { search_paths = snippets_dir } },
         lsp = {
