@@ -48,16 +48,7 @@ try-ssh() {
 }
 
 clipboard-get() {
-  local cmd
-  cmd=$(
-    cat <<'EOF'
-am startservice com.termux.window/.TermuxFloatService &>/dev/null
-sleep 0.5
-termux-clipboard-get
-am stopservice com.termux.window/.TermuxFloatService &>/dev/null &
-EOF
-  )
-  try-ssh "$cmd"
+  curl -s -H "Authorization: Bearer $(rbw get shellbox_token)" http://termux.lan:16888/clipboard | jq -r .text
 }
 
 clipboard-set() {
@@ -67,7 +58,7 @@ clipboard-set() {
   else
     text="$(cat)"
   fi
-  printf %s "$text" | try-ssh "termux-clipboard-set"
+  curl -X PUT -H "Authorization: Bearer $(rbw get shellbox_token)" "http://termux.lan:16888/clipboard?text=${text}"
 }
 
 screenshot() {
