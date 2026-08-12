@@ -31,6 +31,15 @@ bind K "select-pane -m; select-pane -D; swap-pane; select-pane -D; select-pane -
 bind I "select-pane -m; select-pane -U; swap-pane; select-pane -U; select-pane -M"
 bind L "select-pane -m; select-pane -R; swap-pane; select-pane -R; select-pane -M"
 
+bind -n M-j select-pane -L  # move left
+bind -n M-k select-pane -D  # move down
+bind -n M-i select-pane -U  # move up
+bind -n M-l select-pane -R  # move right
+bind -n M-J "select-pane -m; select-pane -L; swap-pane; select-pane -L; select-pane -M"
+bind -n M-K "select-pane -m; select-pane -D; swap-pane; select-pane -D; select-pane -M"
+bind -n M-I "select-pane -m; select-pane -U; swap-pane; select-pane -U; select-pane -M"
+bind -n M-L "select-pane -m; select-pane -R; swap-pane; select-pane -R; select-pane -M"
+bind -n M-n splitw -h -c '#{pane_current_path}'
 
 bind -r C-j previous-window # select previous window
 bind -r C-l next-window     # select next window
