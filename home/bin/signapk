@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [ $# -ne 1 ]; then
+  echo "用法: $0 <未签名的apk路径>" >&2
+  exit 1
+fi
+
+INPUT="$1"
+if [ ! -f "$INPUT" ]; then
+  echo "错误: 找不到文件: $INPUT" >&2
+  exit 1
+fi
+
+KEYSTORE=~/.android/personal.keystore
+PASSWORD="$(rbw get apksigner-personal-password)"
+ALIAS=personal
+
+DIR="$(dirname "$INPUT")"
+BASE="$(basename "$INPUT" .apk)"
+OUTPUT="$DIR/${BASE}_signed.apk"
+
+apksigner sign \
+  --ks "$KEYSTORE" \
+  --ks-pass "pass:$PASSWORD" \
+  --ks-key-alias "$ALIAS" \
+  --key-pass "pass:$PASSWORD" \
+  --out "$OUTPUT" \
+  "$INPUT"
+
+apksigner verify --verbose --print-certs "$OUTPUT"
