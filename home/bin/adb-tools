@@ -36,11 +36,11 @@ EOF
 
 ssh-over-adb() {
   adb forward tcp:8022 tcp:8022 >/dev/null 2>&1
-  ssh localhost -p 8022 "$@"
+  ssh nix-on-droid@127.0.0.1 -p 8022 "$@"
 }
 
 ssh-directly() {
-  ssh u0_a356@termux.lan -p 8022 "$@"
+  ssh nix-on-droid@termux.lan -p 8022 "$@"
 }
 
 try-ssh() {
@@ -58,7 +58,9 @@ clipboard-set() {
   else
     text="$(cat)"
   fi
-  curl -X PUT -H "Authorization: Bearer $(rbw get shellbox_token)" "http://termux.lan:16888/clipboard?text=${text}"
+  curl -s -X PUT -H "Authorization: Bearer $(rbw get shellbox_token)" -H "Content-Type: application/json" \
+    --data "$(jq -n --arg text "$text" '{text: $text}')" \
+    "http://termux.lan:16888/clipboard"
 }
 
 screenshot() {
