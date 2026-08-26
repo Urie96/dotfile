@@ -44,21 +44,8 @@ end
 
 bind \cr _command_line_ls
 
-function fzf-file-widget -d "List files and folders"
-    set -l FZF_DEFAULT_COMMAND "fd --strip-cwd-prefix --follow --exclude node_modules"
-    set -l FZF_CTRL_D_COMMAND "$FZF_DEFAULT_COMMAND --type d"
-    set -l FZF_CTRL_F_COMMAND "$FZF_DEFAULT_COMMAND --type f"
-
-    set -l file (fzf --prompt 'All> ' \
-            --bind "ctrl-d:change-prompt(Directories> )+reload($FZF_CTRL_D_COMMAND)" \
-            --bind "ctrl-f:change-prompt(Files> )+reload($FZF_CTRL_F_COMMAND)" \
-            --bind "ctrl-a:change-prompt(All> )+reload($FZF_DEFAULT_COMMAND)")
-
-    if [ -n file ]
-        commandline -i "$file"
-        commandline -f repaint
-    end
+if command -q fzf
+    fzf --fish | FZF_CTRL_R_COMMAND= FZF_ALT_C_COMMAND= FZF_CTRL_T_COMMAND= source
+    bind up fzf-history-widget
+    bind -M insert up __fzf_history_up
 end
-
-bind \ct _command_line_ls
-bind \e\[116\;6u fzf-file-widget # ctrl-shift-t
