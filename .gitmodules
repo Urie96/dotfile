@@ -106,15 +106,3 @@
 [submodule "submodules/yazi.nvim"]
 	path = submodules/nvim/yazi.nvim
 	url = https://github.com/mikavilpas/yazi.nvim
-[submodule "submodules/nvim-rip-substitute"]
-	path = submodules/nvim/nvim-rip-substitute
-	url = https://github.com/chrisgrieser/nvim-rip-substitute
-[submodule "submodules/nvim-dap"]
-	path = submodules/nvim/nvim-dap
-	url = https://github.com/mfussenegger/nvim-dap
-[submodule "submodules/nvim-dap-ui"]
-	path = submodules/nvim/nvim-dap-ui
-	url = https://github.com/rcarriga/nvim-dap-ui
-[submodule "submodules/nvim-dap-go"]
-	path = submodules/nvim/nvim-dap-go
-	url = https://github.com/leoluz/nvim-dap-go
