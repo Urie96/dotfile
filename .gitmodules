@@ -84,7 +84,7 @@
 	url = https://github.com/Urie96/rime.nvim
 [submodule "rpc.nvim"]
 	path = submodules/nvim/rpc.nvim
-	url = git@github.com:Urie96/rpc.nvim.git
+	url = https://github.com/Urie96/rpc.nvim
 [submodule "rustaceanvim"]
 	path = submodules/nvim/rustaceanvim
 	url = https://github.com/mrcjkb/rustaceanvim
