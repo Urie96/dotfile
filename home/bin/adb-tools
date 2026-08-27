@@ -82,7 +82,7 @@ Commands:
   ssh-over-adb [args...]       Forward adb tcp:8022 and ssh to localhost:8022
   ssh-directly [args...]       SSH directly to configured Termux host
   clipboard-get                Print Android clipboard
-  clipboard-set [text]         Set Android clipboard; reads stdin when text is omitted
+  clipboard-set [text]         Set Android clipboard;
   screenshot                   Write Android screenshot binary data to stdout
   help                         Show this help
 EOF

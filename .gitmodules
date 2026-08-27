@@ -10,3 +10,111 @@
 [submodule "yazi-rs-flavors"]
 	path = submodules/yazi-rs-flavors
 	url = https://github.com/yazi-rs/flavors.git
+[submodule "submodules/persistence.nvim"]
+	path = submodules/nvim/persistence.nvim
+	url = https://github.com/folke/persistence.nvim
+[submodule "submodules/blink.cmp"]
+	path = submodules/nvim/blink.cmp
+	url = https://github.com/saghen/blink.cmp
+[submodule "submodules/catppuccin"]
+	path = submodules/nvim/catppuccin
+	url = https://github.com/catppuccin/nvim
+[submodule "submodules/codediff.nvim"]
+	path = submodules/nvim/codediff.nvim
+	url = https://github.com/esmuellert/codediff.nvim
+[submodule "submodules/codeverse.vim"]
+	path = submodules/nvim/codeverse.vim
+	url = https://code.byted.org/chenjiaqi.cposture/codeverse.vim.git
+[submodule "submodules/flash.nvim"]
+	path = submodules/nvim/flash.nvim
+	url = https://github.com/folke/flash.nvim
+[submodule "submodules/grug-far.nvim"]
+	path = submodules/nvim/grug-far.nvim
+	url = https://github.com/MagicDuck/grug-far.nvim
+[submodule "submodules/lazydev.nvim"]
+	path = submodules/nvim/lazydev.nvim
+	url = https://github.com/folke/lazydev.nvim
+[submodule "submodules/mini.nvim"]
+	path = submodules/nvim/mini.nvim
+	url = https://github.com/nvim-mini/mini.nvim
+[submodule "submodules/neogen"]
+	path = submodules/nvim/neogen
+	url = https://github.com/danymat/neogen
+[submodule "submodules/neotest"]
+	path = submodules/nvim/neotest
+	url = https://github.com/nvim-neotest/neotest
+[submodule "submodules/neotest-golang"]
+	path = submodules/nvim/neotest-golang
+	url = https://github.com/fredrikaverpil/neotest-golang
+[submodule "submodules/noice.nvim"]
+	path = submodules/nvim/noice.nvim
+	url = https://github.com/folke/noice.nvim
+[submodule "submodules/nui.nvim"]
+	path = submodules/nvim/nui.nvim
+	url = https://github.com/MunifTanjim/nui.nvim
+[submodule "submodules/nvim-lint"]
+	path = submodules/nvim/nvim-lint
+	url = https://github.com/mfussenegger/nvim-lint
+[submodule "submodules/nvim-lspconfig"]
+	path = submodules/nvim/nvim-lspconfig
+	url = https://github.com/neovim/nvim-lspconfig
+[submodule "submodules/nvim-nio"]
+	path = submodules/nvim/nvim-nio
+	url = https://github.com/nvim-neotest/nvim-nio
+[submodule "submodules/nvim-treesitter"]
+	path = submodules/nvim/nvim-treesitter
+	url = https://github.com/nvim-treesitter/nvim-treesitter
+[submodule "submodules/nvim-treesitter-context"]
+	path = submodules/nvim/nvim-treesitter-context
+	url = https://github.com/nvim-treesitter/nvim-treesitter-context
+[submodule "submodules/nvim-treesitter-textobjects"]
+	path = submodules/nvim/nvim-treesitter-textobjects
+	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+[submodule "submodules/obsidian.nvim"]
+	path = submodules/nvim/obsidian.nvim
+	url = https://github.com/obsidian-nvim/obsidian.nvim
+[submodule "submodules/overseer.nvim"]
+	path = submodules/nvim/overseer.nvim
+	url = https://github.com/stevearc/overseer.nvim
+[submodule "submodules/plenary.nvim"]
+	path = submodules/nvim/plenary.nvim
+	url = https://github.com/nvim-lua/plenary.nvim
+[submodule "submodules/render-markdown.nvim"]
+	path = submodules/nvim/render-markdown.nvim
+	url = https://github.com/MeanderingProgrammer/render-markdown.nvim
+[submodule "submodules/rime.nvim"]
+	path = submodules/nvim/rime.nvim
+	url = https://github.com/Urie96/rime.nvim
+[submodule "submodules/rpc.nvim"]
+	path = submodules/nvim/rpc.nvim
+	url = git@github.com:Urie96/rpc.nvim.git
+[submodule "submodules/rustaceanvim"]
+	path = submodules/nvim/rustaceanvim
+	url = https://github.com/mrcjkb/rustaceanvim
+[submodule "submodules/snacks.nvim"]
+	path = submodules/nvim/snacks.nvim
+	url = https://github.com/folke/snacks.nvim
+[submodule "submodules/tokyonight.nvim"]
+	path = submodules/nvim/tokyonight.nvim
+	url = https://github.com/folke/tokyonight.nvim
+[submodule "submodules/which-key.nvim"]
+	path = submodules/nvim/which-key.nvim
+	url = https://github.com/folke/which-key.nvim
+[submodule "submodules/windsurf.nvim"]
+	path = submodules/nvim/windsurf.nvim
+	url = https://github.com/Exafunction/windsurf.nvim
+[submodule "submodules/yazi.nvim"]
+	path = submodules/nvim/yazi.nvim
+	url = https://github.com/mikavilpas/yazi.nvim
+[submodule "submodules/nvim-rip-substitute"]
+	path = submodules/nvim/nvim-rip-substitute
+	url = https://github.com/chrisgrieser/nvim-rip-substitute
+[submodule "submodules/nvim-dap"]
+	path = submodules/nvim/nvim-dap
+	url = https://github.com/mfussenegger/nvim-dap
+[submodule "submodules/nvim-dap-ui"]
+	path = submodules/nvim/nvim-dap-ui
+	url = https://github.com/rcarriga/nvim-dap-ui
+[submodule "submodules/nvim-dap-go"]
+	path = submodules/nvim/nvim-dap-go
+	url = https://github.com/leoluz/nvim-dap-go
