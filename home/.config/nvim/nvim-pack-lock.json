@@ -13,10 +13,6 @@
       "rev": "e08a35a56a52c290398ebfaec33c34cfcf2d0f3c",
       "src": "https://github.com/esmuellert/codediff.nvim"
     },
-    "codeverse.vim": {
-      "rev": "ae41d521b2373c6d86986f0337496c664967585b",
-      "src": "https://code.byted.org/chenjiaqi.cposture/codeverse.vim.git"
-    },
     "flash.nvim": {
       "rev": "5f0f270fdc7c5b0c21d903ee85b9cb06f2ac636a",
       "src": "https://github.com/folke/flash.nvim"
