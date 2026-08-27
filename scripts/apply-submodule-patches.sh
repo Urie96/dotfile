@@ -21,6 +21,15 @@ msg() { printf "\033[1;34m>>> %s\033[0m\n" "$*"; }
 warn() { printf "\033[1;33m!!! %s\033[0m\n" "$*"; }
 err() { printf "\033[1;31m!!! %s\033[0m\n" "$*" >&2; }
 
+# --reset-only: 只做第 1 步（reset 有补丁的 submodule 工作区），不 update 也不 apply。
+# 用于 pull 前清理 dirty 工作区，避免补丁被打两遍。
+RESET_ONLY=false
+case "${1:-}" in
+--reset-only) RESET_ONLY=true ;;
+"") ;;
+*) err "用法: $0 [--reset-only]"; exit 1 ;;
+esac
+
 # 1. 有补丁的 submodule 先恢复干净（补丁本身已提交到父仓库，reset 不丢东西）
 shopt -s nullglob
 for dir in patches/*/; do
@@ -29,6 +38,10 @@ for dir in patches/*/; do
     git -C "submodules/$name" reset --hard -q
   fi
 done
+
+if [[ "$RESET_ONLY" == true ]]; then
+  exit 0
+fi
 
 # 2. 对齐 pin 的 commit
 git submodule update --init --recursive

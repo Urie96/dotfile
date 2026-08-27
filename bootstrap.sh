@@ -28,8 +28,9 @@ if [ -d "$DEST/.git" ]; then
   msg "仓库已存在: $DEST — 执行 pull"
   cd "$DEST"
   # 先清掉已应用的 submodule 补丁，避免 dirty 工作区挡住 pull --recurse-submodules
-  ./scripts/apply-submodule-patches.sh
-  git pull --ff-only --recurse-submodules "$REPO" main || {
+  # （--reset-only：只 reset，不重复 apply，补丁在 pull 之后统一应用）
+  ./scripts/apply-submodule-patches.sh --reset-only
+  git pull --ff-only --recurse-submodules=on-demand "$REPO" main || {
     err "存在冲突，请手动解决后再运行本脚本"
     exit 1
   }
