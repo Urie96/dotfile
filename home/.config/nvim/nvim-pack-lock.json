@@ -105,7 +105,7 @@
       "src": "https://github.com/Urie96/rime.nvim"
     },
     "rpc.nvim": {
-      "rev": "59b7a66ae5c1a770ad5f61553ca3f6a4ff91621f",
+      "rev": "e0ba624ae9742b4b8b2d065487c93c4c7f25a29c",
       "src": "https://github.com/urie96/rpc.nvim"
     },
     "rustaceanvim": {
