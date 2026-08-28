@@ -44,8 +44,4 @@ end
 
 bind \cr _command_line_ls
 
-if command -q fzf
-    fzf --fish | FZF_CTRL_R_COMMAND= FZF_ALT_C_COMMAND= FZF_CTRL_T_COMMAND= source
-    bind up fzf-history-widget
-    bind -M insert up __fzf_history_up
-end
+bind up fzf-history-widget
