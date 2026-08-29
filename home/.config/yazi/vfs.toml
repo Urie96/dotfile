@@ -1,25 +1,25 @@
-[services.home]
+[sftp.home]
 type     = "sftp"
 host     = "home.lubui.com"
 user     = "urie"
 port     = 22
 key_file = "~/.ssh/id_ed25519"
 
-[services.mac]
+[sftp.mac]
 type     = "sftp"
 host     = "mac.mini"
 user     = "urie"
 port     = 22
 key_file = "~/.ssh/id_ed25519"
 
-[services.kindle]
+[sftp.kindle]
 type     = "sftp"
 host     = "kindle.lan"
 user     = "root"
 port     = 2222
 key_file = "~/.ssh/id_ed25519"
 
-[services.termux]
+[sftp.termux]
 type     = "sftp"
 host     = "termux.lan"
 user     = "u0_a356"
