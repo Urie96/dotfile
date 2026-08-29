@@ -4,6 +4,10 @@ window-rule {
     open-maximized true
 }
 
+window-rule {
+    draw-border-with-background false // 不然 kitty 没有透明背景
+}
+
 // Web browsers -> "web" workspace
 window-rule {
     match app-id=r#"^(firefox|librewolf|chromium-browser|google-chrome|org\.chromium\.Chromium)$"#
