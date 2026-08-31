@@ -25,7 +25,7 @@ binds {
     // Choosers — noctalia launcher providers (replaces the old fuzzel-based
     // audio-chooser / internet-chooser scripts from the KDE era)
     Mod+A hotkey-overlay-title="Audio Chooser" { spawn "noctalia-shell" "ipc" "call" "plugin:audio-provider" "toggle"; }
-    Mod+N hotkey-overlay-title="Internet Chooser" { spawn "noctalia-shell" "ipc" "call" "plugin:internet-provider" "toggle"; }
+    // Mod+N hotkey-overlay-title="Internet Chooser" { spawn "noctalia-shell" "ipc" "call" "plugin:internet-provider" "toggle"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
@@ -130,7 +130,7 @@ binds {
     // Toggle tabbed column display mode.
     // Windows in this column will appear as vertical tabs,
     // rather than stacked on top of each other.
-    Mod+W { toggle-column-tabbed-display; }
+    // Mod+W { toggle-column-tabbed-display; }
 
     // Actions to switch layouts.
     // Note: if you uncomment these, make sure you do NOT have
