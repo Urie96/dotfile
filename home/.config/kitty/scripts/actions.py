@@ -21,7 +21,7 @@ def handle_result(args: List[str], _: str, target_window_id: int, boss: Boss) ->
         "What would you like to do with kitty:\n",
         partial(cb, boss, w),
         "r:Reload config file",
-        "k:Kill -9",
+        "h:h:Lazydeck process",
         "i:i:Scroll up prompt",
         "s:Kitty shell",
         "t:t:Quick Actions",
@@ -44,25 +44,12 @@ def cb(boss: Boss, window: Window, o: str):
             boss.launch("--type=tab", "--title=Action", "t")
         case "n":
             boss.launch("--type=tab", "--title=Daily Note", "zk", "d")
-        case "k":
+        case "h":
             pid = window.child.pid_for_cwd
             if not pid:
                 boss.show_error("Kill failed", "pid is None")
                 return
 
-            def confirm_kill(confirm: bool, pid: int, signal: int):
-                if confirm:
-                    import os
-
-                    os.kill(pid, signal)
-
-            cmd = styled(" ".join(window.child.cmdline_of_pid(pid)), fg="blue")
-            boss.confirm(
-                f"Are you sure to force kill `{cmd}`?",
-                confirm_kill,
-                pid,
-                9,
-                window=window,
-            )
+            boss.launch("--type=overlay", "lazydeck", "/process/" + str(pid))
         case _:
             pass
