@@ -12,6 +12,8 @@ bind-key C-space display-popup -T ㄓ -h 2 -w 100% -EE -b none \
   -y "#{?#{e|<:#{cursor_y},#{e|-:#{e|-:#{client_height},#{popup_pane_top}},1}},#{e|+:#{e|+:#{popup_pane_top},#{cursor_y}},1},#{e|-:#{e|-:#{e|+:#{popup_pane_top},#{cursor_y}},#{popup_height}},1}}" \
   'rime-cli --exec "tmux send-keys {key}"'
 
+bind-key h run-shell -b "tmux display-popup -E -w 80% -h 80% -b rounded 'lazydeck /process/#{pane_pid}'"
+
 # -- navigation ----------------------------------------------------------------
 
 bind C-t new-window -c "#{pane_current_path}"
