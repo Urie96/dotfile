@@ -1,10 +1,25 @@
+-- ── rbw secret 读取 ──────────────────────────────────────────────
+-- shell 单引号转义
+local function shq(s) return "'" .. tostring(s):gsub("'", "'\\''") .. "'" end
+
+-- 同步执行命令，返回 (exit_code, stdout)
+-- stderr 丢弃到 /dev/null，防止 rbw 报错文本直接打印到 TUI 造成花屏
+local function run(cmd)
+  local handle = io.popen(cmd .. ' 2>/dev/null')
+  if not handle then return nil end
+  local out = handle:read '*a'
+  local ok, why, code = handle:close()
+  local exit_code = ok == true and 0 or (why == 'exit' and type(code) == 'number' and code) or 1
+  return exit_code, out
+end
+
 local function get_secret(key)
-  local handle = io.popen(string.format('rbw get "%s"', key))
-  if handle then
-    local result = handle:read '*a' -- 读取全部内容
-    handle:close()
-    return result
+  if run 'rbw unlocked' ~= 0 then
+    deck.interactive({ 'rbw', 'unlock' }, { wait_confirm = function(exit_code) return exit_code ~= 0 end })
   end
+
+  local _, value = run('rbw get ' .. shq(key))
+  return value
 end
 
 deck.config {
@@ -101,6 +116,14 @@ deck.config {
           url = 'https://music.lubui.com:8443',
           username = 'urie',
           password = get_secret 'navidrome-password',
+        }
+      end,
+    },
+    {
+      dir = '/Users/bytedance/.local/share/lazydeck/plugins/apple-music.lazydeck',
+      config = function()
+        require('apple-music').setup {
+          base_url = os.getenv 'APPLE_MUSIC_API_URL' or 'http://127.0.0.1:8899',
         }
       end,
     },
