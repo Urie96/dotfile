@@ -17,7 +17,11 @@ unmap { '<tab>', mode = i } -- remove smart tab: https://github.com/neovim/neovi
 
 map { 'j', '[', remap = true }
 map { 'l', ']', remap = true }
-map { '<Esc>', '<cmd>nohlsearch<CR>', desc = 'Clear Highlights On Search' }
+map {
+  '<Esc>',
+  '<Cmd>nohlsearch|diffupdate|call nvim_buf_clear_namespace(0, nvim_create_namespace("nvim.multicursor"), 0, -1)<CR>',
+  desc = 'Clear Highlights On Search',
+}
 map { '<Down>', 'gj', mode = { n, x }, desc = 'Down' } -- adapt wrap line
 map { '<Up>', 'gk', mode = { n, x }, desc = 'Up' } -- adapt wrap line
 

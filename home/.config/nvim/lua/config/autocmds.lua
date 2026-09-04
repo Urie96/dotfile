@@ -46,7 +46,7 @@ if vim.env.SSH_TTY then write_osc52_on_yank = require('vim.ui.clipboard.osc52').
 au('TextYankPost', {
   group = ag 'highlight-yank',
   callback = function()
-    vim.hl.on_yank()
+    vim.hl.hl_op()
     if write_osc52_on_yank then write_osc52_on_yank(vim.v.event.regcontents) end
   end,
 })
